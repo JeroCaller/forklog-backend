@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acorn.api.NaverBlogSearch;
+
 @RestController
 public class NaverController {
     @Autowired
-    private com.acorn.api.NaverBlogSearch naverBlogSearch;
+    private NaverBlogSearch naverBlogSearch;
 
-    @GetMapping("blog/{blogName}")
-    public ResponseEntity<Map<String, Object>> getBlogInfo(@PathVariable("blogName") String blogName) {
-        return ResponseEntity.ok().body(naverBlogSearch.searchBlog(blogName));
+    @GetMapping("blog/{blogTitle}")
+    public ResponseEntity<Map<String, Object>> getBlogInfo(@PathVariable("blogTitle") String blogTitle) {
+        return ResponseEntity.ok().body(naverBlogSearch.searchBlog(blogTitle));
     }
 
     @GetMapping("locations")
