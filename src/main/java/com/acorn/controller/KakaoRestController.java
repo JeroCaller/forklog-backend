@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.api.KakaoRestApi;
 
+
 @RestController
 public class KakaoRestController {
 	private Logger log = LoggerFactory.getLogger(KakaoRestController.class);
+
 	@Autowired
 	private KakaoRestApi kakaoRestApi;
-	
+
+
 	@GetMapping("/eatery")
-	public ResponseEntity<List<Map<String, String>>> getEateries (@RequestParam("query") String searchValue) {
+	public ResponseEntity<Object> getEateries (@RequestParam("query") String searchValue) {
 		log.info("{}", searchValue);
 		return ResponseEntity.ok().body(kakaoRestApi.getEateries(searchValue));
 	}

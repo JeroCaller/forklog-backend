@@ -1,78 +1,80 @@
 package com.acorn.api;
 
+import com.acorn.api.openfeign.KakaoRestOpenFeign;
+import com.acorn.model.CategoriesModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Component
+@Service
 public class KakaoRestApi {
 	private Logger log = LoggerFactory.getLogger(KakaoRestApi.class);
 
-	@Value("${kakao.rest_api_key}")
-	private String kakaoApiKey;
+	@Autowired
+	private KakaoRestOpenFeign kakaoRestOpenFeign;
 	
-	@Value("${kakao.redirect_uri}")
-	private String kakaoRedirectUri;
+	private final String CATEGORY_GROUP_CODE = "FD6";
+
+	@Autowired
+	private NaverBlogSearch naverBlogSearch;
+	
+	@Autowired
+	private CategoriesModel categoriesModel;
 
 	/**
-	 * 카카오 키워드로 장소 검색하기 API  
+	 * 카카오 키워드로 장소 검색하기 API
+	 * 
 	 * @param searchValue
-	 * @return
+	 * @return List<Map<String, String>>
 	 */
-	public List<Map<String, String>> getEateries(String searchValue) {
-		log.info("kakaoApiKey : {}", kakaoApiKey);
+	public Object getEateries(String searchValue) {
 		log.info("searchValue : {}", searchValue);
+		// API 응답 데이터
+		Map<String, Object> response = kakaoRestOpenFeign.getEateries(CATEGORY_GROUP_CODE, searchValue);
 
-		// RestTemplate : 
-		RestTemplate restTemplate = new RestTemplate(); // DI로 처리할 것
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "KakaoAK " + kakaoApiKey);
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-
-		String apiURL = "https://dapi.kakao.com/v2/local/search/keyword.json?category_group_code=FD6&query=".concat(searchValue);
-
-		// API 호출
-		ResponseEntity<Map> response = restTemplate.exchange(apiURL, HttpMethod.GET, entity, Map.class);
-		log.info("response : {}", response);
-		
+		log.info("Kakao - API 응답 데이터 : {}", response);
 		// 응답 데이터 처리
-		if (response.getStatusCode() == HttpStatus.OK) {
-			List<Map<String, Object>> documents = (List<Map<String, Object>>) response.getBody().get("documents");
+		List<Map<String, Object>> documents = (List<Map<String, Object>>) response.get("documents");
 
-			List<Map<String, String>> eateries = new ArrayList<>();
-			for (Map<String, Object> doc : documents) {
-				// 음식 카테고리 분류 구분 (대분류 > 소분류)
-				String[] categories = ((String) doc.get("category_name")).split(" > ");
-				
-				Map<String, String> eatery = new HashMap<>();
-				eatery.put("name", (String) doc.get("place_name"));
-				// 카테고리 구분
-				if (categories.length > 1) {
-					eatery.put("category_group", categories[1]);
-				}
-				if (categories.length > 2) {
-					eatery.put("categories", categories[2]);
-				}
-				eatery.put("longitude", (String) doc.get("x"));
-				eatery.put("latitude", (String) doc.get("y"));
-				eateries.add(eatery);
+		List<Map<String, Object>> eateries = new ArrayList<>();
+		for (Map<String, Object> doc : documents) {
+			// 음식 카테고리 분류 구분 (대분류 > 소분류)
+			String[] categories = ((String) doc.get("category_name")).split(" > ");
+			String[] locations = ((String) doc.get("address_name")).split(" ");
+			
+			Map<String, Object> eatery = new HashMap<>();
+			eatery.put("name", (String) doc.get("place_name"));
+			// 음식 카테고리 구분
+			if (categories.length > 1) {
+				eatery.put("category_group", categories[1]);
 			}
+			if (categories.length > 2) {
+				eatery.put("categories", categories[2]);
+			}
+		 	// 지역 분류
+			if (locations.length > 1) {
+				eatery.put("location_group", locations[0]);
+			}
+			if (locations.length > 2) {
+				eatery.put("locations", locations[1]);
+			}
+			eatery.put("phone", doc.get("phone"));
+			eatery.put("longitude", doc.get("x"));
+			eatery.put("latitude", doc.get("y"));
 
-			// 음식점 정보 출력
-			log.info("eateries : {}", eateries);
-			return eateries;
+			log.info("{}", String.valueOf(eatery.getOrDefault("locations", "")) + " " + eatery.get("name"));
+
+//			eatery.put("blog", naverBlogSearch.searchBlog(String.valueOf(eatery.getOrDefault("locations", "")) + " " +  eatery.get("name")));
+			eateries.add(eatery);
 		}
-		return null;
+
+		categoriesModel.updateCategory(documents);
+
+		return eateries;
 	}
-	
-	
-//	public String getAccessToken(String code) {
-//		
-//	}
+
 }
