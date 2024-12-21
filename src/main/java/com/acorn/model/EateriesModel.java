@@ -48,7 +48,7 @@ public class EateriesModel {
 					.latitude(latitude) // String -> BigDecimal 변환
 					.category(categoriesRepository.findByName(categoriesName))
 					.build();
-			eateriesRepository.save(entity);
+//			eateriesRepository.save(entity);
 		}
 	}
 }
