@@ -10,9 +10,19 @@ import java.util.Map;
 public interface KakaoRestOpenFeign {
 	
 	@PostMapping(value = "/local/search/keyword.json")
-	Map<String, Object> getEateries (
+	Map<String, Object> getEateriesByKeyword (
 			@RequestParam("category_group_code") String categoryGroupCode,
-			@RequestParam("query") String searchValue
+			@RequestParam("query") String searchValue,
+			@RequestParam("page") int page
 	);
+	
+	@PostMapping(value = "/local/search/category.json")
+	Map<String, Object> getEateriesByCategory (
+			@RequestParam("category_group_code") String categoryGroupCode,
+			@RequestParam("x") boolean longitude,
+			@RequestParam("y") boolean latitude,
+			@RequestParam("radius") int radius,
+			@RequestParam("page") int page
+			);
 	
 }

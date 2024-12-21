@@ -20,13 +20,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Categories {
-	@Id()
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
-	private Integer categoryNo;
+	private Integer no;
 	
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "groupNo")
+	@JoinColumn(name = "groupNo", referencedColumnName = "no")
 	private CategoryGroups group;
 }

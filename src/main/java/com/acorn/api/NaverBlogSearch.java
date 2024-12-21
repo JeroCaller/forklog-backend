@@ -25,10 +25,10 @@ public class NaverBlogSearch { // 네이버 검색 API 예제 - 블로그 검색
 	 * @return Map 형태의 검색 결과
 	 */
 	public Map<String, Object> searchBlog(String searchValue) {
-		log.info("검색어 : {}", searchValue);
+//		log.trace("검색어 : {}", searchValue);
 
 		Map<String, Object> response = naverOpenFeign.searchBlog(searchValue);
-		log.info("조회한 블로그 글 : {}", response);
+//		log.trace("조회한 블로그 글 : {}", response);
 		return response;
 	}
 

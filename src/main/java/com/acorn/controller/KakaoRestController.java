@@ -24,7 +24,7 @@ public class KakaoRestController {
 
 	@GetMapping("/eatery")
 	public ResponseEntity<Object> getEateries (@RequestParam("query") String searchValue) {
-		log.info("{}", searchValue);
+//		log.trace("{}", searchValue);
 		return ResponseEntity.ok().body(kakaoRestApi.getEateries(searchValue));
 	}
 }
