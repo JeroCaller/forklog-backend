@@ -7,6 +7,7 @@ import com.acorn.entity.CategoryGroups;
 
 public interface CategoryGroupsRepository extends JpaRepository<CategoryGroups, Integer> {
 	
-	@Query
 	CategoryGroups findIdByName(String name);
+	
+	boolean existsByName(String name);
 }
