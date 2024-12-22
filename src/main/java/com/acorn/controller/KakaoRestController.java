@@ -1,8 +1,5 @@
 package com.acorn.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +18,10 @@ public class KakaoRestController {
 	@Autowired
 	private KakaoRestApi kakaoRestApi;
 
-
 	@GetMapping("/eatery")
 	public ResponseEntity<Object> getEateries (@RequestParam("query") String searchValue) {
 //		log.trace("{}", searchValue);
 		return ResponseEntity.ok().body(kakaoRestApi.getEateries(searchValue));
 	}
+	
 }
