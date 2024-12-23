@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.api.KakaoRestApi;
 import com.acorn.dto.EateriesDto;
+import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.LocationRoads;
 import com.acorn.exception.NoDataFoundForRandomLocation;
 import com.acorn.process.EateriesProcess;
 import com.acorn.process.LocationProcess;
+import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
 import com.acorn.utils.LocationConverter;
@@ -36,6 +38,9 @@ public class EateriesController {
 	
 	@Autowired
 	private LocationConverter locationConverter;
+	
+	@Autowired
+	private KeywordSearchProcess keywordSearchProcess;
 	
 	/**
 	 * 지역을 랜덤으로 골라 그 지역의 음식점 정보들을 반환.
@@ -85,9 +90,10 @@ public class EateriesController {
 		
 		if (eateries == null || eateries.size() == 0) {
 			// DB로부터 조회된 음식점 정보가 없을 경우, 외부 API로부터 정보를 얻어온다.
-			//kakaoRestApi.getEateries(searchValue);
 			String fullLocation = locationConverter.getLocationWithoutRoad(randomLocation);
-			Object apiResult = kakaoRestApi.getEateries(fullLocation);
+			//Object apiResult = kakaoRestApi.getEateries(fullLocation);
+			KeywordResponseDto apiResult = keywordSearchProcess.getApiResult(
+					fullLocation, 1, randomLocation);
 			
 			log.info("apiResult");
 			log.info(apiResult.toString());

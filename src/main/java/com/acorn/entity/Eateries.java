@@ -52,4 +52,5 @@ public class Eateries {
 	@ManyToOne
 	@JoinColumn(name = "road_no")
 	private LocationRoads locationRoads;
+	
 }

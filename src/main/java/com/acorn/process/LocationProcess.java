@@ -31,10 +31,10 @@ public class LocationProcess {
 	/**
 	 * DB 내 도로명 주소를 랜덤으로 하나 조회.
 	 * 
+	 * @author JeroCaller (JJH)
 	 * @return 랜덤으로 조회된 전체 도로명 주소
 	 * @throws NoDataFoundForRandomLocation 
 	 *  랜덤으로 조회한 PK 번호가 테이블 내 존재하지 않아 조회된 데이터가 없는 경우 발생하는 예외
-	 * @author JeroCaller (JJH)
 	 */
 	public LocationRoads getRandomLocation() throws NoDataFoundForRandomLocation {
 		Integer noMax = locationRoadsRepository.findByIdMax();

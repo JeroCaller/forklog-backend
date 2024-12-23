@@ -10,4 +10,6 @@ public interface CategoryGroupsRepository extends JpaRepository<CategoryGroups, 
 	CategoryGroups findIdByName(String name);
 	
 	boolean existsByName(String name);
+	
+	CategoryGroups findByName(String name);
 }
