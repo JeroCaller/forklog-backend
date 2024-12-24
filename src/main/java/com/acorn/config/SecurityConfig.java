@@ -1,6 +1,8 @@
 package com.acorn.config;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.acorn.jwt.JwtAuthenticationFilter;
@@ -70,6 +73,19 @@ public class SecurityConfig implements WebMvcConfigurer {
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder(); // BCryptPasswordEncoder 인스턴스 반환
+	}
+	
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		//정적리소스(이미지,css,js,데이터 경로) 추가 설정
+		//지금은 업로드 경로 설정이 목적
+		Path uploadDir = Paths.get("./uploads");
+		//uploads 절대 경로 얻기
+		String uploadPath = uploadDir.toFile().getAbsolutePath();
+		//	/uploads/test.png라는 url이 들어오면 uploads디렉토리 내의 test.png를 반환
+		registry.addResourceHandler("/uploads/**").addResourceLocations("file:"+uploadPath+"/");
+		//"file:"+uploadPath+"/" : 파일 시스템의 uploads 디렉토리 경로를 나타냄
+		//"file:"접두사를 붙임으로 해서 이 경로가 파일 시스템의 경로임을 지정한다.
 	}
 }
 

@@ -10,14 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewImagesDto {
-	private Integer no;
+public class ReviewImagesRequestDto {
     private String imageUrl;
     private ReviewsDto reviewsDto;
 	// toDto
-	public static ReviewImagesDto toDto(ReviewImages reviewImages) {
-		return ReviewImagesDto.builder()
-				.no(reviewImages.getNo())
+	public static ReviewImagesResponseDto toDto(ReviewImages reviewImages) {
+		return ReviewImagesResponseDto.builder()
 				.imageUrl(reviewImages.getImageUrl())
 				.reviewsDto(ReviewsDto.toDto(reviewImages.getReviews()))
 				.build();

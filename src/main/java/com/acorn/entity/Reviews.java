@@ -2,6 +2,12 @@ package com.acorn.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.acorn.dto.ReviewRequestDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,10 +42,13 @@ public class Reviews {
     @Column(name = "has_photo", columnDefinition = "TINYINT")
 	private Boolean hasPhoto;
     
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp	//mariadb current_timestamp() 매핑 어노테이션 
+    @Column(name="created_at", updatable = false)
 	private LocalDateTime createdAt;
     
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    //mariadb current_timestamp() ON UPDATE current_timestamp() 매핑 어노테이션
+    @UpdateTimestamp
+    @Column(name = "updated_at")
 	private LocalDateTime updatedAt;
     
     @ManyToOne
@@ -49,6 +58,5 @@ public class Reviews {
     @ManyToOne
     @JoinColumn(name = "eatery_no",referencedColumnName = "no")
     private Eateries eateries;
-    
     
 }
