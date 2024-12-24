@@ -46,6 +46,8 @@ public class Eateries {
 	@Column(precision = 10, scale = 8) 
 	private BigDecimal latitude;
 	
+	private String tel;
+	
 	@ManyToOne
 	@JoinColumn(name = "category_no", referencedColumnName = "no")
 	private Categories category;

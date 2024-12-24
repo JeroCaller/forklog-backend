@@ -2,6 +2,7 @@ package com.acorn.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,7 +40,10 @@ public class LocationRoads {
 	@Column(nullable = false, length = 50)
 	private String name;
 	
-	@ManyToOne
+	// 연관된 엔티티도 같이 한꺼번에 저장하고자 할 때 
+	// cascade = CascadeType.PERSIST 속성을 
+	// ManyToOne 등의 매핑 어노테이션에 적용한다.
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "location_no", nullable = false)
 	private Locations locations;
 	

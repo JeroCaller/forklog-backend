@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.LocationRoadsDto;
+import com.acorn.dto.LocationSplitDto;
+import com.acorn.entity.LocationGroups;
 import com.acorn.entity.LocationRoads;
+import com.acorn.entity.Locations;
 import com.acorn.exception.NoDataFoundForRandomLocation;
 import com.acorn.repository.LocationRoadsRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -58,5 +62,29 @@ public class LocationProcess {
 		}
 		
 		return randomEntity;
+	}
+	
+	/**
+	 * 주소 파편 정보를 담은 locationSplitDto를 통해 새 주소를 DB에 저장.
+	 * 
+	 * @param locationSplitDto
+	 * @return
+	 */
+	@Transactional
+	public LocationRoads saveFull(LocationSplitDto locationSplitDto) {
+		
+		// TODO EXCEPTION PK에 해당하는 키가 자동으로 삽입되지 않아 에러 발생.
+		LocationGroups locationGroupsEntity = LocationGroups.builder()
+				.name(locationSplitDto.getLargeCity())
+				.build();
+		Locations locationsEntity = Locations.builder()
+				.name(locationSplitDto.getMediumCity())
+				.locationGroups(locationGroupsEntity)
+				.build();
+		LocationRoads locationRoadsEntity = LocationRoads.builder()
+				.name(locationSplitDto.getRoadName())
+				.locations(locationsEntity)
+				.build();
+		return locationRoadsRepository.save(locationRoadsEntity);
 	}
 }

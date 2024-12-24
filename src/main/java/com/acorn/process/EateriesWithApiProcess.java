@@ -1,10 +1,15 @@
 package com.acorn.process;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.EateriesDto;
@@ -13,7 +18,9 @@ import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
+import com.acorn.entity.LocationGroups;
 import com.acorn.entity.LocationRoads;
+import com.acorn.entity.Locations;
 import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
@@ -42,6 +49,9 @@ public class EateriesWithApiProcess {
 	private LocationRoadsRepository locationRoadsRepository;
 	
 	@Autowired
+	private LocationProcess locationProcess;
+	
+	@Autowired
 	private LocationConverter locationConverter;
 	
 	/**
@@ -51,12 +61,17 @@ public class EateriesWithApiProcess {
 	 * @param locationRoads 
 	 * @return
 	 */
-	public List<EateriesDto> getDataFromDbBy(LocationRoads locationRoads) {
-		List<Eateries> eateries = eateriesRepository.findByRoadNo(locationRoads.getNo());
+	public Page<EateriesDto> getDataFromDbByLocation(
+			LocationRoads locationRoads, 
+			Pageable pageRequest
+	) {
+		Page<Eateries> eateries = eateriesRepository.findByRoadNo(
+				locationRoads.getNo(),
+				pageRequest
+		);
+		
 		if (eateries == null) return null;
-		return eateries.stream()
-				.map(EateriesDto :: toDto)
-				.collect(Collectors.toList());
+		return eateries.map(entity -> EateriesDto.toDto(entity));
 	}
 	
 	/**
@@ -65,7 +80,9 @@ public class EateriesWithApiProcess {
 	 * @author JeroCaller (JJH)
 	 * @param response
 	 */
-	public void saveApi(List<KeywordDocumentDto> response) {
+	public Page<EateriesDto> saveApi(List<KeywordDocumentDto> response) {
+		List<Eateries> eateries = new ArrayList<Eateries>();
+		
 		response.forEach(document -> {
 			// 맨 첫 요소는 불필요한 정보.
 			String[] categoryFragments = document.getCategoryName().split(" > ");
@@ -91,6 +108,26 @@ public class EateriesWithApiProcess {
 			
 			LocationRoads locationRoadsEntity = locationRoadsRepository
 					.findByFullLocation(locationSplitDto);
+			
+			// 만약 조회된 엔티티가 없다면 DB에 등록되지 않은 주소로 간주하고 
+			// 새 주소를 DB에 저장.
+			if (locationRoadsEntity == null) {
+				/*
+				LocationGroups locationGroupsEntity = LocationGroups.builder()
+						.name(locationSplitDto.getLargeCity())
+						.build();
+				Locations locationsEntity = Locations.builder()
+						.name(locationSplitDto.getMediumCity())
+						.locationGroups(locationGroupsEntity)
+						.build();
+				locationRoadsEntity = LocationRoads.builder()
+						.name(locationSplitDto.getRoadName())
+						.locations(locationsEntity)
+						.build();
+				locationRoadsEntity = locationRoadsRepository.save(locationRoadsEntity);
+				*/
+				locationRoadsEntity = locationProcess.saveFull(locationSplitDto);
+			}
 			log.info(locationRoadsEntity.toString());
 			
 			//TODO thumbnail, description 데이터도 필요.
@@ -100,10 +137,24 @@ public class EateriesWithApiProcess {
 					.latitude(new BigDecimal(document.getY()))
 					.locationRoads(locationRoadsEntity)
 					.category(categoryEntity)
+					.tel(document.getPhone())
 					.build();
 			eateriesRepository.save(newEateries);
+			eateries.add(newEateries);
 		});
 		
+		List<EateriesDto> eateriesDto = eateries.stream()
+				.map(EateriesDto :: toDto)
+				.collect(Collectors.toList());
+		
+		// List<DTO> -> Page<DTO>
+		return new PageImpl<EateriesDto>(eateriesDto);
+		
+		/*
+		return eateries.stream()
+				.map(EateriesDto :: toDto)
+				.collect(Collectors.toList());
+		*/
 	}
 	
 	/**

@@ -3,6 +3,8 @@ package com.acorn.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,5 +28,8 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 		JOIN e.locationRoads locR
 		ON locR.no = :road_no
 	""")
-	List<Eateries> findByRoadNo(@Param("road_no") Integer roadNo);
+	Page<Eateries> findByRoadNo(
+			@Param("road_no") Integer roadNo,
+			Pageable pageRequest
+	);
 }

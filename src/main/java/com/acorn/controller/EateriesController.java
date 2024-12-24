@@ -3,13 +3,15 @@ package com.acorn.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acorn.api.KakaoRestApi;
 import com.acorn.dto.EateriesDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.LocationRoads;
@@ -28,9 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EateriesController {
 	
 	@Autowired
-	private KakaoRestApi kakaoRestApi;
-	
-	@Autowired
 	private LocationProcess locationProcess;
 	
 	@Autowired
@@ -42,6 +41,9 @@ public class EateriesController {
 	@Autowired
 	private KeywordSearchProcess keywordSearchProcess;
 	
+	// 카카오 API - "키워드로 장소 검색하기"에 따르면 최대 페이지의 사이즈는 15개까지만 요청 가능. 
+	private final int MAX_PAGE_SIZE = 15;
+	
 	/**
 	 * 지역을 랜덤으로 골라 그 지역의 음식점 정보들을 반환.
 	 * 
@@ -50,8 +52,8 @@ public class EateriesController {
 	 * @return
 	 */
 	@GetMapping("/eatery/locations/random")
-	public ResponseEntity<Object> getEateriesByRandomLocations(
-			@RequestParam(name = "page", defaultValue = "1") Integer page
+	public ResponseEntity<ResponseJson> getEateriesByRandomLocations(
+			@RequestParam(name = "page", defaultValue = "1") int page
 	) {
 		ResponseJson responseJson = null;
 		
@@ -83,41 +85,44 @@ public class EateriesController {
 					.status(responseJson.getStatus())
 					.body(responseJson);
 		}
-			
+		
+		Pageable pageRequest = PageRequest.of(page, MAX_PAGE_SIZE);
+		
 		// 주소를 검색어로 입력하여 해당 주소 주변 식당을 검색
-		List<EateriesDto> eateries = eateriesProcess.getDataFromDbBy(randomLocation);
+		Page<EateriesDto> eateries = eateriesProcess.getDataFromDbByLocation(
+				randomLocation,
+				pageRequest
+		);
 		log.info("eateries: " + eateries);
 		
-		if (eateries == null || eateries.size() == 0) {
+		if (eateries == null || eateries.getNumberOfElements() == 0) {
 			// DB로부터 조회된 음식점 정보가 없을 경우, 외부 API로부터 정보를 얻어온다.
 			String fullLocation = locationConverter.getLocationWithoutRoad(randomLocation);
 			//Object apiResult = kakaoRestApi.getEateries(fullLocation);
 			KeywordResponseDto apiResult = keywordSearchProcess.getApiResult(
-					fullLocation, 1, randomLocation);
+					fullLocation, 1, randomLocation
+			);
 			
 			log.info("apiResult");
 			log.info(apiResult.toString());
 			
-			// TODO api 결과는 eateries dto로 변환 및 반환해야 함.
-			
-			// 임시 테스트용
+			eateries = eateriesProcess.saveApi(apiResult.getDocuments());
+		} 
+		
+		// 위의 if문을 거쳤음에도 조회된 eateries가 없을 경우 
+		if (eateries == null || eateries.getNumberOfElements() == 0) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.build();
+		} else {
+			log.info("eateries size: " + eateries.getNumberOfElements());
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(apiResult)
+					.data(eateries)
 					.build();
-			
-			return ResponseEntity
-					.status(responseJson.getStatus())
-					.body(responseJson);
-		} 
-		
-		log.info("eateries size: " + eateries.size());
-		responseJson = ResponseJson.builder()
-				.status(HttpStatus.OK)
-				.message(ResponseStatusMessages.READ_SUCCESS)
-				.data(eateries)
-				.build();
+		}
 		
 		return ResponseEntity
 				.status(responseJson.getStatus())
