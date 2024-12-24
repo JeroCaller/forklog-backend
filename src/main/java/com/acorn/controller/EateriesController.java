@@ -98,6 +98,9 @@ public class EateriesController {
 			log.info("apiResult");
 			log.info(apiResult.toString());
 			
+			// TODO api 결과는 eateries dto로 변환 및 반환해야 함.
+			
+			// 임시 테스트용
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)

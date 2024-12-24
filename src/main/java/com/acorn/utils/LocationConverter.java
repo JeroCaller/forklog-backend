@@ -2,6 +2,7 @@ package com.acorn.utils;
 
 import org.springframework.stereotype.Component;
 
+import com.acorn.dto.LocationSplitDto;
 import com.acorn.entity.LocationRoads;
 
 import lombok.extern.slf4j.Slf4j;
@@ -68,41 +69,42 @@ public class LocationConverter {
 	 * 예3) 전북특별자치도 장수군 장수읍 군청길 19 => "전북특별자치도", "장수군", "장수읍 군청길", "19"
 	 * 예4) 전북특별자치도 장수군 장수읍 군청길 => "전북특별자치도", "장수군", "장수읍 군청길"
 	 * 예5) 서울 XX구 OO대로12번길 => "서울", "XX구", "OO대로12번길"
+	 * 예6) 전북특별자치도 군산시 중앙로 177 => "전북특별자치도", "군산시", "중앙로", "177"
 	 * 
 	 * @param fullLocation
 	 * @return {"대분류", "중분류", "도로명", "건물번호"}
 	 */
-	public String[] getSplitLocation(String fullLocation) {
-		String[] results = {null, null, null, null};
+	public LocationSplitDto getSplitLocation(String fullLocation) {
 		String[] splited = fullLocation.split(" ");
+		log.info("splited length: " + splited.length);
 		
-		switch(splited.length) {
-			case 5:
-				results[0] = splited[0];
-				results[1] = splited[1];
-				results[2] = splited[2] + " " + splited[3]; // 2개가 하나의 도로명을 구성함.
-				results[3] = splited[4];
-				break;
-			case 4:
-				results[0] = splited[0];
-				results[1] = splited[1];
-				results[2] = splited[2] + " " + splited[3];
-				break;
-			case 3:
-				results[0] = splited[0];
-				results[1] = splited[1];
-				results[2] = splited[2];
-				break;
-			case 2:
-				results[0] = splited[0];
-				results[1] = splited[1];
-				break;
-			case 1:
-				results[0] = splited[0];
-			default:
-				break;
+		LocationSplitDto result = new LocationSplitDto();
+		
+		result.setLargeCity(splited[0]);
+		if (splited.length > 1) {
+			result.setLargeCity(splited[0]);
+			result.setMediumCity(splited[1]);
+		}
+		if (splited.length == 3) {
+			result.setRoadName(splited[2]);
+		} else if (splited.length == 4) {
+			
+			// 분해된 주소 파편의 마지막 요소가 건물 번호인지 도로명 주소인지 판별
+			try {
+				Integer.parseInt(splited[splited.length - 1].split("-")[0]);
+				
+				result.setRoadName(splited[2]);
+				result.setBuildingNo(splited[3]);
+			} catch (Exception e) {
+				// 건물 번호 아님이 판별됨.
+				result.setRoadName(splited[2] + " " + splited[3]); // 2개가 하나의 도로명을 구성함.
+			} 
+			
+		} else if (splited.length == 5) {
+			result.setRoadName(splited[2] + " " + splited[3]); // 2개가 하나의 도로명을 구성함.
+			result.setBuildingNo(splited[4]);
 		}
 		
-		return results;
+		return result;
 	}
 }

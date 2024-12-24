@@ -37,7 +37,8 @@ public class Eateries {
 	private String description;
 	
 	@Column(precision = 2, scale = 1) // decimal(2,1)과 매핑 : 2자리 중 1자리는 소수점 이하
-	private BigDecimal rating;
+	@Builder.Default
+	private BigDecimal rating = new BigDecimal(0.0);
 	
 	@Column(precision = 11, scale = 8) // decimal(11, 8)과 매핑 - ex. 127.06547254
 	private BigDecimal longitude;

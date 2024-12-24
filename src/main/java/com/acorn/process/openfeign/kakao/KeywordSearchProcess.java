@@ -1,16 +1,11 @@
 package com.acorn.process.openfeign.kakao;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
-import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
-import com.acorn.entity.Eateries;
 import com.acorn.entity.LocationRoads;
 import com.acorn.process.EateriesProcess;
 

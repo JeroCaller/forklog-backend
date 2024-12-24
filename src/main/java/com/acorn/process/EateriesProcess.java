@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.EateriesDto;
+import com.acorn.dto.LocationSplitDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
@@ -17,11 +18,15 @@ import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.repository.LocationRoadsRepository;
+import com.acorn.utils.LocationConverter;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  */
 @Service
+@Slf4j
 public class EateriesProcess {
 	
 	@Autowired
@@ -35,6 +40,9 @@ public class EateriesProcess {
 	
 	@Autowired
 	private LocationRoadsRepository locationRoadsRepository;
+	
+	@Autowired
+	private LocationConverter locationConverter;
 	
 	/**
 	 * 주어진 도로명 주소에 해당하는 음식점 데이터들을 DB로부터 조회하여 반환
@@ -71,17 +79,24 @@ public class EateriesProcess {
 				categoryEntity = saveAndReturnCategory(categoryFragments[1], null);
 			}
 			
-			// TODO ...
-			// API 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후 
-			// 이를 Eateries의 외래키를 충족시키도록 하는 로직 작성 필요
-			document.getRoadAddressName();
+			// 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후 
+			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
+			log.info("road address name from kakao api");
+			log.info(document.getRoadAddressName());
+			LocationSplitDto locationSplitDto = locationConverter
+					.getSplitLocation(document.getRoadAddressName());
+			log.info("location splited");
+			log.info(locationSplitDto.toString());
+			LocationRoads locationRoadsEntity = locationRoadsRepository
+					.findByFullLocation(locationSplitDto);
+			log.info(locationRoadsEntity.toString());
 			
 			//TODO thumbnail, description 데이터도 필요.
 			Eateries newEateries = Eateries.builder()
 					.name(document.getPlaceName())
 					.longitude(new BigDecimal(document.getX()))
 					.latitude(new BigDecimal(document.getY()))
-					//.locationRoads(locationRoads)
+					.locationRoads(locationRoadsEntity)
 					.category(categoryEntity)
 					.build();
 			eateriesRepository.save(newEateries);
@@ -94,12 +109,11 @@ public class EateriesProcess {
 	 * 또는
 	 * DB 내에 해당 정보 없을 시 해당 엔티티 새 생성 및 반환.
 	 * 
-	 * 
 	 * saveApi 메서드에서 사용됨. 
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param largeCate
-	 * @param smallCate
+	 * @param largeCate - 음식 대분류 카테고리
+	 * @param smallCate - 음식 소분류 카테고리
 	 * @return
 	 */
 	private Categories saveAndReturnCategory(String largeCate, String smallCate) {
@@ -123,7 +137,7 @@ public class EateriesProcess {
 					.build());
 		}
 		
-		categoryEntity = categoriesRepository.findByName(smallCate);
+		categoryEntity = categoriesRepository.findByNames(largeCate, smallCate);
 		if (categoryEntity == null) {
 			// 새 카테고리 DB에 삽입
 			categoryEntity = categoriesRepository.save(
