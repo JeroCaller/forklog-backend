@@ -42,5 +42,5 @@ public interface KakaoRestOpenFeign {
 	 * @return
 	 */
 	@GetMapping(value = "/local/search/keyword.json")
-	KeywordResponseDto getEateriesByKeywordTest(@SpringQueryMap KeywordRequestDto requestDto);
+	KeywordResponseDto getEateriesByKeyword(@SpringQueryMap KeywordRequestDto requestDto);
 }

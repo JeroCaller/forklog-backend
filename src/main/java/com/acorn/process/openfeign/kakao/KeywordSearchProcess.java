@@ -7,7 +7,7 @@ import com.acorn.api.openfeign.KakaoRestOpenFeign;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.LocationRoads;
-import com.acorn.process.EateriesProcess;
+import com.acorn.process.EateriesWithApiProcess;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ public class KeywordSearchProcess {
 	private KakaoRestOpenFeign kakaoRestOpenFeign;
 	
 	@Autowired
-	private EateriesProcess eateriesProcess;
+	private EateriesWithApiProcess eateriesProcess;
 	
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class KeywordSearchProcess {
 		*/
 		log.info("카테고리 코드 - " + requestDto.getCategory_group_code());
 		log.info(String.valueOf(requestDto.getCategory_group_code().length()));
-		KeywordResponseDto result = kakaoRestOpenFeign.getEateriesByKeywordTest(requestDto);
+		KeywordResponseDto result = kakaoRestOpenFeign.getEateriesByKeyword(requestDto);
 		
 		//log.info("키워드로 장소 검색하기 조회 결과");
 		//log.info(result.toString());

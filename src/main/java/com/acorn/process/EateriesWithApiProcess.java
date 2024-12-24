@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
-public class EateriesProcess {
+public class EateriesWithApiProcess {
 	
 	@Autowired
 	private EateriesRepository eateriesRepository;
@@ -83,10 +83,12 @@ public class EateriesProcess {
 			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
 			log.info("road address name from kakao api");
 			log.info(document.getRoadAddressName());
+			
 			LocationSplitDto locationSplitDto = locationConverter
 					.getSplitLocation(document.getRoadAddressName());
 			log.info("location splited");
 			log.info(locationSplitDto.toString());
+			
 			LocationRoads locationRoadsEntity = locationRoadsRepository
 					.findByFullLocation(locationSplitDto);
 			log.info(locationRoadsEntity.toString());
@@ -147,6 +149,8 @@ public class EateriesProcess {
 					.build()
 			);
 		}
+		log.info("category Entity");
+		log.info(categoryEntity.toString());
 		
 		return categoryEntity;
 	}

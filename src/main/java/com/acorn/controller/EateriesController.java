@@ -14,7 +14,7 @@ import com.acorn.dto.EateriesDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.LocationRoads;
 import com.acorn.exception.NoDataFoundForRandomLocation;
-import com.acorn.process.EateriesProcess;
+import com.acorn.process.EateriesWithApiProcess;
 import com.acorn.process.LocationProcess;
 import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
 import com.acorn.response.ResponseJson;
@@ -34,7 +34,7 @@ public class EateriesController {
 	private LocationProcess locationProcess;
 	
 	@Autowired
-	private EateriesProcess eateriesProcess;
+	private EateriesWithApiProcess eateriesProcess;
 	
 	@Autowired
 	private LocationConverter locationConverter;
