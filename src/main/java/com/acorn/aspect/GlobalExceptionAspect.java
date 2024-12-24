@@ -6,6 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.acorn.exception.NotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+
 /**
  * 프로젝트 전역에 대한 예외처리 담당 Aspect [스프링 프레임워크 제공]
  * AOP와 유사한 방식으로 동작하지만 주로 컨트롤러 계층에만 적용됨.
@@ -44,6 +48,26 @@ public class GlobalExceptionAspect {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Invalid argument: " + exception.getMessage());
+    }
+    
+    /**
+     * @param EntityNotFoundException
+     * @return { NOT_FOUND }
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(EntityNotFoundException exception) {
+    	return ResponseEntity.status(HttpStatus.NOT_FOUND)
+    			.body("Entity was not found: " + exception.getMessage());
+    }
+    
+    /**
+     * @param NotFoundException (Custom Exception)
+     * @return { NOT_FOUND }
+     */
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(NotFoundException exception) {
+    	return ResponseEntity.status(HttpStatus.NOT_FOUND)
+    			.body("Data were not found: " + exception.getMessage());
     }
 
     /**
