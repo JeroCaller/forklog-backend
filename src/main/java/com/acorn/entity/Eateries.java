@@ -32,6 +32,7 @@ public class Eateries {
 	private int viewCount;
 	private int favoritesCount;
 	private String thumbnail;
+	private String tel;
 	
 	@Column(columnDefinition = "text") // mysql text type
 	private String description;
@@ -46,9 +47,10 @@ public class Eateries {
 	private BigDecimal latitude;
 	
 	@ManyToOne
-	@JoinColumn(name = "categoryNo", referencedColumnName = "no")
+	@JoinColumn(name = "category_no", referencedColumnName = "no")
 	private Categories category;
 	
-//	@ManyToOne
-//	private LocationRoads road;
+	@ManyToOne
+	@JoinColumn(name = "road_no", referencedColumnName = "no")
+	private LocationRoads road;
 }
