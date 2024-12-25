@@ -21,6 +21,7 @@ import com.acorn.process.LocationProcess;
 import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
+import com.acorn.utils.ListUtil;
 import com.acorn.utils.LocationConverter;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class EateriesController {
 	private LocationProcess locationProcess;
 	
 	@Autowired
-	private EateriesWithApiProcess eateriesProcess;
+	private EateriesWithApiProcess eateriesWithApiProcess;
 	
 	@Autowired
 	private LocationConverter locationConverter;
@@ -89,7 +90,7 @@ public class EateriesController {
 		Pageable pageRequest = PageRequest.of(page, MAX_PAGE_SIZE);
 		
 		// 주소를 검색어로 입력하여 해당 주소 주변 식당을 검색
-		Page<EateriesDto> eateries = eateriesProcess.getDataFromDbByLocation(
+		Page<EateriesDto> eateries = eateriesWithApiProcess.getDataFromDbByLocation(
 				randomLocation,
 				pageRequest
 		);
@@ -106,15 +107,28 @@ public class EateriesController {
 			log.info("apiResult");
 			log.info(apiResult.toString());
 			
-			eateries = eateriesProcess.saveApi(apiResult.getDocuments());
+			eateries = eateriesWithApiProcess.saveApi(apiResult.getDocuments());
 		} 
 		
-		// 위의 if문을 거쳤음에도 조회된 eateries가 없을 경우 
-		if (eateries == null || eateries.getNumberOfElements() == 0) {
-			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+		List<String> failedLocations = eateriesWithApiProcess.getFailedLocations(); 
+		if (failedLocations != null && failedLocations.size() > 0) {
+			if (eateries == null || eateries.getNumberOfElements() == 0) {
+				// 위의 if문을 거쳤음에도 조회된 eateries가 없을 경우
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.NOT_FOUND)
+						.message(ResponseStatusMessages.NO_DATA_FOUND)
+						.build();
+			} else {
+				String allLocations = ListUtil.getStringList(failedLocations);
+				String responseMessage = "API로부터 가져온 주소 중 DB 내 조회되지 않은 주소 존재. 주소 명단) ";
+				responseMessage += allLocations;
+				
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.PARTIAL_CONTENT) // 206
+						.message(responseMessage)
+						.data(eateries)
+						.build();
+			}
 		} else {
 			log.info("eateries size: " + eateries.getNumberOfElements());
 			responseJson = ResponseJson.builder()
@@ -128,4 +142,5 @@ public class EateriesController {
 				.status(responseJson.getStatus())
 				.body(responseJson);
 	}
+
 }

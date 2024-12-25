@@ -27,7 +27,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 			JOIN c.group cg
 			WHERE c.name = :smallCate AND
 			cg.name = :largeCate
-			""")
+	""")
 	Categories findByNames(
 			@Param("largeCate") String largeCate,
 			@Param("smallCate") String smallCate

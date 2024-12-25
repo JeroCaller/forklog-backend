@@ -18,6 +18,7 @@ public class NoDataFoundForRandomLocation extends Exception {
 	""";
 	
 	public NoDataFoundForRandomLocation() {
+		// TODO NoDataFoundException으로 바꾸고 이 클래스 삭제하기
 		super(EXCEPTION_MESSAGE);
 	}
 }
