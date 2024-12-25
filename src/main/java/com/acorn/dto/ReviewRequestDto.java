@@ -1,8 +1,6 @@
 package com.acorn.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +16,4 @@ public class ReviewRequestDto {
 	private Boolean hasPhoto;
 	private Integer memberNo;
 	private Integer eateryNo;
-	private List<ReviewImagesRequestDto> reviewImagesRequestDtoList;
-
 }

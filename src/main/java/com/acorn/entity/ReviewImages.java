@@ -31,5 +31,4 @@ public class ReviewImages {
     @ManyToOne
     @JoinColumn(name = "review_no",referencedColumnName = "no")
     private Reviews reviews;
-    //toEntity
 }

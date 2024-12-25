@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 public class ReviewImagesResponseDto {
 	private Integer no;
     private String imageUrl;
-    private ReviewsDto reviewsDto;
+    private Integer reviewNo;
 	// toDto
 	public static ReviewImagesResponseDto toDto(ReviewImages reviewImages) {
 		return ReviewImagesResponseDto.builder()
 				.no(reviewImages.getNo())
 				.imageUrl(reviewImages.getImageUrl())
-				.reviewsDto(ReviewsDto.toDto(reviewImages.getReviews()))
+				.reviewNo(reviewImages.getReviews().getNo())
 				.build();
 	}
 }
