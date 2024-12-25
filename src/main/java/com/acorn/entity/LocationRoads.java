@@ -1,7 +1,6 @@
 package com.acorn.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,21 +11,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
-@Builder
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categories {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
-	private Integer no;
-	
-	private String name;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "group_no", referencedColumnName = "no")
-	private CategoryGroups group;
+@ToString
+public class LocationRoads {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer no;
+
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "location_no", referencedColumnName = "no")
+    private Locations location;
 }
