@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.acorn.entity.Locations;
 
@@ -27,5 +28,21 @@ public interface LocationsRepository extends JpaRepository<Locations, Integer> {
 	 */
 	@Query(value = "SELECT MAX(loc.no) FROM Locations loc")
 	Integer findbyIdMax();
+	
+	/**
+	 * 주어진 주소 대분류 엔티티의 no 필드에 부합하는 모든 
+	 * 중분류 주소 엔티티를 반환.
+	 * 예) 서울 -> 강남구, 강서구, ...
+	 * 
+	 * @param groupNo - locationGroup.no
+	 * @return
+	 */
+	@Query(value = """
+		SELECT loc
+		FROM locations loc
+		JOIN loc.locationGroups locG
+		WHERE locG.no = :gno
+	""")
+	List<Locations> findAllBy(@Param("gno") int groupNo);
 	
 }
