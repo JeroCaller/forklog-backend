@@ -2,18 +2,13 @@ package com.acorn.jwt;
 
 import java.io.IOException;
 
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.acorn.dto.JwtDto;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,40 +25,37 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtProvider jwtProvider;
+	private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
+		
 		try {
 			// 액세스 토큰이 있는지 확인
-			String accessToken = parseToken(request);
+			String accessToken = parseAccessToken(request);
 
 			if (accessToken == null) {
 				// 액세스 토큰이 없다면 리프레시 토큰으로 액세스 토큰 재발급
 				String refreshToken = parseRefreshToken(request);
-				if (refreshToken != null && !jwtProvider.isRefreshTokenExpired(refreshToken)) {
+				if (refreshToken != null && !jwtUtil.isRefreshTokenExpired(refreshToken)) {
 					// 리프레시 토큰 검증
-					JwtDto jwtDto = jwtProvider.validate(refreshToken);
-					if (jwtDto != null) {
+					String email = jwtUtil.extractUseremail(refreshToken);
+				
+					if (email != null) {
 						// 리프레시 토큰을 통해 새로운 액세스 토큰 생성
-						String newAccessToken = jwtProvider.createAccessToken(jwtDto);
+						String newAccessToken = jwtUtil.createAccessToken(email);
+						
+						UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+						
+						Authentication authentication = 
+								new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 						// 새로 생성한 액세스 토큰을 응답 헤더에 추가
 						response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-						// 인증 객체 생성
-						AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-								jwtDto.getEmail(), null);
-						authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-						// SecurityContext에 인증 정보 설정
-						SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-						securityContext.setAuthentication(authenticationToken);
-						SecurityContextHolder.setContext(securityContext);
 						
-						return;
+						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}
 				}
 				// 리프레시 토큰도 없다면 그대로 필터 진행
@@ -72,29 +64,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 			// 액세스 토큰 검증
-			JwtDto jwtDto = jwtProvider.validate(accessToken);
-			if (jwtDto == null) {
-				filterChain.doFilter(request, response);
-				return;
+			if (accessToken != null && jwtUtil.validate(accessToken)) {
+				
+				String email = jwtUtil.extractUseremail(accessToken);
+				
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				
+				Authentication authentication = 
+						new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+				
+				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
-
-			// 권한 정보 생성
-			// List<GrantedAuthority> authorities =
-			// AuthorityUtils.createAuthorityList(jwtDto.getRoles());
-
-			// 인증 객체 생성
-			AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-					jwtDto.getEmail(),
-					null
-			// authorities // 권한 정보 설정
-			);
-			authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-			// SecurityContext에 인증 정보 설정
-			SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-			securityContext.setAuthentication(authenticationToken);
-			SecurityContextHolder.setContext(securityContext);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,25 +83,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	// 엑세스 토큰을 추출
-	private String parseToken(HttpServletRequest request) {
-		// Authorization 헤더에서 엑세스 토큰 추출
-		String authorization = request.getHeader("Authorization");
-		if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
-			return authorization.substring(7);
+	private String parseAccessToken(HttpServletRequest request) {
+		
+		String accessToken = null;
+		
+		String authHeader = request.getHeader("Authorization");
+		System.out.println("authHeader : " + authHeader);
+		
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			accessToken = authHeader.substring(7);
+		} else {
+			Cookie[] cookies = request.getCookies();
+			if(cookies != null) {
+				for(Cookie cookie : cookies) {
+					if("accessToken".equals(cookie.getName())) {
+						accessToken = cookie.getValue();
+					}
+				}
+			}
 		}
-		return null; // 토큰이 없으면 null 반환
+		return null; // 엑세스 토큰이 없으면 null 반환
 	}
 
 	// 리프레시 토큰 추출
 	private String parseRefreshToken(HttpServletRequest request) {
-		// 쿠키에서 리프레시 토큰 추출
-		if (request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if ("refreshToken".equals(cookie.getName())) {
-					return cookie.getValue();
+		
+		String refreshToken = null;
+		
+		String authHeader = request.getHeader("Authorization");
+		System.out.println("authHeader : " + authHeader);
+		
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			refreshToken = authHeader.substring(7);
+		} else {
+			Cookie[] cookies = request.getCookies();
+			if(cookies != null) {
+				for(Cookie cookie : cookies) {
+					if("refreshToken".equals(cookie.getName())) {
+						refreshToken = cookie.getValue();
+					}
 				}
 			}
 		}
-		return null; // 리프레시 토큰이 없으면 null 반환
+		return null; // 엑세스 토큰이 없으면 null 반환
 	}
 }

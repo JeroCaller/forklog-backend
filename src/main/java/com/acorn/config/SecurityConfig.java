@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,11 +34,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
-	// JwtAuthenticationFilter 의존성 주입
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 		// CORS 설정과 CSRF 비활성화, 세션 관리 정책 설정
 		httpSecurity
 				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
@@ -42,15 +43,18 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 특정 요청 허용
+						.requestMatchers("/", "/auth/**", "/main/**", "/address/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 특정 요청 허용
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정
 
-		// JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
-		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
 		return httpSecurity.build(); // 설정 완료 후 SecurityFilterChain 반환
+	}
+	
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
 	}
 
 	// CORS 설정 메서드
@@ -66,9 +70,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 		return source;
 	}
 
-	// BCryptPasswordEncoder : 스프링 시큐리티에서 제공하는 패스워드 암호화 기능
 	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+	public PasswordEncoder PasswordEncoder() {
 		return new BCryptPasswordEncoder(); // BCryptPasswordEncoder 인스턴스 반환
 	}
 }
