@@ -32,15 +32,13 @@ public class KeywordSearchProcess {
 				//.categoryGroupCode("FD6")
 				.build();
 
-		log.info("카테고리 코드 - " + requestDto.getCategory_group_code());
-		log.info(String.valueOf(requestDto.getCategory_group_code().length()));
+		//log.info("카테고리 코드 - " + requestDto.getCategory_group_code());
+		//log.info(String.valueOf(requestDto.getCategory_group_code().length()));
 		KeywordResponseDto result = kakaoRestOpenFeign.getEateriesByKeyword(requestDto);
 		
 		//log.info("키워드로 장소 검색하기 조회 결과");
 		//log.info(result.toString());
 		
-		// DB에 저장.
-		//eateriesProcess.saveApi(result.getDocuments());
 		return result;
 	}
 	

@@ -6,12 +6,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.acorn.dto.openfeign.kakao.blog.BlogRequestDto;
+import com.acorn.dto.openfeign.kakao.blog.BlogResponseDto;
+import com.acorn.dto.openfeign.kakao.image.ImageRequestDto;
+import com.acorn.dto.openfeign.kakao.image.ImageResponseDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 
 import java.util.Map;
 
-@FeignClient(name="KakaoRestOpenFeign", url = "https://dapi.kakao.com/v2", configuration = KakaoOpenFeignConfig.class)
+@FeignClient(
+		name="KakaoRestOpenFeign", 
+		url = "https://dapi.kakao.com/v2", 
+		configuration = KakaoOpenFeignConfig.class
+)
 public interface KakaoRestOpenFeign {
 	
 	@PostMapping(value = "/local/search/keyword.json")
@@ -31,7 +39,7 @@ public interface KakaoRestOpenFeign {
 			);
 	
 	/**
-	 * 키워드 장소 검색 테스트
+	 * 키워드 장소 검색
 	 * 
 	 * 참고)
 	 * Get 요청에서 요청 파라미터를 DTO로 넘기고자 할 경우 
@@ -43,4 +51,22 @@ public interface KakaoRestOpenFeign {
 	 */
 	@GetMapping(value = "/local/search/keyword.json")
 	KeywordResponseDto getEateriesByKeyword(@SpringQueryMap KeywordRequestDto requestDto);
+	
+	/**
+	 * 메인 화면에 보일 음식점 썸네일 사진 한 장 데이터 가져오기
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@GetMapping(value = "/search/image")
+	ImageResponseDto getEateryImage(@SpringQueryMap ImageRequestDto requestDto);
+	
+	/**
+	 * 특정 음식점의 상세 설명을 위해 블로그의 일부 글을 발췌
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@GetMapping(value = "/search/blog")
+	BlogResponseDto getEateryBlog(@SpringQueryMap BlogRequestDto requestDto);
 }

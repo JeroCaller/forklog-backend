@@ -28,9 +28,16 @@ public class Eateries {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer no;
 	
+	@Column(nullable = false, length = 255)
 	private String name;
+	
+	@Column(length = 11)
 	private int viewCount;
+	
+	@Column(length = 11)
 	private int favoritesCount;
+	
+	@Column(length = 500)
 	private String thumbnail;
 	
 	@Column(columnDefinition = "text") // mysql text type
@@ -46,6 +53,7 @@ public class Eateries {
 	@Column(precision = 10, scale = 8) 
 	private BigDecimal latitude;
 	
+	@Column(length = 20)
 	private String tel;
 	
 	@ManyToOne

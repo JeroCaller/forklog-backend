@@ -31,7 +31,7 @@ public class LocationConverter {
 		};
 		
 		String result = String.join(" ", locationFragments);
-		log.info("전체 도로명 주소: " + result);
+		//log.info("전체 도로명 주소: " + result);
 		return result;
 	}
 	
@@ -58,7 +58,7 @@ public class LocationConverter {
 		};
 		
 		String result = String.join(" ", locationFragments);
-		log.info("상세 도로명 주소를 제외한 전체 주소: " + result);
+		//log.info("상세 도로명 주소를 제외한 전체 주소: " + result);
 		return result;
 	}
 	

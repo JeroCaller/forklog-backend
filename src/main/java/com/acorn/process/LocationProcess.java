@@ -91,7 +91,7 @@ public class LocationProcess {
 	 */
 	public LocationSplitDto getSplitLocation(String fullLocation) {
 		String[] splited = fullLocation.split(" ");
-		log.info("splited length: " + splited.length);
+		//log.info("splited length: " + splited.length);
 		
 		LocationSplitDto result = new LocationSplitDto();
 		

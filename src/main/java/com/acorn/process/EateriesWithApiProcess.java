@@ -13,11 +13,15 @@ import org.springframework.stereotype.Service;
 
 import com.acorn.dto.EateriesDto;
 import com.acorn.dto.LocationSplitDto;
+import com.acorn.dto.openfeign.kakao.blog.BlogDocumentsDto;
+import com.acorn.dto.openfeign.kakao.image.ImageDocumentDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
 import com.acorn.entity.LocationRoads;
+import com.acorn.process.openfeign.kakao.BlogSearchProcess;
+import com.acorn.process.openfeign.kakao.ImageSearchProcess;
 import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
@@ -31,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * API - DB 연동 로직이 긴 관계로, 음식점과 관계된 다른 로직 작성 필요 시 별도의 클래스에 작성 요망.
  * 
- * @author JeroCaller (JJH)
  */
 @Service
 @Slf4j
@@ -52,9 +55,21 @@ public class EateriesWithApiProcess {
 	@Autowired
 	private LocationProcess locationProcess;
 	
+	@Autowired
+	private ImageSearchProcess imageSearchProcess;
+	
+	@Autowired
+	private BlogSearchProcess blogSearchProcess;
+	
 	// saveApi() 메서드 내에서 DB 내 조회되지 않은 주소 수집용.
 	private final List<String> failedLocations = new ArrayList<String>();
 	
+	/**
+	 * saveApi() 메서드 내에서 DB 내 조회되지 않은 주소 수집한 내용 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
 	public List<String> getFailedLocations() {
 		return failedLocations;
 	}
@@ -105,13 +120,13 @@ public class EateriesWithApiProcess {
 
 			// 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후
 			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
-			log.info("road address name from kakao api");
-			log.info(document.getRoadAddressName());
+			//log.info("road address name from kakao api");
+			//log.info(document.getRoadAddressName());
 
 			LocationSplitDto locationSplitDto
 					= locationProcess.getSplitLocation(document.getRoadAddressName());
-			log.info("location splited");
-			log.info(locationSplitDto.toString());
+			//log.info("location splited");
+			//log.info(locationSplitDto.toString());
 
 			LocationRoads locationRoadsEntity 
 				= locationRoadsRepository.findByFullLocation(locationSplitDto);
@@ -120,9 +135,36 @@ public class EateriesWithApiProcess {
 				failedLocations.add(document.getRoadAddressName());
 				continue;
 			}
-			log.info(locationRoadsEntity.toString());
-
-			// TODO thumbnail, description 데이터도 필요.
+			//log.info(locationRoadsEntity.toString());
+			
+			// 검색 결과 정확성을 위해 주소 중분류까지 첨부하여 검색
+			// placeName() : 음식점명
+			String apiQuery = document.getPlaceName() + " " 
+					+ locationSplitDto.getLargeCity() + " " 
+					+ locationSplitDto.getMediumCity();
+			//log.info("apiQuery : " + apiQuery);
+			ImageDocumentDto imageDocumentDto = imageSearchProcess.getOneImage(apiQuery);
+			BlogDocumentsDto blogDocumentsDto = blogSearchProcess.getOneBlog(apiQuery);
+			
+			String imageResult = "";
+			String blogResult = "";
+			
+			//log.info("image result");
+			if (imageDocumentDto != null) {
+				imageResult = imageDocumentDto.getImageUrl();
+				//log.info(imageDocumentDto.toString());
+			} else {
+				//log.info("image NOT FOUND");
+			}
+			
+			//log.info("blog result");
+			if (blogDocumentsDto != null) {
+				blogResult = blogDocumentsDto.getContents();
+				//log.info(blogDocumentsDto.toString());
+			} else {
+				//log.info("blog NOT FOUND");
+			}
+			
 			Eateries newEateries = Eateries.builder()
 					.name(document.getPlaceName())
 					.longitude(new BigDecimal(document.getX()))
@@ -130,6 +172,8 @@ public class EateriesWithApiProcess {
 					.locationRoads(locationRoadsEntity)
 					.category(categoryEntity)
 					.tel(document.getPhone())
+					.thumbnail(imageResult)
+					.description(blogResult)
 					.build();
 			eateriesRepository.save(newEateries);
 			eateries.add(newEateries);
@@ -188,8 +232,8 @@ public class EateriesWithApiProcess {
 					.build()
 			);
 		}
-		log.info("category Entity");
-		log.info(categoryEntity.toString());
+		//log.info("category Entity");
+		//log.info(categoryEntity.toString());
 
 		return categoryEntity;
 	}

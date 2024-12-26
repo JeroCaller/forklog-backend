@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-public class EateriesController {
+@RequestMapping("/main")
+public class EateriesMainController {
 	
 	@Autowired
 	private LocationProcess locationProcess;
@@ -94,7 +96,7 @@ public class EateriesController {
 				randomLocation,
 				pageRequest
 		);
-		log.info("eateries: " + eateries);
+		//log.info("eateries: " + eateries);
 		
 		if (eateries == null || eateries.getNumberOfElements() == 0) {
 			// DB로부터 조회된 음식점 정보가 없을 경우, 외부 API로부터 정보를 얻어온다.
@@ -104,8 +106,8 @@ public class EateriesController {
 					fullLocation, 1, randomLocation
 			);
 			
-			log.info("apiResult");
-			log.info(apiResult.toString());
+			//log.info("apiResult");
+			//log.info(apiResult.toString());
 			
 			eateries = eateriesWithApiProcess.saveApi(apiResult.getDocuments());
 		} 
@@ -130,7 +132,7 @@ public class EateriesController {
 						.build();
 			}
 		} else {
-			log.info("eateries size: " + eateries.getNumberOfElements());
+			//log.info("eateries size: " + eateries.getNumberOfElements());
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)

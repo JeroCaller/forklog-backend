@@ -39,7 +39,6 @@ public class EateriesDto {
 	
 	private LocationRoadsDto locationRoadsDto;
 	
-	// TODO toDto -> fromEntity로 바꾸기
 	public static EateriesDto toDto(Eateries entity) {
 		return EateriesDto.builder()
 				.no(entity.getNo())
