@@ -1,15 +1,22 @@
 package com.acorn.process;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.acorn.dto.LocationGroupsDto;
 import com.acorn.dto.LocationSplitDto;
+import com.acorn.dto.LocationsDto;
+import com.acorn.entity.LocationGroups;
 import com.acorn.entity.LocationRoads;
+import com.acorn.entity.Locations;
 import com.acorn.exception.NoDataFoundException;
+import com.acorn.repository.LocationGroupsRepository;
 import com.acorn.repository.LocationRoadsRepository;
 import com.acorn.repository.LocationsRepository;
 
@@ -35,6 +42,9 @@ public class LocationProcess {
 	
 	@Autowired
 	private LocationsRepository locationsRepository;
+	
+	@Autowired
+	private LocationGroupsRepository locationGroupsRepository;
 	
 	/**
 	 * DB 내 도로명 주소를 랜덤으로 하나 조회.
@@ -165,6 +175,49 @@ public class LocationProcess {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * 서울, 경기 등 주소 대분류 데이터를 모두 반환. (전국 행정구역 17개)
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	public List<LocationGroupsDto> getLocationGroupsAll() {
+		List<LocationGroups> result = locationGroupsRepository.findAll();
+		return result.stream()
+				.map(LocationGroupsDto :: toDto)
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * 서울, 경기 등 대분류 주소 입력 시 그에 해당하는 모든 중분류 주소를 반환.
+	 * 
+	 * 예) 서울 -> 강남구, 강서구 등등...
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param largeCity
+	 * @return
+	 * @throws NoDataFoundException 
+	 */
+	public List<LocationsDto> getLocationMediumAll(String largeCity) 
+			throws NoDataFoundException 
+	{
+		LocationGroups locationGroupsEntity 
+			= locationGroupsRepository.findByName(largeCity);
+		
+		if (locationGroupsEntity == null) {
+			throw new NoDataFoundException(
+				"조회된 주소 대분류 데이터가 없습니다. 입력된 주소 대분류: " + largeCity
+			);
+		}
+		
+		List<Locations> result 
+			= locationsRepository.findAllBy(locationGroupsEntity.getNo());
+		
+		return result.stream()
+				.map(LocationsDto :: toDto)
+				.collect(Collectors.toList());
 	}
 	
 	/**
