@@ -41,3 +41,6 @@ out/
 
 .DS_STORE
 .metadata/
+
+**/src/main/resources/application.properties
+settings.gradle

@@ -1,13 +1,16 @@
 package com.acorn.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,20 +18,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "locations")
 @Getter
-@Builder
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categories {
+@Builder
+public class Locations {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(nullable = false, length = 11)
 	private Integer no;
 	
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false, length = 50)
 	private String name;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "group_no", referencedColumnName = "no")
-	private CategoryGroups group;
+	@ManyToOne
+	@JoinColumn(name = "group_no", nullable = false)
+	private LocationGroups locationGroups;
+	
+	@OneToMany(mappedBy = "locations")
+	private List<LocationRoads> locationRoads;
 }
