@@ -25,6 +25,9 @@ public class EateriesDto {
 	
 	private String thumbnail;
 	private String description;
+	private String address;
+	private String tel;
+	private String categoryName;
 	
 	@Builder.Default
 	private BigDecimal rating = new BigDecimal(0.0);
@@ -51,7 +54,7 @@ public class EateriesDto {
 				.longitude(entity.getLongitude())
 				.latitude(entity.getLatitude())
 				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
-				.locationRoadsDto(LocationRoadsDto.toDto(entity.getLocationRoads()))
+				.locationRoadsDto(LocationRoadsDto.toDto(entity.getRoad()))
 				.build();
 	}
 }

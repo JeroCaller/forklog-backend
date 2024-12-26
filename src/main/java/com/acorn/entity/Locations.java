@@ -37,6 +37,6 @@ public class Locations {
 	@JoinColumn(name = "group_no", nullable = false)
 	private LocationGroups locationGroups;
 	
-	@OneToMany(mappedBy = "locations", referencedColumnName = "no")
+	@OneToMany(mappedBy = "locations")
 	private List<LocationRoads> locationRoads;
 }
