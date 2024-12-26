@@ -25,7 +25,7 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	@Query(value = """
 		SELECT e
 		FROM Eateries e
-		JOIN e.locationRoads locR
+		JOIN e.road locR
 		ON locR.no = :road_no
 	""")
 	Page<Eateries> findByRoadNo(
