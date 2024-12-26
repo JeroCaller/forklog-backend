@@ -2,6 +2,7 @@ package com.acorn.entity;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +26,7 @@ public class CategoryGroups {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer no;
 	
+	@Column(nullable = false, length = 255)
 	private String name;
 	
 	@OneToMany(mappedBy = "group", fetch = FetchType.EAGER)

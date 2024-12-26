@@ -1,19 +1,57 @@
 package com.acorn.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 
+import com.acorn.entity.Eateries;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EateriesDto {
 	private Integer no;
-    private String name;	// 음식적 이름
-    private BigDecimal rating;	// 음식점 별점
-    private String address;	// 음식점 주소
-    private String tel;		// 음식점 번호
-    private String categoryName;	// 음식점 카테고리대분류
-    private BigDecimal latitude;    // 위도
-    private BigDecimal longitude;   // 경도
+	private String name;
+	
+	@Builder.Default
+	private int viewCount = 0;
+	
+	@Builder.Default
+	private int favoritesCount = 0;
+	
+	private String thumbnail;
+	private String description;
+	
+	@Builder.Default
+	private BigDecimal rating = new BigDecimal(0.0);
+	
+	@Builder.Default
+	private BigDecimal longitude = new BigDecimal(0.0); 
+	
+	@Builder.Default
+	private BigDecimal latitude = new BigDecimal(0.0);
+	
+	private CategoriesDto categoryDto;
+	
+	private LocationRoadsDto locationRoadsDto;
+	
+	public static EateriesDto toDto(Eateries entity) {
+		return EateriesDto.builder()
+				.no(entity.getNo())
+				.name(entity.getName())
+				.viewCount(entity.getViewCount())
+				.favoritesCount(entity.getFavoritesCount())
+				.thumbnail(entity.getThumbnail())
+				.description(entity.getDescription())
+				.rating(entity.getRating())
+				.longitude(entity.getLongitude())
+				.latitude(entity.getLatitude())
+				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
+				.locationRoadsDto(LocationRoadsDto.toDto(entity.getLocationRoads()))
+				.build();
+	}
 }

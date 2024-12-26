@@ -92,7 +92,7 @@ public class KakaoRestApi {
 				}
 				
 			count++;
-		} while (count < 5);
+		} while (count < 2);
 //				categoriesModel.updateCategory(eateries);
 
 		return eateries;

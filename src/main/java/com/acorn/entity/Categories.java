@@ -1,5 +1,6 @@
 package com.acorn.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ public class Categories {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
 	private Integer no;
 	
+	@Column(nullable = false, length = 255)
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
