@@ -39,7 +39,7 @@ public interface LocationsRepository extends JpaRepository<Locations, Integer> {
 	 */
 	@Query(value = """
 		SELECT loc
-		FROM locations loc
+		FROM Locations loc
 		JOIN loc.locationGroups locG
 		WHERE locG.no = :gno
 	""")
