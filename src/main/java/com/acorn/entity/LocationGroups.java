@@ -17,11 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * locations_groups 테이블과 매핑될 엔티티
- * 
- * @author JeroCaller (JJH)
- */
 @Entity
 @Table(name = "location_groups")
 @Getter

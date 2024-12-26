@@ -7,10 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 
- * @author JeroCaller (JJH)
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

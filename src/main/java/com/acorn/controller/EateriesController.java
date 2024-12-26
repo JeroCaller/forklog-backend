@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acorn.dto.EateriesDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.LocationRoads;
-import com.acorn.exception.NoDataFoundForRandomLocation;
+import com.acorn.exception.NoDataFoundException;
 import com.acorn.process.EateriesWithApiProcess;
 import com.acorn.process.LocationProcess;
 import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
@@ -62,8 +62,8 @@ public class EateriesController {
 		LocationRoads randomLocation = null;
 		try {
 			randomLocation = locationProcess.getRandomLocation();
-			//throw new NoDataFoundForRandomLocation();  // For Test
-		} catch (NoDataFoundForRandomLocation exception) {
+			//throw new NoDataFoundException();  // For Test
+		} catch (NoDataFoundException exception) {
 			// 해당 예외 발생 시 이에 대한 JSON 응답 데이터 구성 및 반환
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND) // 응답 데이터에 포함시키는 용도

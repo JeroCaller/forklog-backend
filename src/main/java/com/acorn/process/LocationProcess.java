@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.acorn.dto.LocationSplitDto;
 import com.acorn.entity.LocationRoads;
-import com.acorn.exception.NoDataFoundForRandomLocation;
+import com.acorn.exception.NoDataFoundException;
 import com.acorn.repository.LocationRoadsRepository;
 import com.acorn.repository.LocationsRepository;
 
@@ -41,10 +41,10 @@ public class LocationProcess {
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @return 랜덤으로 조회된 전체 도로명 주소
-	 * @throws NoDataFoundForRandomLocation 
-	 *  랜덤으로 조회한 PK 번호가 테이블 내 존재하지 않아 조회된 데이터가 없는 경우 발생하는 예외
+	 * @throws NoDataFoundException 
+	 * 랜덤으로 조회한 PK 번호가 테이블 내 존재하지 않아 조회된 데이터가 없는 경우 발생하는 예외
 	 */
-	public LocationRoads getRandomLocation() throws NoDataFoundForRandomLocation {
+	public LocationRoads getRandomLocation() throws NoDataFoundException {
 		//Integer noMax = locationRoadsRepository.findByIdMax();
 		Integer noMax = getMaxIdOf(LOCATION_ROAD);
 		
@@ -63,7 +63,11 @@ public class LocationProcess {
 		}
 		
 		if (randomEntity == null) {
-			throw new NoDataFoundForRandomLocation();
+			//throw new NoDataFoundForRandomLocation();
+			throw new NoDataFoundException("""
+				랜덤으로 조회된 주소가 없습니다. 랜덤 반복 횟수를 늘리거나 테이블 내 특정 데이터를 
+				콕 집을 수 있는 확실한 다른 알고리즘이 필요한 듯 합니다.
+			""");
 		}
 		
 		return randomEntity;
