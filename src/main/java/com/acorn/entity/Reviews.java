@@ -2,12 +2,8 @@ package com.acorn.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import com.acorn.dto.ReviewRequestDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Reviews {
     @Id
-    @Column(name = "no", nullable = false)
+    @Column(name = "no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer no;
     

@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReviewImages {
     @Id
-    @Column(name = "no", nullable = false)
+    @Column(name = "no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer no;
     

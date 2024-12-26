@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequestDto {
+	private Integer no;
 	private BigDecimal rating;
 	private String content;
 	private Boolean hasPhoto;

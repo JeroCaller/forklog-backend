@@ -14,8 +14,8 @@ public class ReviewImagesRequestDto {
     private String imageUrl;
     private Integer reviewNo;
 	// toDto
-	public static ReviewImagesResponseDto toDto(ReviewImages reviewImages) {
-		return ReviewImagesResponseDto.builder()
+	public static ReviewImagesRequestDto toDto(ReviewImages reviewImages) {
+		return ReviewImagesRequestDto.builder()
 				.imageUrl(reviewImages.getImageUrl())
 				.reviewNo(reviewImages.getReviews().getNo())
 				.build();
