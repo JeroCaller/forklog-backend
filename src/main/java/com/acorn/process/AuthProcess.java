@@ -10,11 +10,16 @@ import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.RegisterResponseDto;
 import com.acorn.dto.ResponseDto;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public interface AuthProcess {
 	
 	ResponseEntity<? super RegisterResponseDto> register(RegisterRequestDto dto);
 	
-	ResponseEntity<? super LoginRepsonseDto> login(LoginRequestDto dto);
+	ResponseEntity<? super LoginRepsonseDto> login(LoginRequestDto dto, HttpServletResponse response);
+	
+	ResponseEntity<?> logout(HttpServletResponse response);
 	
 	ResponseEntity<? super RegisterResponseDto> checkEmailDuplication(String email);
 	

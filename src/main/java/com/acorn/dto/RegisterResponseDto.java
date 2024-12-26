@@ -8,7 +8,7 @@ import com.acorn.common.ResponseMessage;
 
 import lombok.Getter;
 
-// SignUpResponseDto : 회원가입 과정에서 발생하는 다양한 응답을 관리하는 DTO
+// RegisterResponseDto : 회원가입 과정에서 발생하는 다양한 응답을 관리하는 DTO
 @Getter
 public class RegisterResponseDto extends ResponseDto {
 
