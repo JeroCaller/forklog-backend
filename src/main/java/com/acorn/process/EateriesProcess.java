@@ -22,11 +22,12 @@ public class EateriesProcess {
         return eateriesRepository.findById(id).map(eatery -> {
             // 주소를 조합
             String fullAddress = String.format("%s시 %s %s",
-                eatery.getRoad().getLocation().getLocationGroup().getName(),  //시
-                eatery.getRoad().getLocation().getName(),                     //구
+                eatery.getRoad().getLocations().getLocationGroups().getName(),  //시
+                eatery.getRoad().getLocations().getName(),                     //구
                 eatery.getRoad().getName()                                    //길
             );
             
+            /*
             return new EateriesDto(
                 eatery.getNo(),
                 eatery.getName(),
@@ -36,7 +37,17 @@ public class EateriesProcess {
                 eatery.getCategory().getName(),
                 eatery.getLatitude(),    // 위도 추가
                 eatery.getLongitude()    // 경도 추가
-            );
+            );*/
+            return EateriesDto.builder()
+            		.no(eatery.getNo())
+            		.name(eatery.getName())
+            		.rating(eatery.getRating())
+            		.address(fullAddress)
+            		.tel(eatery.getTel())
+            		.categoryName(eatery.getCategory().getName())
+            		.latitude(eatery.getLatitude())
+            		.longitude(eatery.getLongitude())
+            		.build();
         });
     }
 }
