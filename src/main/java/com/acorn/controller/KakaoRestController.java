@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acorn.api.KakaoRestApi;
+import com.acorn.process.AddressProcess;
 
 @RestController
 public class KakaoRestController {
 	private Logger log = LoggerFactory.getLogger(KakaoRestController.class);
 
 	@Autowired
-	private KakaoRestApi kakaoRestApi;
+	private AddressProcess kakaoRestApi;
 
 	@GetMapping("/eatery")
 	public ResponseEntity<Object> getEateries(@RequestParam("query") String searchValue) {

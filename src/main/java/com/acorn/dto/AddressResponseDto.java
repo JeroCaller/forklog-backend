@@ -9,7 +9,7 @@ import lombok.Data;
  * Key : Value 값이 겹겹이 쌓여 있는 구조로 별도의 (내부) 클래스로 분해
  */
 @Data
-public class AddressResponse {
+public class AddressResponseDto {
 	private List<Document> documents;
 	
     @Data
