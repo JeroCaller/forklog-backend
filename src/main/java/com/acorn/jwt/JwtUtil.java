@@ -7,8 +7,6 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.acorn.dto.JwtDto;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -18,7 +16,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
-//JwtProvider : JWT 처리에 필요한 로직을 제공하는 클래스, 토큰의 생성과 유효성을 검증하고, 사용자 정보를 추출하는 역할
+//JwtUtil : JWT 처리에 필요한 로직을 제공하는 클래스, 토큰의 생성과 유효성을 검증한다.
 @Component
 public class JwtUtil {
 
@@ -52,7 +50,6 @@ public class JwtUtil {
 
 		Date expiredDate = new Date(System.currentTimeMillis() + expireTime);
 
-		// JWT 생성
 		return Jwts.builder()
 				.signWith(getSecretKey(), SignatureAlgorithm.HS256) // SecretKey 객체 사용, 서명 및 알고리즘 설정
 				.setSubject(email) // JWT 주체 설정
@@ -61,6 +58,7 @@ public class JwtUtil {
 				.compact(); // JWT 문자열로 반환
 	}
 	
+	// 페이로드(클레임) 추출
 	public Claims extractClaims(String token) {
 		return Jwts.parserBuilder()
 				.setSigningKey(getSecretKey())
@@ -69,11 +67,12 @@ public class JwtUtil {
 				.getBody();
 	}
 	
+	// 로그인 주체 추출
 	public String extractUseremail(String token) {
 		return extractClaims(token).getSubject();
 	}
-
-	// JWT 검증 및 JwtDto 반환
+	
+	// 토큰 검증
 	public boolean validate(String token) {
 		try {
 			Claims claims = extractClaims(token);

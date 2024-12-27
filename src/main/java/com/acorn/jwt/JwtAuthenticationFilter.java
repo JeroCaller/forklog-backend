@@ -66,19 +66,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 액세스 토큰 검증
 			if (accessToken != null && jwtUtil.validate(accessToken)) {
 				
+				// 토큰 주체 객체 생성
 				String email = jwtUtil.extractUseremail(accessToken);
 				
+				// 사용자 인증 정보 객체 생성
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				
 				Authentication authentication = 
 						new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 				
+				// 요청 처리 동안, 인증된 사용자 정보가 SecurityContext에 저장
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		// FilterChain: 여러 개의 필터가 순차적으로 실행되는 구조이다. 각 필터는 HTTP 요청 처리 후 다음 필터로 요청을 전달한다.
+		// JWT를 사용하며 STATELESS 정책을 쓰기 때문에 토큰 기반 인증을 간단히 처리할 수 있다.
 		filterChain.doFilter(request, response);
 	}
 
@@ -89,10 +93,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		String authHeader = request.getHeader("Authorization");
 		System.out.println("authHeader : " + authHeader);
-		
+		// 토큰을 얻는 방법 두 가지: 다양한 클라이언트 환경 및 요청에 대해 유연한 대처가 필요하다.
+		// 헤더에서 토큰 얻기
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			accessToken = authHeader.substring(7);
+			// Authorization: Bearer <JWT_TOKEN>에서 Bearer 접두어를 제거하고 실제 토큰만 추출한다.
 		} else {
+			// 쿠키에서 토큰 얻기
 			Cookie[] cookies = request.getCookies();
 			if(cookies != null) {
 				for(Cookie cookie : cookies) {
