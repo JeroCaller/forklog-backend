@@ -1,4 +1,4 @@
-package com.acorn.model;
+package com.acorn.process;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,12 +25,12 @@ import com.acorn.repository.ReviewImagesRepository;
 import com.acorn.repository.ReviewsRepository;
 
 @Repository
-public class ReviewsModel {
+public class ReviewsProcess {
 	private MembersMainRepository membersMainRepository;
 	private EateriesRepository eateriesRepository;
 	private ReviewsRepository reviewsRepository;	
 	private ReviewImagesRepository reviewImagesRepository;
-	public ReviewsModel(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
+	public ReviewsProcess(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
 			,MembersMainRepository membersMainRepository, EateriesRepository eateriesRepository) {
 		this.reviewsRepository = reviewsRepository;
 		this.reviewImagesRepository=reviewImagesRepository;

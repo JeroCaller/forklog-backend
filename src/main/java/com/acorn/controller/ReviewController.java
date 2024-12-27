@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.acorn.dto.ReviewRequestDto;
 import com.acorn.dto.ReviewResponseDto;
-import com.acorn.model.ReviewsModel;
+import com.acorn.process.ReviewsProcess;
 
 @RestController
 @RequestMapping("/review")
 public class ReviewController {
-	private ReviewsModel reviewsModel;
-	public ReviewController(ReviewsModel reviewsModel) {
+	private ReviewsProcess reviewsModel;
+	public ReviewController(ReviewsProcess reviewsModel) {
 		this.reviewsModel=reviewsModel;
 	}
 	//회원별 리뷰 목록 조회
@@ -45,7 +45,7 @@ public class ReviewController {
 	}
 	//별점 리뷰 수정
 	//formData에 reviewNo 넣어서 보내야 합니다.
-	//hasPhoto=1으로 요청 시 해당 리뷰 사진을 모두 지웁니다. hasPhoto=0인 경우에 사진이 수정 됩니다.
+	//hasPhoto=0으로 요청 시 해당 리뷰 사진을 모두 지웁니다. hasPhoto=1인 경우에 사진이 수정 됩니다.
 	@PutMapping("/{reviewNo}")
 	public ResponseEntity<String> updateReview(@ModelAttribute("inputDto") ReviewRequestDto inputDto,
 					@PathVariable("reviewNo") String reviewNo,

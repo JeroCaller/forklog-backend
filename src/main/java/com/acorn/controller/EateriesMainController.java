@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/main")
 public class EateriesMainController {
-	
 	@Autowired
 	private LocationProcess locationProcess;
 	
