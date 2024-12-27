@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
-import com.acorn.entity.LocationRoads;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +24,7 @@ public class KeywordSearchProcess {
 	 * @param locationRoads - 검색 지역 DB 조회용
 	 * @return
 	 */
-	public KeywordResponseDto getApiResult(String searchKeyword, int page, LocationRoads locationRoads) {
+	public KeywordResponseDto getApiResult(String searchKeyword, int page) {
 		KeywordRequestDto requestDto = KeywordRequestDto.builder()
 				.query(searchKeyword)
 				.page(page)

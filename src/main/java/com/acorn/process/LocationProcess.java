@@ -221,6 +221,32 @@ public class LocationProcess {
 	}
 	
 	/**
+	 * 주소 대분류 이름을 통해 해당하는 엔티티 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param cityName
+	 * @return
+	 */
+	public LocationGroups getLocationGroupByName(String cityName) {
+		LocationGroups locationGroups = locationGroupsRepository.findByName(cityName);
+		return locationGroups;
+	}
+	
+	/**
+	 * 주어진 주소 대분류, 중분류 문자열을 토대로 이에 해당하는 엔티티 조회
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param largeCity
+	 * @param mediumCity
+	 * @return
+	 */
+	public Locations getLocationMediumByName(String largeCity, String mediumCity) {
+		Locations locations = locationsRepository
+				.findByNameExactly(largeCity, mediumCity);
+		return locations;
+	}
+	
+	/**
 	 * 현재 DB 내 locations 또는 location_road 테이블 내 최고 PK 값을 반환.
 	 * 
 	 * @param LOCATIONS | LOCATION_ROAD

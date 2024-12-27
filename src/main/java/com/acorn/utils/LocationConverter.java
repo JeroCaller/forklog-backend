@@ -3,6 +3,7 @@ package com.acorn.utils;
 import org.springframework.stereotype.Component;
 
 import com.acorn.entity.LocationRoads;
+import com.acorn.entity.Locations;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,26 @@ public class LocationConverter {
 		
 		String result = String.join(" ", locationFragments);
 		//log.info("전체 도로명 주소: " + result);
+		return result;
+	}
+	
+	/**
+	 * 두 테이블로 나뉜 주소 대분류, 중분류를 하나의 문자열로 합친다. 
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param locations
+	 * @return
+	 */
+	public String getFullLocation(Locations locationsEntity) {
+		if (locationsEntity == null) return null;
+		
+		String[] locationTokens = {
+				locationsEntity.getLocationGroups().getName(),
+				locationsEntity.getName()
+		};
+		
+		String result = String.join(" ", locationTokens);
+		log.info("주소 대분류 + 중분류 결합 결과: " + result);
 		return result;
 	}
 	

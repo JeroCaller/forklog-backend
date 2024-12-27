@@ -28,7 +28,7 @@ import lombok.Setter;
 @Builder
 public class LocationRoads {
 	
-  @Id
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, length = 11)
 	private Integer no;
@@ -47,6 +47,7 @@ public class LocationRoads {
         this.membersMain = membersMain;
         membersMain.setLocationRoads(this);
     }
+    
 	@ManyToOne
 	@JoinColumn(name = "location_no", nullable = false, referencedColumnName = "no")
 	private Locations locations;
