@@ -24,5 +24,4 @@ public class EateriesController {
             .map(ResponseEntity::ok)         // EateriesDto를 그대로 반환
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 }
