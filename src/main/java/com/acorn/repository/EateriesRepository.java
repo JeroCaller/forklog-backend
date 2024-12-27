@@ -1,7 +1,6 @@
 package com.acorn.repository;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.acorn.entity.Eateries;
+import com.acorn.entity.Locations;
 
 public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	
@@ -30,6 +30,27 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	""")
 	Page<Eateries> findByRoadNo(
 			@Param("road_no") Integer roadNo,
+			Pageable pageRequest
+	);
+	
+	/**
+	 * 지역 중분류에 해당하는 Locations 엔티티 입력 시 
+	 * 이 지역에 해당하는 음식점들을 조회.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@Query(value = """
+		SELECT e
+		FROM Eateries e
+		JOIN e.road locR
+		JOIN locR.locations loc
+		JOIN loc.locationGroups locG
+		WHERE loc.name = :#{#locParam.name} AND
+		locG.name = :#{#locParam.locationGroups.name}
+	""")
+	Page<Eateries> findByLocation(
+			@Param("locParam") Locations locations, 
 			Pageable pageRequest
 	);
 }
