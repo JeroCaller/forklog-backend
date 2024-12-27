@@ -5,12 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,23 +41,22 @@ public class ReviewsModel {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 	//member_no으로 ReviewResponseDto리스트 조회
-	public List<ReviewResponseDto> getReviewsByMemberNo(String memberNo){		
+	public List<ReviewResponseDto> getReviewsByMemberNo(String memberNo){
 		return reviewsRepository.getReviewsByMemberNo(memberNo).stream()
-	               .map(review -> getReviewResponseDto(review)).toList();
+				.map(review -> getReviewResponseDto(review)).toList();
 	}
 	//eatery_no으로 ReviewResponseDto리스트 조회
-	public List<ReviewResponseDto> getReviewsByEateryNo(String eateryNo){		
+	public List<ReviewResponseDto> getReviewsByEateryNo(String eateryNo){
 		return reviewsRepository.getReviewsByEateryNo(eateryNo).stream()
-	               .map(review -> getReviewResponseDto(review)).toList();
+				.map(review -> getReviewResponseDto(review)).toList();
 	}
 	//review_no에 해당하는 ReviewImagesResponseDto리스트 조회
 	public List<ReviewImagesResponseDto> getReviewImagesByReviewNo(String reviewNo){
-		return Optional.ofNullable(reviewImagesRepository.getReviewImagesByReviewNo(reviewNo))
-				.orElse(Collections.emptyList()).stream() // null일 경우 빈 리스트로 대체				
+		return reviewImagesRepository.getReviewImagesByReviewNo(reviewNo).stream()
 				.map(ReviewImagesResponseDto::toDto).toList();
 	}
 	//Reviews->ReviewResponseDto변환
-	public ReviewResponseDto getReviewResponseDto(Reviews reviews) {		
+	public ReviewResponseDto getReviewResponseDto(Reviews reviews) {
 		return ReviewResponseDto.builder()
 				.no(reviews.getNo())
 				.rating(reviews.getRating())
