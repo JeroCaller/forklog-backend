@@ -42,6 +42,7 @@ public class EateriesProcess {
             		.no(eatery.getNo())
             		.name(eatery.getName())
             		.rating(eatery.getRating())
+            		.thumbnail(eatery.getThumbnail())
             		.address(fullAddress)
             		.tel(eatery.getTel())
             		.categoryName(eatery.getCategory().getName())
