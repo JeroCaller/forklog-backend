@@ -13,9 +13,6 @@ public class KakaoOpenFeignConfig {
     @Value("${kakao.rest_api_key}")
     private String kakaoApiKey;
 
-    @Value("${kakao.redirect_uri}")
-    private String kakaoRedirectUri;
-
     @Bean
     public RequestInterceptor kakaoRequestInterceptor() {
         return requestTemplate -> {
