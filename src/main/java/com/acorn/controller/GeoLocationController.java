@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acorn.process.AddressProcess;
 
 @RestController
-public class KakaoRestController {
-	private Logger log = LoggerFactory.getLogger(KakaoRestController.class);
+public class GeoLocationController {
+	private Logger log = LoggerFactory.getLogger(GeoLocationController.class);
 
 	@Autowired
 	private AddressProcess addressProcess;
