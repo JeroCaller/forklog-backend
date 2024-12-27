@@ -3,15 +3,12 @@ package com.acorn.process;
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
 import com.acorn.dto.AddressResponseDto;
 import com.acorn.exception.NotFoundException;
-import com.acorn.model.CategoriesModel;
-import com.acorn.model.EateriesModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
 
 @Service
 public class AddressProcess {

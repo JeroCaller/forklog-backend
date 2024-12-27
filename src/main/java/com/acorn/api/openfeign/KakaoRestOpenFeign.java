@@ -3,7 +3,6 @@ package com.acorn.api.openfeign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.acorn.dto.AddressResponseDto;
@@ -13,8 +12,6 @@ import com.acorn.dto.openfeign.kakao.image.ImageRequestDto;
 import com.acorn.dto.openfeign.kakao.image.ImageResponseDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
-
-import java.util.Map;
 
 @FeignClient(
 		name="KakaoRestOpenFeign", 
