@@ -19,7 +19,7 @@ public class GeoLocationController {
 	private AddressProcess addressProcess;
 
 
-	@GetMapping("/address")
+	@GetMapping("/main/address")
 	public ResponseEntity<Object> convertAddress(@RequestParam("lat") String lat, @RequestParam("lng") String lng) {
 		return ResponseEntity.ok().body(addressProcess.convertAddress(lat, lng));
 	}
