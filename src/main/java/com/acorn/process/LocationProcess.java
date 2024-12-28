@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.LocationGroupsDto;
@@ -16,10 +15,14 @@ import com.acorn.entity.LocationGroups;
 import com.acorn.entity.LocationRoads;
 import com.acorn.entity.Locations;
 import com.acorn.exception.NoDataFoundException;
+import com.acorn.exception.location.LocationSearchFailedBy;
+import com.acorn.exception.location.NoLocationGroupFoundException;
+import com.acorn.exception.location.NoLocationMediumFoundException;
 import com.acorn.repository.LocationGroupsRepository;
 import com.acorn.repository.LocationRoadsRepository;
 import com.acorn.repository.LocationsRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LocationProcess {
 	
 	// location_roads 테이블 내 PK 필드에서 숫자가 불연속적인 구간이 있을 수 있음.
@@ -37,14 +41,9 @@ public class LocationProcess {
 	private final String LOCATIONS = "locations";
 	private final String LOCATION_ROAD = "locationRoads";
 	
-	@Autowired
-	private LocationRoadsRepository locationRoadsRepository;
-	
-	@Autowired
-	private LocationsRepository locationsRepository;
-	
-	@Autowired
-	private LocationGroupsRepository locationGroupsRepository;
+	private final LocationRoadsRepository locationRoadsRepository;
+	private final LocationsRepository locationsRepository;
+	private final LocationGroupsRepository locationGroupsRepository;
 	
 	/**
 	 * DB 내 도로명 주소를 랜덤으로 하나 조회.
@@ -183,8 +182,13 @@ public class LocationProcess {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	public List<LocationGroupsDto> getLocationGroupsAll() {
+	public List<LocationGroupsDto> getLocationGroupsAll() 
+			throws NoLocationGroupFoundException {
 		List<LocationGroups> result = locationGroupsRepository.findAll();
+		
+		if (result == null || result.size() == 0) {
+			throw new NoLocationGroupFoundException();
+		}
 		return result.stream()
 				.map(LocationGroupsDto :: toDto)
 				.collect(Collectors.toList());
@@ -198,22 +202,28 @@ public class LocationProcess {
 	 * @author JeroCaller (JJH)
 	 * @param largeCity
 	 * @return
-	 * @throws NoDataFoundException 
+	 * @throws NoLocationGroupFoundException
 	 */
 	public List<LocationsDto> getLocationMediumAll(String largeCity) 
-			throws NoDataFoundException 
+			throws NoLocationGroupFoundException, 
+			NoLocationMediumFoundException
 	{
 		LocationGroups locationGroupsEntity 
 			= locationGroupsRepository.findByName(largeCity);
 		
 		if (locationGroupsEntity == null) {
-			throw new NoDataFoundException(
-				"조회된 주소 대분류 데이터가 없습니다. 입력된 주소 대분류: " + largeCity
-			);
+			throw new NoLocationGroupFoundException(largeCity);
 		}
 		
 		List<Locations> result 
 			= locationsRepository.findAllBy(locationGroupsEntity.getNo());
+		
+		if (result == null || result.size() == 0) {
+			throw new NoLocationMediumFoundException(
+					LocationSearchFailedBy.BY_UPPER, 
+					largeCity
+			);
+		}
 		
 		return result.stream()
 				.map(LocationsDto :: toDto)
@@ -238,11 +248,19 @@ public class LocationProcess {
 	 * @author JeroCaller (JJH)
 	 * @param largeCity
 	 * @param mediumCity
+	 * @throws NoLocationMediumFoundException
 	 * @return
 	 */
-	public Locations getLocationMediumByName(String largeCity, String mediumCity) {
+	public Locations getLocationMediumByName(String largeCity, String mediumCity) 
+			throws NoLocationMediumFoundException {
 		Locations locations = locationsRepository
 				.findByNameExactly(largeCity, mediumCity);
+		if (locations == null) {
+			throw new NoLocationMediumFoundException(
+					LocationSearchFailedBy.BY_NAME, 
+					mediumCity
+			);
+		}
 		return locations;
 	}
 	
