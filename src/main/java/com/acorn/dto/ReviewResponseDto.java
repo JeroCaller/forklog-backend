@@ -16,7 +16,6 @@ public class ReviewResponseDto {
 	private Integer no;
 	private BigDecimal rating;
 	private String content;
-	private Boolean hasPhoto;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private ReviewMembersDto reviewMembersDto;

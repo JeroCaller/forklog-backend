@@ -18,36 +18,32 @@ import com.acorn.repository.MembersRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Getter @Builder @NoArgsConstructor @AllArgsConstructor
-public class CommentDto {
+public class CommentsDto {
     private int no;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int likesCount;
     private boolean isDeleted;
     private int eateryNo;
     private int memberNo;
     private Integer parentCommentNo;
     
     @Builder.Default
-    private List<CommentDto> childComments = new ArrayList<>();
+    private List<CommentsDto> childComments = new ArrayList<>();
 
     // Entity -> Dto
-    public static CommentDto fromEntity(Comment comment) {
-        List<CommentDto> childCommentDtos = new ArrayList<>();
-        
+    public static CommentsDto fromEntity(Comments comment) {
+        List<CommentsDto> childCommentDtos = new ArrayList<>();
         if (comment.hasChildComments()) {   // 자식 댓글이 있을 경우, 각 자식 댓글을 DTO로 변환하여 리스트에 추가
-            for (Comment childComment : comment.getChildComments()) {
+            for (Comments childComment : comment.getChildComments()) {
                 childCommentDtos.add(fromEntity(childComment));
             }
         }
-
-        return CommentDto.builder()
+        return CommentsDto.builder()
             .no(comment.getNo())
             .content(comment.getContent())
             .createdAt(comment.getCreatedAt())
             .updatedAt(comment.getUpdatedAt())
-            .likesCount(comment.getLikesCount())
             .isDeleted(comment.isDeleted())
             .eateryNo(comment.getEatery() != null ? comment.getEatery().getNo() : null)
             .memberNo(comment.getMember() != null ? comment.getMember().getNo() : null)
@@ -69,4 +65,5 @@ public class CommentDto {
 	        // .parentComment(this.parentCommentNo != null ? new Comment(this.parentCommentNo) : null)
 	        .build();
     }
+
 }
