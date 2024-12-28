@@ -22,6 +22,8 @@ import java.util.Optional;
 public class EateriesController {
     private final EateriesProcess eateriesProcess;
 	private final ReviewsProcess reviewsProcess;
+	
+	// 음식점 상세 보기
     @GetMapping("/{id}")
     public ResponseEntity<EateriesDto> getEateryById(@PathVariable("id") int id) {
         Optional<EateriesDto> eateryDto = eateriesProcess.getEateryDtoById(id);

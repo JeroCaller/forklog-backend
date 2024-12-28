@@ -46,11 +46,13 @@ public class EateriesDto {
 				.viewCount(entity.getViewCount())
 				.thumbnail(entity.getThumbnail())
 				.description(entity.getDescription())
+				.tel(entity.getTel())
 				.rating(entity.getRating())
+				.address(entity.getAddress())
 				.longitude(entity.getLongitude())
 				.latitude(entity.getLatitude())
 				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
-				.locationRoadsDto(LocationRoadsDto.toDto(entity.getRoad()))
+//				.locationRoadsDto(LocationRoadsDto.toDto(entity.getRoad()))
 				.build();
 	}
 }

@@ -40,6 +40,12 @@ public class Eateries {
 	@Column(columnDefinition = "text") // mysql text type
 	private String description;
 	
+	@Column(length = 20)
+	private String tel;
+	
+	@Column(length = 255)
+	private String address;
+	
 	@Column(precision = 2, scale = 1) // decimal(2,1)과 매핑 : 2자리 중 1자리는 소수점 이하
 	@Builder.Default
 	private BigDecimal rating = new BigDecimal(0.0);
@@ -50,14 +56,11 @@ public class Eateries {
 	@Column(precision = 10, scale = 8) 
 	private BigDecimal latitude;
 	
-	@Column(length = 20)
-	private String tel;
-	
 	@ManyToOne
 	@JoinColumn(name = "category_no", referencedColumnName = "no")
 	private Categories category;
 	
-	@ManyToOne
-	@JoinColumn(name = "road_no", referencedColumnName = "no")
-	private LocationRoads road;
+//	@ManyToOne
+//	@JoinColumn(name = "road_no", referencedColumnName = "no")
+//	private LocationRoads road;
 }
