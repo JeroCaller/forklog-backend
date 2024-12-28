@@ -9,7 +9,7 @@ import com.acorn.dto.CommentsDto;
 import com.acorn.entity.Comments;
 import com.acorn.repository.CommentsRepository;
 import com.acorn.repository.EateriesRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentsProcess {
 	private final CommentsRepository commentRepository;
-	private final MembersMainRepository memberRepository;
+	private final MembersRepository memberRepository;
 	private final EateriesRepository eateryRepository;
 	
 	// Create

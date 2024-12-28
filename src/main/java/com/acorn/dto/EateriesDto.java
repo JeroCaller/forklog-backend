@@ -37,7 +37,6 @@ public class EateriesDto {
 	
 	private CategoriesDto categoryDto;
 	
-	private LocationRoadsDto locationRoadsDto;
 	
 	public static EateriesDto toDto(Eateries entity) {
 		return EateriesDto.builder()
@@ -52,7 +51,6 @@ public class EateriesDto {
 				.longitude(entity.getLongitude())
 				.latitude(entity.getLatitude())
 				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
-//				.locationRoadsDto(LocationRoadsDto.toDto(entity.getRoad()))
 				.build();
 	}
 }

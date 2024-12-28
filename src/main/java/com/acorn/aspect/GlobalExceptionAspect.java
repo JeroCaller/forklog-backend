@@ -77,6 +77,6 @@ public class GlobalExceptionAspect {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An unexceptionpected error occurred: " + exception.getMessage());
+                .body("An unexpected error occurred: " + exception.getMessage());
     }
 }

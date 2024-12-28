@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.acorn.entity.Members;
-import com.acorn.repository.MembersDetailRepository;
 import com.acorn.repository.MembersRepository;
 
 import jakarta.mail.MessagingException;
