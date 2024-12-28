@@ -2,8 +2,7 @@ package com.acorn.dto;
 
 import java.time.LocalDateTime;
 
-import com.acorn.entity.MembersDetail;
-import com.acorn.entity.MembersMain;
+import com.acorn.entity.Members;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,9 +34,7 @@ public class MembersDto {
     private LocalDateTime updatedAt;
 	
 	// toDto
-	public static MembersDto toDto(MembersMain membersMain) {
-		
-		MembersDetail detail = membersMain.getMembersDetail();
+	public static MembersDto toDto(Members membersMain) {
 		
 		return MembersDto.builder()
 				.no(membersMain.getNo())
@@ -49,12 +46,12 @@ public class MembersDto {
                 .roadAddress(membersMain.getRoadAddress())
                 .detailAddress(membersMain.getDetailAddress())
                 .updatedAt(membersMain.getUpdatedAt())
-                .birthDate(detail.getBirthDate())
-                .gender(detail.getGender())
-                .phone(detail.getPhone())
-                .emailVerified(detail.getEmailVerified())
-                .status(detail.getStatus())
-                .createdAt(detail.getCreatedAt())
+                .birthDate(membersMain.getBirthDate())
+                .gender(membersMain.getGender())
+                .phone(membersMain.getPhone())
+                .emailVerified(membersMain.getEmailVerified())
+                .status(membersMain.getStatus())
+                .createdAt(membersMain.getCreatedAt())
                 .build();
 	}
 }

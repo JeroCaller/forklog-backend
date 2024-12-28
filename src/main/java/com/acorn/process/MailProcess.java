@@ -9,9 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.acorn.entity.MembersMain;
+import com.acorn.entity.Members;
 import com.acorn.repository.MembersDetailRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -24,11 +24,8 @@ public class MailProcess {
 	
 	private final JavaMailSender javaMailSender;
 	private final CertificationGenerator certificationGenerator;
-	
-	private final MembersMainRepository mainRepository;
-	private final MembersDetailRepository detailRepository;
-	
-	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	private final MembersRepository membersRepository;
+	private final PasswordEncoder passwordEncoder;
 	
 	public void sendEmailForCertification(String email) throws NoSuchAlgorithmException, MessagingException {
 		
@@ -50,11 +47,11 @@ public class MailProcess {
         System.out.println("Hashed password to save: " + password);
         
         // DB에 비밀번호 저장
-        Optional<MembersMain> optionalMember = mainRepository.findOptionalByEmail(email);
+        Optional<Members> optionalMember = membersRepository.findOptionalByEmail(email);
         if (optionalMember.isPresent()) {
-        	MembersMain member = optionalMember.get();
+        	Members member = optionalMember.get();
         	member.setPassword(password); // 비밀번호 설정
-        	mainRepository.save(member); // 변경된 비밀번호를 DB 저장
+        	membersRepository.save(member); // 변경된 비밀번호를 DB 저장
         } else {
             System.out.println("No member found with email: " + email); // 이메일로 회원을 찾을 수 없을 때
         }

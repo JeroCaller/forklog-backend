@@ -11,9 +11,9 @@ import java.util.List;
 
 import com.acorn.entity.Comment;
 import com.acorn.entity.Eateries;
-import com.acorn.entity.MembersMain;
+import com.acorn.entity.Members;
 import com.acorn.repository.EateriesRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -57,7 +57,7 @@ public class CommentDto {
     }
 
     // Dto -> Entity
-    public Comment toEntity(MembersMainRepository memberRepository, EateriesRepository eateryRepository) {
+    public Comment toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
         return Comment.builder()
 	        .content(this.content)
 	        .likesCount(this.likesCount)

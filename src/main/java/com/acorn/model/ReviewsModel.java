@@ -21,18 +21,18 @@ import com.acorn.dto.ReviewResponseDto;
 import com.acorn.entity.ReviewImages;
 import com.acorn.entity.Reviews;
 import com.acorn.repository.EateriesRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 import com.acorn.repository.ReviewImagesRepository;
 import com.acorn.repository.ReviewsRepository;
 
 @Repository
 public class ReviewsModel {
-	private MembersMainRepository membersMainRepository;
+	private MembersRepository membersMainRepository;
 	private EateriesRepository eateriesRepository;
 	private ReviewsRepository reviewsRepository;	
 	private ReviewImagesRepository reviewImagesRepository;
 	public ReviewsModel(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
-			,MembersMainRepository membersMainRepository, EateriesRepository eateriesRepository) {
+			,MembersRepository membersMainRepository, EateriesRepository eateriesRepository) {
 		this.reviewsRepository = reviewsRepository;
 		this.reviewImagesRepository=reviewImagesRepository;
 		this.membersMainRepository=membersMainRepository;
