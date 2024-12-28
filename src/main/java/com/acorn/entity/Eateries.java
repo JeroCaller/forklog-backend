@@ -59,8 +59,4 @@ public class Eateries {
 	@ManyToOne
 	@JoinColumn(name = "category_no", referencedColumnName = "no")
 	private Categories category;
-	
-//	@ManyToOne
-//	@JoinColumn(name = "road_no", referencedColumnName = "no")
-//	private LocationRoads road;
 }

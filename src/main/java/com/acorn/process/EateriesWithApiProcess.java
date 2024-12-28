@@ -17,13 +17,11 @@ import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
-import com.acorn.entity.LocationRoads;
 import com.acorn.process.openfeign.kakao.BlogSearchProcess;
 import com.acorn.process.openfeign.kakao.ImageSearchProcess;
 import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
-import com.acorn.repository.LocationRoadsRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +40,6 @@ public class EateriesWithApiProcess {
 	private final EateriesRepository eateriesRepository;
 	private final CategoriesRepository categoriesRepository;
 	private final CategoryGroupsRepository categoryGroupsRepository;
-	private final LocationRoadsRepository locationRoadsRepository;
 	private final LocationProcess locationProcess;
 	private final ImageSearchProcess imageSearchProcess;
 	private final BlogSearchProcess blogSearchProcess;
@@ -139,7 +136,7 @@ public class EateriesWithApiProcess {
 					.name(document.getPlaceName())
 					.longitude(new BigDecimal(document.getX()))
 					.latitude(new BigDecimal(document.getY()))
-					.road(locationRoadsEntity)
+//					.road(locationRoadsEntity)
 					.category(categoryEntity)
 					.tel(document.getPhone())
 					.thumbnail(imageResult)
