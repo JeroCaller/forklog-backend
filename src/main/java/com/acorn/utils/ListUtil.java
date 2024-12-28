@@ -21,4 +21,16 @@ public class ListUtil {
 		return stringBuilder.toString();
 	}
 	
+	/**
+	 * List 객체가 null이거나 요소가 없는지 파악.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param <E>
+	 * @param list
+	 * @return
+	 */
+	public static <E> boolean isEmpty(List<E> list) {
+		return (list == null || list.size() == 0);
+	}
+	
 }

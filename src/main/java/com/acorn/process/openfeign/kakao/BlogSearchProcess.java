@@ -1,6 +1,5 @@
 package com.acorn.process.openfeign.kakao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
@@ -8,11 +7,13 @@ import com.acorn.dto.openfeign.kakao.blog.BlogDocumentsDto;
 import com.acorn.dto.openfeign.kakao.blog.BlogRequestDto;
 import com.acorn.dto.openfeign.kakao.blog.BlogResponseDto;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class BlogSearchProcess {
 	
-	@Autowired
-	private KakaoRestOpenFeign kakaoRestOpenFeign;
+	private final KakaoRestOpenFeign kakaoRestOpenFeign;
 	
 	/**
 	 * 블로그 한 건만 조사하여 반환
