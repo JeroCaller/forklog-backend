@@ -1,6 +1,5 @@
 package com.acorn.process.openfeign.kakao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
@@ -8,11 +7,13 @@ import com.acorn.dto.openfeign.kakao.image.ImageDocumentDto;
 import com.acorn.dto.openfeign.kakao.image.ImageRequestDto;
 import com.acorn.dto.openfeign.kakao.image.ImageResponseDto;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ImageSearchProcess {
 	
-	@Autowired
-	private KakaoRestOpenFeign kakaoRestOpenFeign;
+	private final KakaoRestOpenFeign kakaoRestOpenFeign;
 	
 	/**
 	 * 쿼리에 대한 이미지 한 장의 정보만 반환.

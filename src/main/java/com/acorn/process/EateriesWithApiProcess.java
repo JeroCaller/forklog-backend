@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.EateriesDto;
@@ -27,6 +25,7 @@ import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.repository.LocationRoadsRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,28 +37,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class EateriesWithApiProcess {
-
-	@Autowired
-	private EateriesRepository eateriesRepository;
-
-	@Autowired
-	private CategoriesRepository categoriesRepository;
-
-	@Autowired
-	private CategoryGroupsRepository categoryGroupsRepository;
-
-	@Autowired
-	private LocationRoadsRepository locationRoadsRepository;
-
-	@Autowired
-	private LocationProcess locationProcess;
-	
-	@Autowired
-	private ImageSearchProcess imageSearchProcess;
-	
-	@Autowired
-	private BlogSearchProcess blogSearchProcess;
+	private final EateriesRepository eateriesRepository;
+	private final CategoriesRepository categoriesRepository;
+	private final CategoryGroupsRepository categoryGroupsRepository;
+	private final LocationRoadsRepository locationRoadsRepository;
+	private final LocationProcess locationProcess;
+	private final ImageSearchProcess imageSearchProcess;
+	private final BlogSearchProcess blogSearchProcess;
 	
 	// saveApi() 메서드 내에서 DB 내 조회되지 않은 주소 수집용.
 	private final List<String> failedLocations = new ArrayList<String>();
@@ -75,21 +61,6 @@ public class EateriesWithApiProcess {
 	}
 
 	/**
-	 * 주어진 도로명 주소에 해당하는 음식점 데이터들을 DB로부터 조회하여 반환
-	 * 
-	 * @author JeroCaller (JJH)
-	 * @param locationRoads
-	 * @return
-	 */
-	public Page<EateriesDto> getDataFromDbByLocation(LocationRoads locationRoads, Pageable pageRequest) {
-		Page<Eateries> eateries = eateriesRepository.findByRoadNo(locationRoads.getNo(), pageRequest);
-
-		if (eateries == null)
-			return null;
-		return eateries.map(entity -> EateriesDto.toDto(entity));
-	}
-
-	/**
 	 * 조회된 API를 DB에 저장.
 	 * 
 	 * @author JeroCaller (JJH)
@@ -99,30 +70,28 @@ public class EateriesWithApiProcess {
 	public Page<EateriesDto> saveApi(List<KeywordDocumentDto> response){
 		failedLocations.clear();
 		List<Eateries> eateries = new ArrayList<Eateries>();
-		
-		// DB 내 조회되지 않은 주소 모음.
-		//List<String> failedLocations = new ArrayList<String>();
 
 		for (KeywordDocumentDto document : response) {
 			// 맨 첫 요소는 불필요한 정보.
 			// API에서 제공하는 카테고리 정보의 길이가 동적이고, 어디까지 상세 정보를 제공하는 지 몰라
 			// " > "을 구분자로 구분한 파편 정보들을 별도의 DTO가 아닌 String[]에 담도록 함.
-			String[] categoryFragments = document.getCategoryName().split(" > ");
+			String[] categoryTokens = document.getCategoryName().split(" > ");
 
 			Categories categoryEntity = null;
 
 			// 소분류 항목 있을 경우.
-			if (categoryFragments.length > 2) {
-				categoryEntity = saveAndReturnCategory(categoryFragments[1], categoryFragments[2]);
-			} else if (categoryFragments.length > 1) {
-				categoryEntity = saveAndReturnCategory(categoryFragments[1], null);
+			if (categoryTokens.length > 2) {
+				categoryEntity = saveAndReturnCategory(categoryTokens[1], categoryTokens[2]);
+			} else if (categoryTokens.length > 1) {
+				categoryEntity = saveAndReturnCategory(categoryTokens[1], null);
 			}
 
-			// 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후
-			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
+			
 			//log.info("road address name from kakao api");
 			//log.info(document.getRoadAddressName());
-
+			
+			// 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후
+			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
 			LocationSplitDto locationSplitDto
 					= locationProcess.getSplitLocation(document.getRoadAddressName());
 			//log.info("location splited");
@@ -130,7 +99,8 @@ public class EateriesWithApiProcess {
 
 			LocationRoads locationRoadsEntity 
 				= locationRoadsRepository.findByFullLocation(locationSplitDto);
-
+			
+			// 조회되지 않은 (도로명 포함) 주소를 기록하여 응답 메시지에 내보내기 위함.
 			if (locationRoadsEntity == null) {
 				failedLocations.add(document.getRoadAddressName());
 				continue;

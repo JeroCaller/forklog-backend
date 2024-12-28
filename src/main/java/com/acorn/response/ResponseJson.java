@@ -1,6 +1,7 @@
 package com.acorn.response;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,16 @@ public class ResponseJson {
 	private HttpStatus status;
 	private String message;
 	private Object data;
+	
+	/**
+	 * 현재 ResponseJson 객체를 ResponseEntity 객체로 변환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	public ResponseEntity<ResponseJson> toResponseEntity() {
+		return ResponseEntity
+				.status(this.status)
+				.body(this);
+	}
 }
