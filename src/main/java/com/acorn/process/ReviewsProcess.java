@@ -29,18 +29,20 @@ import com.acorn.repository.ReviewImagesRepository;
 import com.acorn.repository.ReviewsRepository;
 
 @Repository
-public class ReviewsModel {
+public class ReviewsProcess {
 	private MembersRepository membersMainRepository;
 	private EateriesRepository eateriesRepository;
 	private ReviewsRepository reviewsRepository;	
 	private ReviewImagesRepository reviewImagesRepository;
-	public ReviewsModel(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
+	
+	public ReviewsProcess(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
 			,MembersRepository membersMainRepository, EateriesRepository eateriesRepository) {
 		this.reviewsRepository = reviewsRepository;
 		this.reviewImagesRepository=reviewImagesRepository;
 		this.membersMainRepository=membersMainRepository;
 		this.eateriesRepository=eateriesRepository;
 	}
+	
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 	//member_no으로 ReviewResponseDto리스트 조회
