@@ -14,7 +14,6 @@ public class ReviewRequestDto {
 	private Integer no;
 	private BigDecimal rating;
 	private String content;
-	private Boolean hasPhoto;
 	private Integer memberNo;
 	private Integer eateryNo;
 }

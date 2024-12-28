@@ -1,6 +1,10 @@
 package com.acorn.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,23 +19,23 @@ import org.springframework.web.multipart.MultipartFile;
 import com.acorn.dto.ReviewRequestDto;
 import com.acorn.dto.ReviewResponseDto;
 import com.acorn.process.ReviewsProcess;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/review")
-public class ReviewController {
-	private ReviewsProcess reviewsModel;
-	public ReviewController(ReviewsProcess reviewsModel) {
-		this.reviewsModel=reviewsModel;
-	}
+@RequestMapping("/main/mypage")
+@RequiredArgsConstructor
+public class MypageController {
+	private final ReviewsProcess reviewsProcess;
 	//회원별 리뷰 목록 조회
-	@GetMapping("/member/{memberNo}")
-	public ResponseEntity<List<ReviewResponseDto>> getReviewsByMemberNo(@PathVariable("memberNo") String memberNo){
-		return ResponseEntity.ok(reviewsModel.getReviewsByMemberNo(memberNo));
-	}
-	//음식점별 리뷰 목록 조회
-	@GetMapping("/eatery/{eateryNo}")
-	public ResponseEntity<List<ReviewResponseDto>> getReviewsByEateryNo(@PathVariable("eateryNo") String eateryNo){
-		return ResponseEntity.ok(reviewsModel.getReviewsByEateryNo(eateryNo));
+	@GetMapping("/review/member/{no}")
+	public ResponseEntity<Object> getReviewsByMemberNo(
+				@RequestParam(value = "page", required = false, defaultValue = "1" ) int page,
+				@PathVariable("no") String memberNo){
+		Page<ReviewResponseDto> list= reviewsProcess.getReviewsByMemberNo(memberNo,page-1);
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list);
+		map.put("page", page);
+		return ResponseEntity.ok(map);
 	}
 	//별점 리뷰 등록
 	//파일 목록 받기 (@RequestParam("files") List<MultipartFile> files): 여러 파일을 한 번에 받을 수 있도록
@@ -40,23 +44,22 @@ public class ReviewController {
 	@PostMapping
 	public ResponseEntity<String> registerReview(@ModelAttribute("inputDto") ReviewRequestDto inputDto,
 												@RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception {
-		reviewsModel.registReview(inputDto, files);
+		reviewsProcess.registReview(inputDto, files);
 		return ResponseEntity.ok("리뷰 등록에 성공했습니다.");
 	}
 	//별점 리뷰 수정
 	//formData에 reviewNo 넣어서 보내야 합니다.
-	//hasPhoto=0으로 요청 시 해당 리뷰 사진을 모두 지웁니다. hasPhoto=1인 경우에 사진이 수정 됩니다.
-	@PutMapping("/{reviewNo}")
+	@PutMapping("/review/{no}")
 	public ResponseEntity<String> updateReview(@ModelAttribute("inputDto") ReviewRequestDto inputDto,
-					@PathVariable("reviewNo") String reviewNo,
+					@PathVariable("no") String reviewNo,
 					@RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception {
-		reviewsModel.updateReview(reviewNo,inputDto, files);
+		reviewsProcess.updateReview(reviewNo,inputDto, files);
 		return ResponseEntity.ok("리뷰 수정에 성공했습니다.");
 	}
 	//별점 리뷰 삭제
-	@DeleteMapping("/{reviewNo}")
-	public ResponseEntity<String> deleteReview(@PathVariable("reviewNo") String reviewNo)throws Exception{
-		reviewsModel.deleteReview(reviewNo);
+	@DeleteMapping("/review/{no}")
+	public ResponseEntity<String> deleteReview(@PathVariable("no") String reviewNo)throws Exception{
+		reviewsProcess.deleteReview(reviewNo);
 		return ResponseEntity.ok("리뷰 삭제에 성공했습니다.");
 	}
 }

@@ -34,9 +34,6 @@ public class Eateries {
 	@Column(length = 11)
 	private int viewCount;
 	
-	@Column(length = 11)
-	private int favoritesCount;
-	
 	@Column(length = 500)
 	private String thumbnail;
 	

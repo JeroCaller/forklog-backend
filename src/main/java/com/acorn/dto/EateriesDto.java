@@ -20,9 +20,6 @@ public class EateriesDto {
 	@Builder.Default
 	private int viewCount = 0;
 	
-	@Builder.Default
-	private int favoritesCount = 0;
-	
 	private String thumbnail;
 	private String description;
 	private String address;
@@ -47,7 +44,6 @@ public class EateriesDto {
 				.no(entity.getNo())
 				.name(entity.getName())
 				.viewCount(entity.getViewCount())
-				.favoritesCount(entity.getFavoritesCount())
 				.thumbnail(entity.getThumbnail())
 				.description(entity.getDescription())
 				.rating(entity.getRating())

@@ -35,9 +35,6 @@ public class Reviews {
     @Column(name = "content", columnDefinition = "TEXT")
 	private String content;
     
-    @Column(name = "has_photo", columnDefinition = "TINYINT")
-	private Boolean hasPhoto;
-    
     @CreationTimestamp	//mariadb current_timestamp() 매핑 어노테이션 
     @Column(name="created_at", updatable = false)
 	private LocalDateTime createdAt;
