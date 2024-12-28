@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.acorn.entity.Comments;
+import com.acorn.entity.Comment;
+import com.acorn.entity.Eateries;
+import com.acorn.entity.Members;
 import com.acorn.repository.EateriesRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -51,16 +53,17 @@ public class CommentsDto {
     }
 
     // Dto -> Entity
-    public Comments toEntity(MembersMainRepository memberRepository, EateriesRepository eateryRepository) {
-        return Comments.builder()
-            .content(this.content)
-            .isDeleted(this.isDeleted)
-            .eatery(eateryRepository.findById(this.eateryNo).orElseThrow(()
-                -> new EntityNotFoundException("식당을 찾을 수 없습니다.")))
-            .member(memberRepository.findById(this.memberNo).orElseThrow(()
-                -> new EntityNotFoundException("회원을 찾을 수 없습니다.")))
-            .parentComment(this.parentCommentNo != null ? Comments.builder().no(this.parentCommentNo).build() : null)
-            .build();
+    public Comment toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
+        return Comment.builder()
+	        .content(this.content)
+	        .likesCount(this.likesCount)
+	        .isDeleted(this.isDeleted)
+	        .eatery(eateryRepository.findById(this.eateryNo).orElseThrow(()
+	        	-> new EntityNotFoundException("식당번호에 해당하는 식당을 찾을 수 없습니다.")))
+	        .member(memberRepository.findById(this.memberNo).orElseThrow(()
+	        	-> new EntityNotFoundException("회원번호에 해당하는 회원을 찾을 수 없습니다.")))
+	        // .parentComment(this.parentCommentNo != null ? new Comment(this.parentCommentNo) : null)
+	        .build();
     }
 
 }

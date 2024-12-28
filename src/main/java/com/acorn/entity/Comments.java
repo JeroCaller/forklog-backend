@@ -50,7 +50,7 @@ public class Comments {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_no")
-    private MembersMain member; // 회원
+    private Members member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_no")

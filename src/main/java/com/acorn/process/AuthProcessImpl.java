@@ -5,38 +5,26 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.acorn.dto.LoginRequestDto;
-import com.acorn.dto.JwtDto;
 import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.RegisterResponseDto;
 import com.acorn.dto.ResponseDto;
-import com.acorn.entity.LocationRoads;
-import com.acorn.entity.MembersDetail;
-import com.acorn.entity.MembersMain;
+import com.acorn.entity.Members;
 import com.acorn.jwt.JwtUtil;
-import com.acorn.repository.LocationRoadsRepository;
-import com.acorn.repository.MembersDetailRepository;
-import com.acorn.repository.MembersMainRepository;
+import com.acorn.repository.MembersRepository;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -46,10 +34,7 @@ public class AuthProcessImpl implements AuthProcess {
 
 	private final JwtUtil jwtUtil;
 	private final AuthenticationManager authenticationManager;
-	private final MembersMainRepository membersMainRepository;
-	private final MembersDetailRepository membersDetailRepository;
-	private final LocationRoadsRepository locationRoadsRepository;
-	private final RefreshTokenProcess refreshTokenProcess;
+	private final MembersRepository membersRepository;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
 
@@ -60,12 +45,13 @@ public class AuthProcessImpl implements AuthProcess {
 		try {
 
 			String email = dto.getEmail();
-			boolean existedEmail = membersMainRepository.existsByEmail(email);
+			boolean existedEmail = membersRepository.existsByEmail(email);
 			if (existedEmail)
 				return RegisterResponseDto.duplicateEmail();
 
 			String phone = dto.getPhone();
-			boolean existedPhone = membersDetailRepository.existsByPhone(phone);
+			//boolean existedPhone = membersDetailRepository.existsByPhone(phone);
+			boolean existedPhone = membersRepository.existsByPhone(phone);
 			if (existedPhone)
 				return RegisterResponseDto.duplicatePhone();
 
@@ -73,22 +59,10 @@ public class AuthProcessImpl implements AuthProcess {
 			String encodedPassword = passwordEncoder.encode(password); // 암호화된 패스워드로 변환
 			dto.setPassword(encodedPassword); // 암호화된 패스워드 넣어줌
 
-			// 입력받은 도로명 주소 매칭
-			LocationRoads roadName = locationRoadsRepository.findByName(dto.getRoadAddress())
-					.orElseThrow(() -> new IllegalArgumentException("해당 도로명 주소를 찾을 수 없습니다."));
-
-			// MembersMain과 MembersDetail 객체 생성
-			MembersMain members = MembersMain.registerToEntity(dto);
-			MembersDetail membersDetail = MembersDetail.registerToEntity(dto);
-
-			// 객체 연결 및 memberNo 설정
-			membersDetail.setMemberNo(members.getNo()); // memberNo 설정
-			members.setLocationRoads(roadName); //
-			members.setMembersDetail(membersDetail); // MembersDetail 설정
-			membersDetail.setMembersMain(members); // 양방향 관계 설정
+			Members members = Members.registerToEntity(dto);
 
 			// 데이터베이스에 저장
-			membersMainRepository.save(members);
+			membersRepository.save(members);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -176,7 +150,7 @@ public class AuthProcessImpl implements AuthProcess {
 	// 이메일 중복 체크
 	@Override
 	public ResponseEntity<? super RegisterResponseDto> checkEmailDuplication(String email) {
-		boolean existedEmail = membersMainRepository.existsByEmail(email);
+		boolean existedEmail = membersRepository.existsByEmail(email);
 		if (existedEmail) {
 			return RegisterResponseDto.duplicateEmail(); // 중복된 이메일
 		}
@@ -186,18 +160,19 @@ public class AuthProcessImpl implements AuthProcess {
 	// 이메일 찾기
 	@Override
 	public ResponseEntity<Map<String, Object>> findEmail(Map<String, String> user) {
-		Optional<MembersDetail> memberOptional = membersDetailRepository.findByPhone(user.get("phone"));
+		//Optional<MembersDetail> memberOptional = membersDetailRepository.findByPhone(user.get("phone"));
+		Optional<Members> memberOptional = membersRepository.findByPhone(user.get("phone"));
 
 		Map<String, Object> response = new HashMap();
 
 		if (memberOptional.isPresent()) {
-			MembersDetail membersDetail = memberOptional.get();
-			String name = membersDetail.getMembersMain().getName();
+			Members membersMain = memberOptional.get();
+			String name = membersMain.getName();
 			String inputName = user.get("name");
 
 			if (name.equals(inputName)) {
 				try {
-					String email = membersDetail.getMembersMain().getEmail();
+					String email = membersMain.getEmail();
 					response.put("status", "success");
 					response.put("email", email);
 					return ResponseEntity.ok(response); // JSON 형식으로 반환
@@ -221,11 +196,11 @@ public class AuthProcessImpl implements AuthProcess {
 	// 비밀번호 재설정
 	@Override
 	public ResponseEntity<String> findPassword(Map<String, String> user) {
-		Optional<MembersMain> memberOptional = membersMainRepository.findOptionalByEmail(user.get("email"));
+		Optional<Members> memberOptional = membersRepository.findOptionalByEmail(user.get("email"));
 
 		if (memberOptional.isPresent()) {
-			MembersMain membersMain = memberOptional.get();
-			String phone = membersMain.getMembersDetail().getPhone();
+			Members membersMain = memberOptional.get();
+			String phone = membersMain.getPhone();
 			String inputPhone = user.get("phone");
 
 			if (phone.equals(inputPhone)) {

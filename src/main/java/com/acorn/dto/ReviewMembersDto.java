@@ -1,6 +1,6 @@
 package com.acorn.dto;
 
-import com.acorn.entity.MembersMain;
+import com.acorn.entity.Members;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,10 +17,10 @@ public class ReviewMembersDto {
 	private String name;
 	
 	// toDto
-	public static ReviewMembersDto toDto(MembersMain membersMain) {		
+	public static ReviewMembersDto toDto(Members members) {		
 		return ReviewMembersDto.builder()
-				.no(membersMain.getNo())
-                .name(membersMain.getName())
+				.no(members.getNo())
+                .name(members.getName())
                 .build();
 	}
 }

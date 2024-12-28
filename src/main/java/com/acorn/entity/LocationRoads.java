@@ -38,15 +38,6 @@ public class LocationRoads {
 	
 	@Column(name = "location_no", insertable = false, updatable = false)
 	private Integer locationNo;
-	
-	@OneToOne(mappedBy = "locationRoads", fetch = FetchType.LAZY)
-	private MembersMain membersMain; // MembersMain과의 관계
-
-	// MembersMain 설정 메소드
-    public void setMembersmain(MembersMain membersMain) {
-        this.membersMain = membersMain;
-        membersMain.setLocationRoads(this);
-    }
     
 	@ManyToOne
 	@JoinColumn(name = "location_no", nullable = false, referencedColumnName = "no")

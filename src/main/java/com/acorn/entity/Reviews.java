@@ -46,7 +46,7 @@ public class Reviews {
     
     @ManyToOne
     @JoinColumn(name = "member_no",referencedColumnName = "no")
-    private MembersMain membersMain;
+    private Members membersMain;
     
     @ManyToOne
     @JoinColumn(name = "eatery_no",referencedColumnName = "no")

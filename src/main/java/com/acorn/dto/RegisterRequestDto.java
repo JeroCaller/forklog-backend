@@ -62,4 +62,10 @@ public class RegisterRequestDto {
 	
 	@NotBlank
 	private LocalDateTime createdAt = LocalDateTime.now();
+	
+	@NotBlank
+	private String nickname;
+	
+	@NotBlank
+	private String gender = "남";
 }
