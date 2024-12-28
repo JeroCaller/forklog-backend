@@ -46,7 +46,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/review/**", "/main/**").permitAll() // 특정 요청 허용
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/review/**", "/main/**", "/development/**").permitAll() // 특정 요청 허용
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가

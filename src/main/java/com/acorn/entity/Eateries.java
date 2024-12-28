@@ -34,9 +34,6 @@ public class Eateries {
 	@Column(length = 11)
 	private int viewCount;
 	
-	@Column(length = 11)
-	private int favoritesCount;
-	
 	@Column(length = 500)
 	private String thumbnail;
 	
@@ -56,11 +53,11 @@ public class Eateries {
 	@Column(length = 20)
 	private String tel;
 	
+	@Column(length = 255)
+	private String address;
+	
 	@ManyToOne
 	@JoinColumn(name = "category_no", referencedColumnName = "no")
 	private Categories category;
 	
-	@ManyToOne
-	@JoinColumn(name = "road_no", referencedColumnName = "no")
-	private LocationRoads road;
 }

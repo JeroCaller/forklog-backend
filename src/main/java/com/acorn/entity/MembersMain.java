@@ -11,7 +11,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,10 +60,6 @@ public class MembersMain {
 	
 	@OneToOne(mappedBy = "membersMain", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private MembersDetail membersDetail; // MembersDetail과의 관계
-	
-	@OneToOne
-	@JoinColumn(name = "road_no", referencedColumnName = "no")
-	private LocationRoads locationRoads; // LocationRoads와의 관계
 	
 	// 회원가입 시 클라이언트로부터 받아온 데이터를 엔티티에 저장하는 메소드
 	public static MembersMain registerToEntity(RegisterRequestDto dto) {

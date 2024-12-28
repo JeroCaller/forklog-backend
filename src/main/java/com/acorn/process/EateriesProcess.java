@@ -21,11 +21,13 @@ public class EateriesProcess {
     public Optional<EateriesDto> getEateryDtoById(int id) {
         return eateriesRepository.findById(id).map(eatery -> {
             // 주소를 조합
+        	/*
             String fullAddress = String.format("%s시 %s %s",
                 eatery.getRoad().getLocations().getLocationGroups().getName(),  //시
                 eatery.getRoad().getLocations().getName(),                     //구
                 eatery.getRoad().getName()                                    //길
             );
+            */
             
             /*
             return new EateriesDto(
@@ -43,7 +45,7 @@ public class EateriesProcess {
             		.name(eatery.getName())
             		.rating(eatery.getRating())
             		.thumbnail(eatery.getThumbnail())
-            		.address(fullAddress)
+            		.address(eatery.getAddress())
             		.tel(eatery.getTel())
             		.categoryName(eatery.getCategory().getName())
             		.latitude(eatery.getLatitude())

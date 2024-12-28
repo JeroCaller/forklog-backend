@@ -20,9 +20,6 @@ public class EateriesDto {
 	@Builder.Default
 	private int viewCount = 0;
 	
-	@Builder.Default
-	private int favoritesCount = 0;
-	
 	private String thumbnail;
 	private String description;
 	private String address;
@@ -40,21 +37,17 @@ public class EateriesDto {
 	
 	private CategoriesDto categoryDto;
 	
-	private LocationRoadsDto locationRoadsDto;
-	
 	public static EateriesDto toDto(Eateries entity) {
 		return EateriesDto.builder()
 				.no(entity.getNo())
 				.name(entity.getName())
 				.viewCount(entity.getViewCount())
-				.favoritesCount(entity.getFavoritesCount())
 				.thumbnail(entity.getThumbnail())
 				.description(entity.getDescription())
 				.rating(entity.getRating())
 				.longitude(entity.getLongitude())
 				.latitude(entity.getLatitude())
 				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
-				.locationRoadsDto(LocationRoadsDto.toDto(entity.getRoad()))
 				.build();
 	}
 }

@@ -27,11 +27,9 @@ import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.RegisterResponseDto;
 import com.acorn.dto.ResponseDto;
-import com.acorn.entity.LocationRoads;
 import com.acorn.entity.MembersDetail;
 import com.acorn.entity.MembersMain;
 import com.acorn.jwt.JwtUtil;
-import com.acorn.repository.LocationRoadsRepository;
 import com.acorn.repository.MembersDetailRepository;
 import com.acorn.repository.MembersMainRepository;
 
@@ -48,7 +46,7 @@ public class AuthProcessImpl implements AuthProcess {
 	private final AuthenticationManager authenticationManager;
 	private final MembersMainRepository membersMainRepository;
 	private final MembersDetailRepository membersDetailRepository;
-	private final LocationRoadsRepository locationRoadsRepository;
+	//private final LocationRoadsRepository locationRoadsRepository;
 	private final RefreshTokenProcess refreshTokenProcess;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
@@ -74,8 +72,8 @@ public class AuthProcessImpl implements AuthProcess {
 			dto.setPassword(encodedPassword); // 암호화된 패스워드 넣어줌
 
 			// 입력받은 도로명 주소 매칭
-			LocationRoads roadName = locationRoadsRepository.findByName(dto.getRoadAddress())
-					.orElseThrow(() -> new IllegalArgumentException("해당 도로명 주소를 찾을 수 없습니다."));
+			//LocationRoads roadName = locationRoadsRepository.findByName(dto.getRoadAddress())
+			//		.orElseThrow(() -> new IllegalArgumentException("해당 도로명 주소를 찾을 수 없습니다."));
 
 			// MembersMain과 MembersDetail 객체 생성
 			MembersMain members = MembersMain.registerToEntity(dto);
@@ -83,7 +81,7 @@ public class AuthProcessImpl implements AuthProcess {
 
 			// 객체 연결 및 memberNo 설정
 			membersDetail.setMemberNo(members.getNo()); // memberNo 설정
-			members.setLocationRoads(roadName); //
+			//members.setLocationRoads(roadName); //
 			members.setMembersDetail(membersDetail); // MembersDetail 설정
 			membersDetail.setMembersMain(members); // 양방향 관계 설정
 
