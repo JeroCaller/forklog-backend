@@ -2,28 +2,29 @@ package com.acorn.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.dto.LocationGroupsDto;
 import com.acorn.dto.LocationsDto;
-import com.acorn.exception.NoDataFoundException;
+import com.acorn.exception.location.BaseLocationException;
+import com.acorn.exception.location.NoLocationGroupFoundException;
 import com.acorn.process.LocationProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/main/locations")
+@RequiredArgsConstructor
 public class LocationController {
 	
-	@Autowired
-	private LocationProcess locationProcess;
+	private final LocationProcess locationProcess;
 	
 	/**
 	 * 서울, 경기 등 전국 주소 대분류를 전체 반환 (행정구역 17개)
@@ -35,24 +36,24 @@ public class LocationController {
 	public ResponseEntity<ResponseJson> getLocationLargeCityAll() {
 		ResponseJson responseJson = null;
 		
-		List<LocationGroupsDto> result = locationProcess.getLocationGroupsAll();
-		
-		if (result == null || result.size() == 0) {
+		List<LocationGroupsDto> result = null;
+		try {
+			result = locationProcess.getLocationGroupsAll();
+		} catch (NoLocationGroupFoundException e) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
 					.build();
-		} else {
-			responseJson = ResponseJson.builder()
+			return responseJson.toResponseEntity();
+		}
+		
+		responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)
 					.data(result)
 					.build();
-		}
-		
-		return ResponseEntity
-				.status(responseJson.getStatus())
-				.body(responseJson);
+
+		return responseJson.toResponseEntity();
 	}
 	
 	/**
@@ -70,35 +71,28 @@ public class LocationController {
 	) {
 		ResponseJson responseJson = null;
 		
+		boolean isException = true;
 		List<LocationsDto> locationsDto = null;
 		try {
 			 locationsDto = locationProcess.getLocationMediumAll(largeCity);
-		} catch (NoDataFoundException e) {
+			 isException = false;
+		} catch (BaseLocationException e) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(e.getMessage())
 					.build();
-			
-			return ResponseEntity
-					.status(responseJson.getStatus())
-					.body(responseJson);
 		}
 		
-		if (locationsDto == null || locationsDto.size() == 0) {
-			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
-		} else {
-			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(locationsDto)
-					.build();
+		if (isException) {
+			return responseJson.toResponseEntity();
 		}
 		
-		return ResponseEntity
-				.status(responseJson.getStatus())
-				.body(responseJson);
+		responseJson = ResponseJson.builder()
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(locationsDto)
+				.build();
+
+		return responseJson.toResponseEntity();
 	}
 }
