@@ -1,4 +1,4 @@
-package com.acorn.model;
+package com.acorn.process;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,12 +29,12 @@ import com.acorn.repository.ReviewImagesRepository;
 import com.acorn.repository.ReviewsRepository;
 
 @Repository
-public class ReviewsModel {
+public class ReviewsProcess {
 	private MembersMainRepository membersMainRepository;
 	private EateriesRepository eateriesRepository;
 	private ReviewsRepository reviewsRepository;	
 	private ReviewImagesRepository reviewImagesRepository;
-	public ReviewsModel(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
+	public ReviewsProcess(ReviewsRepository reviewsRepository,ReviewImagesRepository reviewImagesRepository
 			,MembersMainRepository membersMainRepository, EateriesRepository eateriesRepository) {
 		this.reviewsRepository = reviewsRepository;
 		this.reviewImagesRepository=reviewImagesRepository;
@@ -41,14 +44,14 @@ public class ReviewsModel {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 	//member_no으로 ReviewResponseDto리스트 조회
-	public List<ReviewResponseDto> getReviewsByMemberNo(String memberNo){
-		return reviewsRepository.getReviewsByMemberNo(memberNo).stream()
-				.map(review -> getReviewResponseDto(review)).toList();
+	public Page<ReviewResponseDto> getReviewsByMemberNo(String memberNo,int page){
+		Pageable pageable = PageRequest.of(page, 10);
+		return reviewsRepository.getReviewsByMemberNo(pageable,memberNo).map(review -> getReviewResponseDto(review));
 	}
 	//eatery_no으로 ReviewResponseDto리스트 조회
-	public List<ReviewResponseDto> getReviewsByEateryNo(String eateryNo){
-		return reviewsRepository.getReviewsByEateryNo(eateryNo).stream()
-				.map(review -> getReviewResponseDto(review)).toList();
+	public Page<ReviewResponseDto> getReviewsByEateryNo(String eateryNo,int page){
+		Pageable pageable = PageRequest.of(page, 10);
+		return reviewsRepository.getReviewsByEateryNo(pageable,eateryNo).map(review -> getReviewResponseDto(review));
 	}
 	//review_no에 해당하는 ReviewImagesResponseDto리스트 조회
 	public List<ReviewImagesResponseDto> getReviewImagesByReviewNo(String reviewNo){
@@ -61,7 +64,6 @@ public class ReviewsModel {
 				.no(reviews.getNo())
 				.rating(reviews.getRating())
 				.content(reviews.getContent())
-				.hasPhoto(reviews.getHasPhoto())
 				.createdAt(reviews.getCreatedAt())
 				.updatedAt(reviews.getUpdatedAt())
 				.reviewMembersDto(ReviewMembersDto.toDto(reviews.getMembersMain()))
@@ -81,7 +83,6 @@ public class ReviewsModel {
 		return Reviews.builder()
 				.rating(dto.getRating())
 				.content(dto.getContent())
-				.hasPhoto(dto.getHasPhoto())
 				.membersMain(membersMainRepository.findById(dto.getMemberNo()).get())
 				.eateries(eateriesRepository.findById(dto.getEateryNo()).get())
 				.build();
@@ -92,7 +93,6 @@ public class ReviewsModel {
 				.no(dto.getNo())
 				.rating(dto.getRating())
 				.content(dto.getContent())
-				.hasPhoto(dto.getHasPhoto())
 				.membersMain(membersMainRepository.findById(dto.getMemberNo()).get())
 				.eateries(eateriesRepository.findById(dto.getEateryNo()).get())
 				.build();
@@ -122,7 +122,7 @@ public class ReviewsModel {
 	@Transactional
 	public void registReview(ReviewRequestDto inputDto,List<MultipartFile> files) throws Exception {
 		Reviews review= reviewsRepository.save(setReviewRequestDtoToEntityForInsert(inputDto));
-		if(inputDto.getHasPhoto()) {
+		if(!files.isEmpty()) {
 			registReviewImages(review,files);
 		}
 	}
@@ -174,8 +174,8 @@ public class ReviewsModel {
 	//review 수정
 	@Transactional
 	public void updateReview(String reviewNo,ReviewRequestDto inputDto, List<MultipartFile> files) throws Exception {
-		reviewsRepository.save(setReviewRequestDtoToEntityForUpdate(inputDto));
-		if(inputDto.getHasPhoto()) {
+								reviewsRepository.save(setReviewRequestDtoToEntityForUpdate(inputDto));
+		if(!files.isEmpty()) {
 			updateReviewImage(reviewNo, files);
 		}else {
 			reviewImagesRepository.deleteAllById(reviewImagesRepository.findAllNoByReviewNo(reviewNo));

@@ -36,14 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/main")
 @RequiredArgsConstructor
 public class EateriesMainController {
-
 	private final LocationProcess locationProcess;
 	private final EateriesWithApiProcess eateriesWithApiProcess;
 	private final LocationConverter locationConverter;
 	private final KeywordSearchProcess keywordSearchProcess;
 	private final EateriesMainProcess eateriesMainProcess;
-
-	// 카카오 API - "키워드로 장소 검색하기"에 따르면 최대 페이지의 사이즈는 15개까지만 요청 가능.
 	private final int MAX_PAGE_SIZE = 15;
 
 	/**
