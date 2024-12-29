@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.acorn.entity.Comment;
-import com.acorn.entity.Eateries;
-import com.acorn.entity.Members;
+import com.acorn.entity.Comments;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.repository.MembersRepository;
 
@@ -53,10 +51,10 @@ public class CommentsDto {
     }
 
     // Dto -> Entity
-    public Comment toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
-        return Comment.builder()
+    public Comments toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
+        return Comments.builder()
 	        .content(this.content)
-	        .likesCount(this.likesCount)
+//	        .likesCount(this.likesCount)
 	        .isDeleted(this.isDeleted)
 	        .eatery(eateryRepository.findById(this.eateryNo).orElseThrow(()
 	        	-> new EntityNotFoundException("식당번호에 해당하는 식당을 찾을 수 없습니다.")))
