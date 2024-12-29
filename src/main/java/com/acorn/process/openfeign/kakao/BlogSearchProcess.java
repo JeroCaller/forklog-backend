@@ -29,7 +29,10 @@ public class BlogSearchProcess {
 		BlogResponseDto responseDto 
 			= kakaoRestOpenFeign.getEateryBlog(requestDto);
 		BlogDocumentsDto result = null;
-		if (responseDto.getDocuments() != null) {
+		if (responseDto != null && 
+			responseDto.getDocuments() != null &&
+			responseDto.getDocuments().size() != 0
+		) {
 			result = responseDto.getDocuments().getFirst();
 		}
 		return result;

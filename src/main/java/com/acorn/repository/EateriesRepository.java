@@ -1,6 +1,8 @@
 package com.acorn.repository;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,4 +48,5 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 			Pageable pageRequset
 	);
 	
+	Optional<Eateries> findByNameAndAddress(String name, String address);
 }
