@@ -3,32 +3,32 @@ package com.acorn.process;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.acorn.dto.EateriesDto;
-import com.acorn.dto.LocationSplitDto;
 import com.acorn.dto.openfeign.kakao.blog.BlogDocumentsDto;
 import com.acorn.dto.openfeign.kakao.image.ImageDocumentDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordDocumentDto;
+import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
 import com.acorn.process.openfeign.kakao.BlogSearchProcess;
 import com.acorn.process.openfeign.kakao.ImageSearchProcess;
+import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
 import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
+import com.acorn.response.ResponseJson;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * API로부터 가져온 데이터를 eateries 테이블에 저장하고, 그와 동시에 Eateries 엔티티를 반환하여 음식점 정보를 클라이언트에
- * 전송할 수 있게끔 하는 클래스.
+ * 대용량의 API 데이터 호출하여 DB에 저장하는 용도의 서비스 클래스.
+ * 
+ * API 호출은 초기 DB 저장용으로만 사용한다.
  * 
  * API - DB 연동 로직이 긴 관계로, 음식점과 관계된 다른 로직 작성 필요 시 별도의 클래스에 작성 요망.
  * 
@@ -40,21 +40,67 @@ public class EateriesWithApiProcess {
 	private final EateriesRepository eateriesRepository;
 	private final CategoriesRepository categoriesRepository;
 	private final CategoryGroupsRepository categoryGroupsRepository;
-	private final LocationProcess locationProcess;
 	private final ImageSearchProcess imageSearchProcess;
 	private final BlogSearchProcess blogSearchProcess;
-	
-	// saveApi() 메서드 내에서 DB 내 조회되지 않은 주소 수집용.
-	private final List<String> failedLocations = new ArrayList<String>();
+	private final KeywordSearchProcess keywordSearchProcess;
 	
 	/**
-	 * saveApi() 메서드 내에서 DB 내 조회되지 않은 주소 수집한 내용 반환.
+	 * 대용량의 API 데이터 호출하여 DB에 저장.
 	 * 
 	 * @author JeroCaller (JJH)
+	 * @param searchKeyword - API의 검색어 요청 파라미터
+	 * @param startPage - API 응답 데이터 상 가져오기 시작하고자 하는 페이지 번호.
+	 * @param requestApiDataNum - API로부터 요청하여 가져올 총 데이터 수. 예) 300개
 	 * @return
 	 */
-	public List<String> getFailedLocations() {
-		return failedLocations;
+	public ResponseJson saveEateriesAll(
+			String searchKeyword, 
+			int startPage, 
+			int requestApiDataNum
+	) {
+		ResponseJson responseJson = null;
+		
+		int calledDataNum = 0;
+		int currentPage = startPage;
+		
+		while (calledDataNum < requestApiDataNum) {
+			KeywordResponseDto apiResult = keywordSearchProcess
+					.getApiResult(searchKeyword, currentPage);
+			
+			if (apiResult.getDocuments() == null || apiResult.getDocuments().size() == 0) {
+				String message = "조회 결과 없음.";
+				log.info(message);
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.NOT_FOUND)
+						.message(message)
+						.data(calledDataNum)
+						.build();
+				return responseJson;
+			}
+			
+			calledDataNum += saveApi(apiResult.getDocuments());
+			
+			// API 검색 상 현재 페이지가 끝 페이지이므로 break
+			if (apiResult.getMeta().isEnd()) {
+				String message = "마지막 응답 페이지 도달로 API DB 저장 작업 조기 종료.";
+				log.info(message);
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.PARTIAL_CONTENT) // 206
+						.message(message)
+						.data(calledDataNum)
+						.build();
+				return responseJson;
+			}
+			++currentPage;
+		}
+		
+		responseJson = ResponseJson.builder()
+				.status(HttpStatus.OK)
+				.message("DB 영속화 작업 완료")
+				.data(calledDataNum)
+				.build();
+		log.info("현재 페이지 수: " + currentPage);
+		return responseJson;
 	}
 
 	/**
@@ -64,8 +110,7 @@ public class EateriesWithApiProcess {
 	 * @param response
 	 * @return 
 	 */
-	public Page<EateriesDto> saveApi(List<KeywordDocumentDto> response){
-		failedLocations.clear();
+	private int saveApi(List<KeywordDocumentDto> response){
 		List<Eateries> eateries = new ArrayList<Eateries>();
 
 		for (KeywordDocumentDto document : response) {
@@ -83,33 +128,17 @@ public class EateriesWithApiProcess {
 				categoryEntity = saveAndReturnCategory(categoryTokens[1], null);
 			}
 
-			
 			//log.info("road address name from kakao api");
 			//log.info(document.getRoadAddressName());
 			
-			// 응답 데이터로부터 나온 도로명 주소를 DB로부터 조회한 후
-			// 이를 Eateries의 외래키를 충족시키도록 하는 로직.
-			LocationSplitDto locationSplitDto
-					= locationProcess.getSplitLocation(document.getRoadAddressName());
-			//log.info("location splited");
-			//log.info(locationSplitDto.toString());
-
-			LocationRoads locationRoadsEntity 
-				= locationRoadsRepository.findByFullLocation(locationSplitDto);
-			
-			// 조회되지 않은 (도로명 포함) 주소를 기록하여 응답 메시지에 내보내기 위함.
-			if (locationRoadsEntity == null) {
-				failedLocations.add(document.getRoadAddressName());
-				continue;
-			}
-			//log.info(locationRoadsEntity.toString());
-			
-			// 검색 결과 정확성을 위해 주소 중분류까지 첨부하여 검색
+			// 검색 결과 정확성을 위해 주소 중분류까지 첨부하여 검색 
+			// (중분류는 공백 기준 분할 후 나오는 두 번째 문자열 토큰까지만을 고려.)
+			// ( 예) 경기 용인시 처인구 -> 경기 용인시 (원래는 용인시 처인구까지가 중분류임) )
 			// placeName() : 음식점명
-			String apiQuery = document.getPlaceName() + " " 
-					+ locationSplitDto.getLargeCity() + " " 
-					+ locationSplitDto.getMediumCity();
-			//log.info("apiQuery : " + apiQuery);
+			String[] addressTokens = document.getRoadAddressName().split(" ");
+			String address = addressTokens[0] + " " + addressTokens[1];
+			String apiQuery = document.getPlaceName() + " " + address;
+			log.info("apiQuery : " + apiQuery);
 			ImageDocumentDto imageDocumentDto = imageSearchProcess.getOneImage(apiQuery);
 			BlogDocumentsDto blogDocumentsDto = blogSearchProcess.getOneBlog(apiQuery);
 			
@@ -136,7 +165,7 @@ public class EateriesWithApiProcess {
 					.name(document.getPlaceName())
 					.longitude(new BigDecimal(document.getX()))
 					.latitude(new BigDecimal(document.getY()))
-//					.road(locationRoadsEntity)
+					.address(document.getRoadAddressName())
 					.category(categoryEntity)
 					.tel(document.getPhone())
 					.thumbnail(imageResult)
@@ -145,13 +174,8 @@ public class EateriesWithApiProcess {
 			eateriesRepository.save(newEateries);
 			eateries.add(newEateries);
 		}
-
-		List<EateriesDto> eateriesDto = eateries.stream()
-				.map(EateriesDto::toDto)
-				.collect(Collectors.toList());
-
-		// List<DTO> -> Page<DTO>
-		return new PageImpl<EateriesDto>(eateriesDto);
+		
+		return eateries.size();
 
 	}
 

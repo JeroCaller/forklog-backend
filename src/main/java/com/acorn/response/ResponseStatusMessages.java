@@ -23,4 +23,6 @@ public interface ResponseStatusMessages {
 	
 	String DELETE_SUCCESS = "데이터 삭제 성공";
 	String DELETE_FAILED = "데이터 삭제 실패";
+	
+	String NO_REQUEST_ARGS = "입력된 요청 인자 없음.";
 }
