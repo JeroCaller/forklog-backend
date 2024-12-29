@@ -18,6 +18,7 @@ import com.acorn.jwt.JwtUtil;
 import com.acorn.process.AuthProcess;
 import com.acorn.process.RefreshTokenProcess;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ public class AuthController {
 		return loginResponse;
 	}
 	
+	// 로그아웃
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 		ResponseEntity<?> logout = authProcess.logout(response);
