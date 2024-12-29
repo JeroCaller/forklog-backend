@@ -37,7 +37,6 @@ public class EateriesDto {
 	
 	private CategoriesDto categoryDto;
 	
-	
 	public static EateriesDto toDto(Eateries entity) {
 		return EateriesDto.builder()
 				.no(entity.getNo())
