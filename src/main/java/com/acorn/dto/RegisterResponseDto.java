@@ -23,7 +23,7 @@ public class RegisterResponseDto extends ResponseDto {
 	}
 
 	// 닉네임 중복 시 응답 메소드
-	public static ResponseEntity<ResponseDto> duplicateId() {
+	public static ResponseEntity<ResponseDto> duplicateNickname() {
 		ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_NICKNAME, ResponseMessage.DUPLICATE_NICKNAME);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 	}

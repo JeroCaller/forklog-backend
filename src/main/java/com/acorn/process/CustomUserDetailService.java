@@ -20,11 +20,15 @@ public class CustomUserDetailService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 			
-		Members membersMain = membersRepository.findByEmail(email);
+		Members members = membersRepository.findByEmail(email);
+		
+		if (members == null) {
+            throw new UsernameNotFoundException("가입된 계정을 찾을 수 없습니다.");
+        }
 		
 		return User.builder()
-				.username(membersMain.getEmail())
-				.password(membersMain.getPassword())
+				.username(members.getEmail())
+				.password(members.getPassword())
 				.build();
 	}
 }

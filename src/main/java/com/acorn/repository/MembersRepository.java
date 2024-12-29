@@ -3,7 +3,6 @@ package com.acorn.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.acorn.entity.Members;
 
 public interface MembersRepository extends JpaRepository<Members, Integer> {
@@ -15,6 +14,9 @@ public interface MembersRepository extends JpaRepository<Members, Integer> {
 
 	// 휴대전화 중복 검사
 	boolean existsByPhone(String phone);
+	
+	// 닉네임 중복 검사
+	boolean existsByNickname(String nickname);
 
 	// 이메일 찾기
 	Optional<Members> findByPhone(String phone);

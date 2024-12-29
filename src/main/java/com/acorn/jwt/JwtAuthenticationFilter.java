@@ -47,15 +47,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						// 리프레시 토큰을 통해 새로운 액세스 토큰 생성
 						String newAccessToken = jwtUtil.createAccessToken(email);
 						
+                        Cookie newAccessTokenCookie = new Cookie("accessToken", newAccessToken);
+                        newAccessTokenCookie.setHttpOnly(true);
+                        newAccessTokenCookie.setSecure(false);
+                        newAccessTokenCookie.setPath("/");
+                        newAccessTokenCookie.setMaxAge(3600);
+                        
+                        // 새로 생성한 액세스 토큰을 응답 헤더에 추가
+						response.setHeader("Authorization", "Bearer " + newAccessToken);
+						// 새로 생성한 액세스 토큰을 응답 쿠키에 추가
+						response.addCookie(new Cookie("accessToken", newAccessToken));  // 새로운 액세스 토큰을 쿠키에 저장
+						
 						UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 						
 						Authentication authentication = 
 								new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-						// 새로 생성한 액세스 토큰을 응답 헤더에 추가
-						response.setHeader("Authorization", "Bearer " + newAccessToken);
 						
 						SecurityContextHolder.getContext().setAuthentication(authentication);
+						
+						// 여기서 return 해줘야 리프레시 토큰으로 재발급된 액세스 토큰이 반영된 후 필터 체인이 더 이상 진행되지 않음
+						filterChain.doFilter(request, response);
+						return;
 					}
 				}
 				// 리프레시 토큰도 없다면 그대로 필터 진행
@@ -109,7 +122,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-		return null; // 엑세스 토큰이 없으면 null 반환
+		return accessToken;
 	}
 
 	// 리프레시 토큰 추출
@@ -132,6 +145,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-		return null; // 엑세스 토큰이 없으면 null 반환
+		return refreshToken;
 	}
 }
