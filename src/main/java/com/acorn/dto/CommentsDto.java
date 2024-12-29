@@ -32,7 +32,7 @@ public class CommentsDto {
     // Entity -> Dto
     public static CommentsDto fromEntity(Comments comment) {
         List<CommentsDto> childCommentDtos = new ArrayList<>();
-        if (comment.hasChildComments()) {   // 자식 댓글이 있을 경우, 각 자식 댓글을 DTO로 변환하여 리스트에 추가
+        if (comment.hasChildComments()) { // 자식 댓글이 있을 경우, 각 자식 댓글을 DTO로 변환하여 리스트에 추가
             for (Comments childComment : comment.getChildComments()) {
                 childCommentDtos.add(fromEntity(childComment));
             }
@@ -46,7 +46,7 @@ public class CommentsDto {
             .eateryNo(comment.getEatery() != null ? comment.getEatery().getNo() : null)
             .memberNo(comment.getMember() != null ? comment.getMember().getNo() : null)
             .parentCommentNo(comment.getParentComment() != null ? comment.getParentComment().getNo() : null)
-            .childComments(childCommentDtos)   // childComments 필드에 자식 댓글 DTO 리스트 추가
+            .childComments(childCommentDtos) // childComments 필드에 자식 댓글 리스트 추가
             .build();
     }
 
@@ -54,14 +54,12 @@ public class CommentsDto {
     public Comments toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
         return Comments.builder()
 	        .content(this.content)
-//	        .likesCount(this.likesCount)
 	        .isDeleted(this.isDeleted)
 	        .eatery(eateryRepository.findById(this.eateryNo).orElseThrow(()
-	        	-> new EntityNotFoundException("식당번호에 해당하는 식당을 찾을 수 없습니다.")))
+	        	-> new EntityNotFoundException("식당을 찾을 수 없습니다.")))
 	        .member(memberRepository.findById(this.memberNo).orElseThrow(()
-	        	-> new EntityNotFoundException("회원번호에 해당하는 회원을 찾을 수 없습니다.")))
-	        // .parentComment(this.parentCommentNo != null ? new Comment(this.parentCommentNo) : null)
+	        	-> new EntityNotFoundException("회원을 찾을 수 없습니다.")))
+	        .parentComment(this.parentCommentNo != null ? Comments.builder().no(this.parentCommentNo).build() : null)
 	        .build();
     }
-
 }
