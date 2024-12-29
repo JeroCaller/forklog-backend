@@ -165,7 +165,7 @@ public class EateriesWithApiProcess {
 					.name(document.getPlaceName())
 					.longitude(new BigDecimal(document.getX()))
 					.latitude(new BigDecimal(document.getY()))
-					.address(address)
+					.address(document.getRoadAddressName())
 					.category(categoryEntity)
 					.tel(document.getPhone())
 					.thumbnail(imageResult)

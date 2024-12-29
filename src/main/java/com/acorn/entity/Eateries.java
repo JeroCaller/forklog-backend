@@ -34,7 +34,7 @@ public class Eateries {
 	@Column(length = 11)
 	private int viewCount;
 	
-	@Column(length = 500)
+	@Column(length = 1000)
 	private String thumbnail;
 	
 	@Column(columnDefinition = "text") // mysql text type
