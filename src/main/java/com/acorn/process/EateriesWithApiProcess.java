@@ -3,6 +3,7 @@ package com.acorn.process;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
+import com.acorn.exception.api.DuplicatedInDBException;
 import com.acorn.process.openfeign.kakao.BlogSearchProcess;
 import com.acorn.process.openfeign.kakao.ImageSearchProcess;
 import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
@@ -21,6 +23,7 @@ import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.response.ResponseJson;
+import com.acorn.utils.ListUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +81,20 @@ public class EateriesWithApiProcess {
 				return responseJson;
 			}
 			
-			calledDataNum += saveApi(apiResult.getDocuments());
+			try {
+				calledDataNum += saveApi(apiResult.getDocuments());
+			} catch (DuplicatedInDBException e) {
+				calledDataNum += e.getSavedNum();
+				
+				// 중복 문제는 특정 페이지를 넘어가면 발생하는 것으로 보임. 
+				// 그 이전 페이지까지는 정상적으로 처리되므로 Http status를 PARTIAL_CONTENT로 설정함.
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.PARTIAL_CONTENT) // 206
+						.message(e.getMessage() + " " + e.getDuplicated().toString())
+						.data(calledDataNum)
+						.build();
+				return responseJson;
+			}
 			
 			// API 검색 상 현재 페이지가 끝 페이지이므로 break
 			if (apiResult.getMeta().isEnd()) {
@@ -109,11 +125,27 @@ public class EateriesWithApiProcess {
 	 * @author JeroCaller (JJH)
 	 * @param response
 	 * @return 
+	 * @throws DuplicatedInDBException 
 	 */
-	private int saveApi(List<KeywordDocumentDto> response){
+	private int saveApi(List<KeywordDocumentDto> response) throws DuplicatedInDBException {
 		List<Eateries> eateries = new ArrayList<Eateries>();
 
 		for (KeywordDocumentDto document : response) {
+			// 확인 결과 kaka API에서 특정 페이지 이상 넘기면 아무리 페이지 번호를 증가시켜도
+			// 똑같은 데이터가 반복적으로 응답되는 현상을 확인함.
+			// 따라서 중복 데이터 삽입을 방지.
+			Optional<Eateries> duplicated = eateriesRepository
+					.findByNameAndAddress(
+							document.getPlaceName(), 
+							document.getRoadAddressName()
+					);	
+			if (duplicated.isPresent()) {
+				DuplicatedInDBException customException = new DuplicatedInDBException();
+				customException.setDuplicated(duplicated.get());
+				customException.setSavedNum(eateries.size());
+				throw customException;
+			}
+			
 			// 맨 첫 요소는 불필요한 정보.
 			// API에서 제공하는 카테고리 정보의 길이가 동적이고, 어디까지 상세 정보를 제공하는 지 몰라
 			// " > "을 구분자로 구분한 파편 정보들을 별도의 DTO가 아닌 String[]에 담도록 함.
@@ -135,8 +167,17 @@ public class EateriesWithApiProcess {
 			// (중분류는 공백 기준 분할 후 나오는 두 번째 문자열 토큰까지만을 고려.)
 			// ( 예) 경기 용인시 처인구 -> 경기 용인시 (원래는 용인시 처인구까지가 중분류임) )
 			// placeName() : 음식점명
-			String[] addressTokens = document.getRoadAddressName().split(" ");
-			String address = addressTokens[0] + " " + addressTokens[1];
+			String[] addressTokens = null;
+			if (!document.getRoadAddressName().trim().isEmpty()) {
+				addressTokens = document.getRoadAddressName().split(" ");
+			} 
+			String address = "";
+			
+			// API로부터 조회된 음식점의 도로명 정보가 아예 없는 경우도 있음.
+			if (addressTokens != null) {
+				address = addressTokens[0] + " " + addressTokens[1];
+			}
+
 			String apiQuery = document.getPlaceName() + " " + address;
 			log.info("apiQuery : " + apiQuery);
 			ImageDocumentDto imageDocumentDto = imageSearchProcess.getOneImage(apiQuery);
@@ -146,19 +187,19 @@ public class EateriesWithApiProcess {
 			String blogResult = "";
 			
 			//log.info("image result");
-			if (imageDocumentDto != null) {
+			if (imageDocumentDto != null && imageDocumentDto.getImageUrl() != null) {
 				imageResult = imageDocumentDto.getImageUrl();
-				//log.info(imageDocumentDto.toString());
+				log.info(imageDocumentDto.toString());
 			} else {
-				//log.info("image NOT FOUND");
+				log.info("image NOT FOUND");
 			}
 			
 			//log.info("blog result");
-			if (blogDocumentsDto != null) {
+			if (blogDocumentsDto != null && blogDocumentsDto.getContents() != null) {
 				blogResult = blogDocumentsDto.getContents();
-				//log.info(blogDocumentsDto.toString());
+				log.info(blogDocumentsDto.toString());
 			} else {
-				//log.info("blog NOT FOUND");
+				log.info("blog NOT FOUND");
 			}
 			
 			Eateries newEateries = Eateries.builder()
