@@ -1,7 +1,5 @@
 package com.acorn.process.openfeign.kakao;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.acorn.api.openfeign.KakaoRestOpenFeign;
