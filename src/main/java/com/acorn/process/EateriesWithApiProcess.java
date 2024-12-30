@@ -23,8 +23,8 @@ import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.response.ResponseJson;
-import com.acorn.utils.ListUtil;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class EateriesWithApiProcess {
+	
 	private final EateriesRepository eateriesRepository;
 	private final CategoriesRepository categoriesRepository;
 	private final CategoryGroupsRepository categoryGroupsRepository;
@@ -53,7 +54,7 @@ public class EateriesWithApiProcess {
 	 * @author JeroCaller (JJH)
 	 * @param searchKeyword - API의 검색어 요청 파라미터
 	 * @param startPage - API 응답 데이터 상 가져오기 시작하고자 하는 페이지 번호.
-	 * @param requestApiDataNum - API로부터 요청하여 가져올 총 데이터 수. 예) 300개
+	 * @param requestApiDataNum - API로부터 요청하여 가져올 총 데이터 수. 예) 45개
 	 * @return
 	 */
 	public ResponseJson saveEateriesAll(
@@ -86,8 +87,9 @@ public class EateriesWithApiProcess {
 			} catch (DuplicatedInDBException e) {
 				calledDataNum += e.getSavedNum();
 				
-				// 중복 문제는 특정 페이지를 넘어가면 발생하는 것으로 보임. 
-				// 그 이전 페이지까지는 정상적으로 처리되므로 Http status를 PARTIAL_CONTENT로 설정함.
+				// 데이터 중복 문제는 특정 페이지를 넘어가면 발생하는 것으로 보임. 
+				// 그 이전 페이지까지는 정상적으로 처리되므로 일부 데이터만 처리되었다는 의미에서
+				// Http status를 PARTIAL_CONTENT로 설정함.
 				responseJson = ResponseJson.builder()
 						.status(HttpStatus.PARTIAL_CONTENT) // 206
 						.message(e.getMessage() + " " + e.getDuplicated().toString())
@@ -100,6 +102,8 @@ public class EateriesWithApiProcess {
 			if (apiResult.getMeta().isEnd()) {
 				String message = "마지막 응답 페이지 도달로 API DB 저장 작업 조기 종료.";
 				log.info(message);
+				// 원래 사용자가 원하고자 했던 데이터의 일부만 처리한 셈이므로 PARTIAL_CONTENT로 
+				// response HTTP status로 지정함.
 				responseJson = ResponseJson.builder()
 						.status(HttpStatus.PARTIAL_CONTENT) // 206
 						.message(message)
@@ -115,7 +119,7 @@ public class EateriesWithApiProcess {
 				.message("DB 영속화 작업 완료")
 				.data(calledDataNum)
 				.build();
-		log.info("현재 페이지 수: " + currentPage);
+		log.info("현재 페이지 수: " + (currentPage - 1));
 		return responseJson;
 	}
 
@@ -125,7 +129,7 @@ public class EateriesWithApiProcess {
 	 * @author JeroCaller (JJH)
 	 * @param response
 	 * @return 
-	 * @throws DuplicatedInDBException 
+	 * @throws DuplicatedInDBException - API로부터 가져온 데이터가 DB에 이미 있을 경우 발생하는 커스텀 예외.
 	 */
 	private int saveApi(List<KeywordDocumentDto> response) throws DuplicatedInDBException {
 		List<Eateries> eateries = new ArrayList<Eateries>();
@@ -186,7 +190,7 @@ public class EateriesWithApiProcess {
 			String imageResult = "";
 			String blogResult = "";
 			
-			//log.info("image result");
+			log.info("image result");
 			if (imageDocumentDto != null && imageDocumentDto.getImageUrl() != null) {
 				imageResult = imageDocumentDto.getImageUrl();
 				log.info(imageDocumentDto.toString());
@@ -194,7 +198,7 @@ public class EateriesWithApiProcess {
 				log.info("image NOT FOUND");
 			}
 			
-			//log.info("blog result");
+			log.info("blog result");
 			if (blogDocumentsDto != null && blogDocumentsDto.getContents() != null) {
 				blogResult = blogDocumentsDto.getContents();
 				log.info(blogDocumentsDto.toString());
@@ -221,8 +225,8 @@ public class EateriesWithApiProcess {
 	}
 
 	/**
-	 * API로부터 들어온 음식점 카테고리 정보를 DB로부터 조회하여 외래키 매핑 또는 DB 내에 해당 정보 없을 시 해당 엔티티 새 생성 및
-	 * 반환.
+	 * API로부터 들어온 음식점 카테고리 정보를 DB로부터 조회하여 외래키 매핑 또는 DB 내에 해당 정보 없을 시 
+	 * 해당 엔티티 새 생성 및 반환.
 	 * 
 	 * saveApi 메서드에서 사용됨.
 	 * 
@@ -231,6 +235,7 @@ public class EateriesWithApiProcess {
 	 * @param smallCate - 음식 소분류 카테고리
 	 * @return
 	 */
+	@Transactional
 	private Categories saveAndReturnCategory(String largeCate, String smallCate) {
 		Categories categoryEntity = null;
 

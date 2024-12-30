@@ -1,7 +1,5 @@
 package com.acorn.exception.api;
 
-import java.util.List;
-
 import com.acorn.entity.Eateries;
 
 import lombok.Getter;
