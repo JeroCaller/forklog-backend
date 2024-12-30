@@ -33,4 +33,5 @@ public class LocationProcess {
 				.map(LocationGroupsFilterDto :: toDto)
 				.collect(Collectors.toList());
 	}
+	
 }
