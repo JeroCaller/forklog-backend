@@ -58,14 +58,16 @@ public class EateriesMainProcess {
 	 * @param largeId
 	 * @param pageRequset
 	 * @return
-	 * @throws NoCategoryFoundException 
+	 * @throws NoCategoryFoundException 입력된 카테고리 대분류 ID(largeId)가 DB 
+	 * 내에 조회되지 않은 경우 발생.
 	 */
 	public Page<EateriesDto> getEateriesByLocationAndCategoryLarge(
 			String location,
 			int largeId,
 			Pageable pageRequset
 	) throws NoCategoryFoundException {
-		Optional<CategoryGroups> categoryGroupOpt = categoryGroupsRepository.findById(largeId);
+		Optional<CategoryGroups> categoryGroupOpt = categoryGroupsRepository
+				.findById(largeId);
 		categoryGroupOpt.orElseThrow(
 				() -> new NoCategoryFoundException(
 						"카테고리 대분류 ID: " + String.valueOf(largeId)
@@ -90,7 +92,8 @@ public class EateriesMainProcess {
 	 * @param smallId
 	 * @param pageRequest
 	 * @return
-	 * @throws NoCategoryFoundException 
+	 * @throws NoCategoryFoundException 입력된 카테고리 소분류 ID(largeId)가 DB 
+	 * 내에 조회되지 않은 경우 발생.
 	 */
 	public Page<EateriesDto> getEateriesByLocationAndCategorySmall(
 			String location,
@@ -100,7 +103,7 @@ public class EateriesMainProcess {
 		Optional<Categories> categoryOpt = categoriesRepository.findById(smallId);
 		categoryOpt.orElseThrow(() -> new NoCategoryFoundException(String.valueOf(smallId)));
 		Categories category = categoryOpt.get();
-		log.info("조회된 카테고리: " + category.toString() + " " + category.getGroup().getName());
+		//log.info("조회된 카테고리: " + category.toString() + " " + category.getGroup().getName());
 		Page<Eateries> eateries = eateriesRepository
 				.findByAddressContainingAndCategory(location, category, pageRequest);
 		return eateries.map(EateriesDto :: toDto);

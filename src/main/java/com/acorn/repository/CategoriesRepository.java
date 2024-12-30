@@ -17,6 +17,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 	/**
 	 * 음식 카테고리 대분류, 중분류와 일치하는 유일한 Categories 엔티티 조회.
 	 * 
+	 * @author JeroCaller (JJH)
 	 * @param largeCate
 	 * @param smallCate
 	 * @return

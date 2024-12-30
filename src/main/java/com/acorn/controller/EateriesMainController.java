@@ -70,6 +70,9 @@ public class EateriesMainController {
 	/**
 	 * 지역 및 음식 카테고리 대분류 두 검색 조건이 적용되어 검색된 음식점 정보들을 반환.
 	 * 
+	 * 예를 들어 지역: 서울, 카테고리: 한식 입력 시 서울 지역 내 한식 카테고리에 해당하는 
+	 * 모든 음식점 정보들을 페이징하여 반환.
+	 * 
 	 * @author JeroCaller (JJH)
 	 * @param location
 	 * @param largeId
@@ -86,11 +89,8 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		// TODO 로직 구현
 		Pageable pageRequest = PageRequest.of(page, size);
-		
 		Page<EateriesDto> eateries = null;
-		
 		try {
 			eateries = eateriesMainProcess
 					.getEateriesByLocationAndCategoryLarge(
@@ -123,7 +123,9 @@ public class EateriesMainController {
 	}
 	
 	/**
-	 *지역 및 음식 카테고리 소분류 두 검색 조건이 적용되어 검색된 음식점 정보들을 반환.
+	 * 지역 및 음식 카테고리 소분류 두 검색 조건이 적용되어 검색된 음식점 정보들을 반환.
+	 *
+	 * 카테고리 소분류 ID만 있어도 카테고리 대분류를 알아낼 수 있음.
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @param location
