@@ -29,7 +29,7 @@ public class CategoryController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("/")
+	@GetMapping("/filter")
 	public ResponseEntity<ResponseJson> getCategoryAll() {
 		ResponseJson responseJson = null;
 		
