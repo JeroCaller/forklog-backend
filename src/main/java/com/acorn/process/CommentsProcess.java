@@ -1,8 +1,7 @@
 package com.acorn.process;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,15 +36,8 @@ public class CommentsProcess {
 	
 	// Read
 	@Transactional(readOnly = true)
-	public List<CommentsDto> getCommentsByEatery(int eateryNo) {
-		return commentRepository.findByEateryNoOrderByCreatedAtDesc(eateryNo)
-			.stream().map(CommentsDto::fromEntity).collect(Collectors.toList());
-	}
-	
-	@Transactional(readOnly = true)
-	public List<CommentsDto> getCommentsByMember(int memberNo) {
-		return commentRepository.findByMemberNoOrderByCreatedAtDesc(memberNo)
-			.stream().map(CommentsDto::fromEntity).collect(Collectors.toList());
+	public Page<CommentsDto> getCommentsByEatery(int eateryNo, Pageable pageable) {
+		return commentRepository.findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(eateryNo, pageable).map(CommentsDto::fromEntity);
 	}
 	
 	// Update: 이건 @Transactional 없이 정상작동
