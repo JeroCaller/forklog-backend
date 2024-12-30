@@ -45,7 +45,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**").permitAll() // 특정 요청 허용
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/uploads/**", "/main/**").permitAll() // 특정 요청 허용
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
@@ -62,7 +62,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 	// CORS 설정 메서드
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOriginPattern("*"); // React의 로컬 서버 주소
+		configuration.addAllowedOriginPattern("http://localhost:3000"); // React의 로컬 서버 주소
 		configuration.setAllowedMethods(List.of("*")); // 모든 HTTP 메서드 허용
 		configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 인증 정보 포함 요청 허용 (쿠키 등)

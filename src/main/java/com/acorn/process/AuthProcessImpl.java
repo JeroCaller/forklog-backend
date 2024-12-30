@@ -1,5 +1,6 @@
 package com.acorn.process;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -8,9 +9,12 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +25,13 @@ import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.RegisterResponseDto;
 import com.acorn.dto.ResponseDto;
 import com.acorn.entity.Members;
+import com.acorn.entity.RefreshToken;
 import com.acorn.jwt.JwtUtil;
 import com.acorn.repository.MembersRepository;
+import com.acorn.repository.RefreshTokenRepository;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +42,8 @@ public class AuthProcessImpl implements AuthProcess {
 	private final JwtUtil jwtUtil;
 	private final AuthenticationManager authenticationManager;
 	private final MembersRepository membersRepository;
+	private final CustomUserDetailService customUserDetailService;
+	//private final RefreshTokenRepository refreshTokenRepository;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
 
@@ -50,7 +59,6 @@ public class AuthProcessImpl implements AuthProcess {
 				return RegisterResponseDto.duplicateEmail();
 
 			String phone = dto.getPhone();
-			//boolean existedPhone = membersDetailRepository.existsByPhone(phone);
 			boolean existedPhone = membersRepository.existsByPhone(phone);
 			if (existedPhone)
 				return RegisterResponseDto.duplicatePhone();
@@ -71,55 +79,86 @@ public class AuthProcessImpl implements AuthProcess {
 
 		return RegisterResponseDto.success(); // 성공 응답
 	}
-
+	
 	// 로그인
 	@Override
-	public ResponseEntity<? super LoginRepsonseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse response) {
-		
-		String email = dto.getEmail();
-		String password = dto.getPassword();
-		try {
-			UsernamePasswordAuthenticationToken token = 
-					new UsernamePasswordAuthenticationToken(email, password);
-			
-			Authentication authentication = authenticationManager.authenticate(token);
-			
-			String accessToken = jwtUtil.createAccessToken(email);
-			String refreshToken = jwtUtil.createRefreshToken(email);
-			
-			Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false);
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge(3600);
-			response.addCookie(accessTokenCookie);
-			
-			Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false);
-			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(604800);
-			response.addCookie(refreshTokenCookie);
-			
-			System.out.println("Login accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
-			System.out.println("Login refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
-			
-			return ResponseEntity.ok() // 로그인 성공 시 응답
-					.body(LoginRepsonseDto.success(accessToken, refreshToken)); // 로그인 성공 응답 반환
-			
-		} catch (Exception e) {
-			//return ResponseDto.databaseError(); // 실패 시 데이터베이스 오류 응답
-			e.printStackTrace();
-		    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-		            .body("로그인 중 오류 발생"+ e.getMessage());
-		}
+	public ResponseEntity<? super LoginRepsonseDto> login(@RequestBody LoginRequestDto dto,
+	                                                      HttpServletResponse response) {
+	    String email = dto.getEmail();
+	    String password = dto.getPassword();
+
+	    try {
+	        // 이메일 유효성 검사
+	        UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
+	        if (userDetails == null) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                                 .body("가입된 계정이 없습니다.");
+	        }
+
+	        // 비밀번호 유효성 검사
+	        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                                 .body("이메일 또는 비밀번호가 잘못되었습니다.");
+	        }
+
+	        // JWT 토큰 생성
+	        String accessToken = jwtUtil.createAccessToken(email);
+	        String refreshToken = jwtUtil.createRefreshToken(email);
+
+	        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+	        accessTokenCookie.setHttpOnly(true);
+	        accessTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
+	        accessTokenCookie.setPath("/");
+	        accessTokenCookie.setMaxAge(3600);
+	        response.addCookie(accessTokenCookie);
+
+	        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+	        refreshTokenCookie.setHttpOnly(true);
+	        refreshTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
+	        refreshTokenCookie.setPath("/");
+	        refreshTokenCookie.setMaxAge(604800);
+	        response.addCookie(refreshTokenCookie);
+
+	        return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
+
+	    } catch (BadCredentialsException e) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                             .body("이메일 또는 비밀번호가 잘못되었습니다.");
+	    } catch (UsernameNotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                             .body("가입된 계정이 없습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("로그인 중 오류 발생: " + e.getMessage());
+	    }
 	}
-	
+
 	// 로그아웃
 	@Override
 	public ResponseEntity<?> logout(HttpServletResponse response) {
-		
+
 		try {
+//			// 클라이언트로부터 받은 리프레시 토큰을 쿠키에서 추출
+//			String refreshToken = null;
+//			Cookie[] cookies = request.getCookies();
+//			if (cookies != null) {
+//				for (Cookie cookie : cookies) {
+//					System.out.println("Cookie name: " + cookie.getName() + ", Cookie value: " + cookie.getValue());
+//					if ("refreshToken".equals(cookie.getName())) {
+//						refreshToken = cookie.getValue();
+//						System.out.println("Found refreshToken in cookie: " + refreshToken);
+//						break;
+//					}
+//				}
+//			}
+//			System.out.println("Received refreshToken: " + refreshToken); // 로그 찍어서 토큰 값 확인
+//
+//			if (refreshToken != null) {
+//				// 리프레시 토큰을 DB에서 삭제
+//				refreshTokenRepository.deleteByRefreshToken(refreshToken);
+//			}
+
 			// 엑세스 토큰 쿠키 제거
 			Cookie accessTokenCookie = new Cookie("accessToken", null);
 			accessTokenCookie.setHttpOnly(true);
@@ -127,7 +166,7 @@ public class AuthProcessImpl implements AuthProcess {
 			accessTokenCookie.setPath("/");
 			accessTokenCookie.setMaxAge(0);
 			response.addCookie(accessTokenCookie);
-			
+
 			// 엑세스 토큰 쿠키 제거
 			Cookie refreshTokenCookie = new Cookie("refreshToken", null);
 			refreshTokenCookie.setHttpOnly(true);
@@ -135,16 +174,18 @@ public class AuthProcessImpl implements AuthProcess {
 			refreshTokenCookie.setPath("/");
 			refreshTokenCookie.setMaxAge(0);
 			response.addCookie(refreshTokenCookie);
-			
+
 			SecurityContextHolder.clearContext();
-			
-			System.out.println("Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
-			System.out.println("Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
+
+			System.out.println(
+					"Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
+			System.out.println(
+					"Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
 
 			return ResponseEntity.ok().body("로그아웃 성공"); // 로그아웃 성공 시 응답
 		} catch (Exception e) {
 			return ResponseDto.databaseError();
-		} 
+		}
 	}
 
 	// 이메일 중복 체크
@@ -160,7 +201,6 @@ public class AuthProcessImpl implements AuthProcess {
 	// 이메일 찾기
 	@Override
 	public ResponseEntity<Map<String, Object>> findEmail(Map<String, String> user) {
-		//Optional<MembersDetail> memberOptional = membersDetailRepository.findByPhone(user.get("phone"));
 		Optional<Members> memberOptional = membersRepository.findByPhone(user.get("phone"));
 
 		Map<String, Object> response = new HashMap();
@@ -221,4 +261,18 @@ public class AuthProcessImpl implements AuthProcess {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이메일로 등록된 사용자가 없습니다."); // 해당 이메일으로 등록된 계정이 없을 경우
 		}
 	}
+
+//	// 리프레쉬 토큰 DB 저장
+//	private void saveRefreshToken(String email, String refreshToken) {
+//		// 기존에 리프레시 토큰이 있으면 삭제하고 새로 저장
+//		Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
+//		existingToken.ifPresent(refreshTokenRepository::delete); // 기존 리프레시 토큰 삭제
+//
+//		// 새로운 리프레시 토큰 저장
+//		RefreshToken refreshTokenEntity = new RefreshToken();
+//		refreshTokenEntity.setEmail(email);
+//		refreshTokenEntity.setRefreshToken(refreshToken);
+//		refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusWeeks(1)); // 리프레시 토큰의 만료일을 설정 (1주일)
+//		refreshTokenRepository.save(refreshTokenEntity);
+//	}
 }

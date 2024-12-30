@@ -17,11 +17,11 @@ public class KeywordSearchProcess {
 	private final KakaoRestOpenFeign kakaoRestOpenFeign;
 	
 	/**
+	 * 문자열 검색어로 API 검색.
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @param searchKeyword
 	 * @param page
-	 * @param locationRoads - 검색 지역 DB 조회용
 	 * @return
 	 */
 	public KeywordResponseDto getApiResult(String searchKeyword, int page) {

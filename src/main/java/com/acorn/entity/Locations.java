@@ -2,35 +2,37 @@ package com.acorn.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
+/**
+ * 지역 필터 등의 이유로 필요한 엔티티
+ */
 @Entity
+@Table(name = "locations")
 @Getter
-@Builder
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString // For Logging
-public class Categories {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
-	private Integer no;
+@Builder
+public class Locations {
 	
-	@Column(nullable = false, length = 255)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(nullable = false, length = 11)
+	private int no;
+	
+	@Column(nullable = false, length = 50)
 	private String name;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "group_no", referencedColumnName = "no")
-	private CategoryGroups group;
+	private LocationGroups groups;
 }

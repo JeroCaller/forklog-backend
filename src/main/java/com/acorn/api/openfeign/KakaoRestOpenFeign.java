@@ -1,5 +1,7 @@
 package com.acorn.api.openfeign;
 
+import java.util.Optional;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +54,7 @@ public interface KakaoRestOpenFeign {
 	 * @return
 	 */
 	@GetMapping(value = "/search/image")
-	ImageResponseDto getEateryImage(@SpringQueryMap ImageRequestDto requestDto);
+ 	ImageResponseDto getEateryImage(@SpringQueryMap ImageRequestDto requestDto);
 	
 	/**
 	 * 특정 음식점의 상세 설명을 위해 블로그의 일부 글을 발췌
