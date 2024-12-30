@@ -18,38 +18,38 @@ import com.acorn.process.CommentsProcess;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/main/comments")
+@RequestMapping("/main/eateries/")
 @RequiredArgsConstructor
 public class CommentsController {
 	private final CommentsProcess process;
 	
 	// -- Create --
-	@PostMapping
+	@PostMapping("comments")
 	public ResponseEntity<CommentsDto> createComment(@RequestBody CommentsDto dto) {
 		return ResponseEntity.ok(process.createComment(dto));
 	}
 	
 	// -- Read --
 	// 해당 식당에 작성된 댓글 목록 읽기
-	@GetMapping("/eateries/{eateryNo}")
+	@GetMapping("{eateryNo}/comments")
 	public ResponseEntity<List<CommentsDto>> getCommentsByEatery(@PathVariable("eateryNo") int eateryNo) {
 		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo));
 	}
 
 	// 해당 회원이 작성한 댓글 목록 읽기
-	@GetMapping("/members/{memberNo}")
-	public ResponseEntity<List<CommentsDto>> getCommentsByMember(@PathVariable("memberNo") int memberNo) {
-		return ResponseEntity.ok(process.getCommentsByMember(memberNo));
-	}
+//	@GetMapping("/members/{memberNo}")
+//	public ResponseEntity<List<CommentsDto>> getCommentsByMember(@PathVariable("memberNo") int memberNo) {
+//		return ResponseEntity.ok(process.getCommentsByMember(memberNo));
+//	}
 	
 	// -- Update --
-	@PutMapping("/comments/{no}")
+	@PutMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> updateComment(@PathVariable("no") int no, @RequestBody CommentsDto dto){
 		return ResponseEntity.ok(process.updateComment(no, dto));
 	}
 	
 	// -- Delete --
-	@DeleteMapping("/comments/{no}")
+	@DeleteMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> deleteComment(@PathVariable("no") int no) {
 		process.deleteComment(no);
 		return ResponseEntity.noContent().build();
