@@ -1,5 +1,10 @@
 package com.acorn.process;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,9 +31,11 @@ public class CustomUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("가입된 계정을 찾을 수 없습니다.");
         }
 		
-		return User.builder()
-				.username(members.getEmail())
-				.password(members.getPassword())
-				.build();
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority(members.getRole()));
+		
+		UserDetails userDetails = new User(members.getEmail(), members.getPassword(), authorities);
+		
+		return userDetails;
 	}
 }
