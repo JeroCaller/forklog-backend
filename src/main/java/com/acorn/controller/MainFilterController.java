@@ -27,9 +27,9 @@ public class MainFilterController {
 	 */
 	@GetMapping
 	public ResponseEntity<List<MainFilterDto.CategoryGroups>> getFilter() {
-		List<MainFilterDto.CategoryGroups> list = mainFilterProcess.getCategoryGroups();
-		log.info("Category Groups : {}" , list);
-		return ResponseEntity.ok().body(list);
-//		return ResponseEntity.ok().body(mainFilterProcess.getCategoryGroups());
+//		List<MainFilterDto.CategoryGroups> list = mainFilterProcess.getCategoryGroups();
+//		log.info("Category Groups : {}" , list);
+//		return ResponseEntity.ok().body(list);
+		return ResponseEntity.ok().body(mainFilterProcess.getCategoryGroups());
 	}
 }

@@ -27,12 +27,16 @@ public class MainFilterProcess {
 		// List<CategoryGroups> 로부터 Entity -> DTO 변환 
 		return categoryGroupsRepository.findAll()
 				.stream()
+				// 하위 카테고리가 없는 경우 제외
+				.filter(group -> group.getCategories().size() > 1)
 				.map(group -> ( // CategoryGroup 엔티티 DTO로 변환(매핑) - 대분류
 						MainFilterDto.CategoryGroups.builder()
 							.no(group.getNo())
 							.name(group.getName())
 							.categories(group.getCategories()
 									  .stream()
+									  // 하위 카테고리명이 "기타"인 경우 제외
+									  .filter(category -> !category.getName().equals("기타"))
 									  .map(category -> ( // 소분류
 											  MainFilterDto.CategoryGroups.Category.builder()
 												.no(category.getNo())
