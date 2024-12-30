@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
-@RequestMapping("/main/location")
+@RequestMapping("/main/locations")
 @RequiredArgsConstructor
 public class EateriesMainController {
 	
@@ -80,7 +80,7 @@ public class EateriesMainController {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping("/{location}/category/large/{lid}")
+	@GetMapping("/{location}/categories/large/{lid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategoryLarge(
 			@PathVariable(name = "location") String location,
 			@PathVariable(name = "lid") int largeId,
@@ -134,7 +134,7 @@ public class EateriesMainController {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping("/{location}/category/small/{sid}")
+	@GetMapping("/{location}/categories/small/{sid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategorySmall(
 			@PathVariable(name = "location") String location,
 			@PathVariable(name = "sid") int smallId,
