@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/members")
+@RequestMapping("/main/mypage/members")
 @RequiredArgsConstructor
 public class MembersController {
 	
