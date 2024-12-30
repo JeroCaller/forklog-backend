@@ -1,6 +1,7 @@
 package com.acorn.process;
 
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,8 @@ import com.acorn.dto.EateriesDto;
 import com.acorn.entity.Categories;
 import com.acorn.entity.CategoryGroups;
 import com.acorn.entity.Eateries;
+import com.acorn.exception.BadAlgorithmException;
+import com.acorn.exception.NoDataFoundException;
 import com.acorn.exception.category.NoCategoryFoundException;
 import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
@@ -32,6 +35,8 @@ public class EateriesMainProcess {
 	private final EateriesRepository eateriesRepository;
 	private final CategoriesRepository categoriesRepository;
 	private final CategoryGroupsRepository categoryGroupsRepository;
+	
+	private final Random random = new Random();
 	
 	/**
 	 * 지역 주소 입력 시 그와 비슷한 주소에 해당하는 음식점 정보들을 반환.
@@ -107,5 +112,39 @@ public class EateriesMainProcess {
 		Page<Eateries> eateries = eateriesRepository
 				.findByAddressContainingAndCategory(location, category, pageRequest);
 		return eateries.map(EateriesDto :: toDto);
+	}
+	
+	/**
+	 * DB 내 eateries 테이블로부터 랜덤으로 하나의 레코드를 뽑아 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 * @throws NoDataFoundException
+	 * @throws BadAlgorithmException
+	 */
+	public EateriesDto getOneEateriesByRandom() 
+			throws NoDataFoundException, BadAlgorithmException {
+		Integer maxId = eateriesRepository.findIdMax();
+		if (maxId == null) {
+			throw new NoDataFoundException("조회된 최대 ID값이 없습니다. DB에 데이터가 아예 없는 것인지 확인 필요");
+		}
+		
+		// DB에 PK값이 불연속적으로 있을 수도 있음. 
+		// 이 경우 DB에 없는 랜덤 값이 반환될 수 있기에 값이 나올 때까지 
+		// 랜덤 값을 발생시킬 횟수를 정한다. 
+		final int MAX_ROTATE_NUM = 100;
+		int count = 0;
+		
+		while (count < MAX_ROTATE_NUM) {
+			int randId = random.nextInt(1, maxId);
+			Optional<Eateries> eateriesOpt = eateriesRepository.findById(randId);
+			if (eateriesOpt.isPresent()) {
+				return EateriesDto.toDto(eateriesOpt.get());
+			}
+		}
+		
+		throw new BadAlgorithmException("""
+			조회된 랜덤 음식점 정보가 없습니다. 반복 횟수를 늘리거나 다른 알고리즘이 필요할 듯 합니다.
+		""");
 	}
 }
