@@ -1,12 +1,12 @@
 package com.acorn.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.acorn.entity.Comments;
 
 public interface CommentsRepository extends JpaRepository<Comments, Integer>{
-	List<Comments> findByEateryNoOrderByCreatedAtDesc(int eateryNo);
-    List<Comments> findByMemberNoOrderByCreatedAtDesc(int memberNo);
+	Page<Comments> findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(int eateryNo, Pageable pageable);
+    // Page<Comments> findByMemberNoOrderByCreatedAtDesc(int memberNo, Pageable pageable);
 }
