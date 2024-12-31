@@ -161,4 +161,5 @@ public class EateriesMainProcess {
 			"조회된 랜덤 음식점 정보가 없습니다. 반복 횟수를 늘리거나 다른 알고리즘이 필요할 듯 합니다."
 		);
 	}
+	
 }

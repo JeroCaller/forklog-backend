@@ -31,4 +31,5 @@ public class CategoryProcess {
 				.map(CategoryGroupsFilterDto :: toDto)
 				.collect(Collectors.toList());
 	}
+	
 }

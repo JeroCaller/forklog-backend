@@ -204,7 +204,7 @@ public class EateriesMainController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("/user")
+	@GetMapping("/gps/user")
 	public ResponseEntity<ResponseJson> getEateriesByUserLocation(
 			@RequestParam(name = "x", defaultValue = "") String x,
 			@RequestParam(name = "y", defaultValue = "") String y,
