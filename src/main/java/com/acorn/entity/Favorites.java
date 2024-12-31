@@ -29,8 +29,8 @@ public class Favorites {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;
 	
-	@Column(name = "status")
-	private Boolean status;
+	@Column(name = "status", nullable = false, columnDefinition = "int default 0")
+    private int status; // 0: 비활성, 1: 활성
 	
 	@CreationTimestamp
     @Column(name = "created_at", updatable = false)
