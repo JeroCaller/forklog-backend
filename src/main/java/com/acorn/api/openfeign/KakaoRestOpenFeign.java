@@ -21,18 +21,6 @@ import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 )
 public interface KakaoRestOpenFeign {
 	
-	/*
-	@GetMapping(value = "/local/geo/coord2address.json")
-	AddressResponseDto convertAddress(
-			@RequestParam("x") String longitude,
-			@RequestParam("y") String latitude
-	);
-	
-	@GetMapping(value = "local/search/address.json")
-	AddressResponseDto convertRoadAddress(
-			@RequestParam("query") String address
-	);*/
-	
 	@GetMapping(value = "/local/geo/coord2address.json")
 	GeoLocationResponseDto getAddressFromCoordinate(
 			@RequestParam("x") String x,

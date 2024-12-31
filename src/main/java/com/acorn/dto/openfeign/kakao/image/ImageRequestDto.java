@@ -37,6 +37,7 @@ public class ImageRequestDto {
 	
 	@Builder.Default
 	private int size = 1;
+	
 }
 
 

@@ -274,4 +274,5 @@ public class EateriesWithApiProcess {
 
 		return categoryEntity;
 	}
+	
 }

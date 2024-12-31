@@ -24,7 +24,9 @@ import lombok.ToString;
 @ToString  // For Logging
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BlogMetaDto {
+	
 	private int totalCount = 0;
 	private int pageableCount = 0;
 	private boolean isEnd;
+	
 }

@@ -65,6 +65,7 @@ public class GeoLocationResponseDto {
 			private String mountainYn;
 			private String mainAddressNo;
 			private String subAddressNo;
+			
 		}
 		
 		@Getter
@@ -92,6 +93,7 @@ public class GeoLocationResponseDto {
 			private String subBuildingNo;
 			private String buildingName;
 			private String zoneNo;
+			
 		}
 	}
 	
@@ -101,7 +103,10 @@ public class GeoLocationResponseDto {
 	@Builder
 	@ToString  // For logging
 	public static class GeoLocationMetaDto {
+		
 		@JsonProperty("total_count")
 		int totalCount;
+		
 	}
+	
 }

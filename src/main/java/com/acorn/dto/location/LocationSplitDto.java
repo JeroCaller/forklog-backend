@@ -20,6 +20,7 @@ import lombok.ToString;
 @Builder
 @ToString // For logging
 public class LocationSplitDto {
+	
 	private String largeCity;
 	private String mediumCity;
 	private String roadName;
@@ -30,9 +31,9 @@ public class LocationSplitDto {
 	 * 예) largeCity = "서울", mediumCity = "강남구"
 	 * => "서울 강남구"
 	 * 
+	 * @author JeroCaller (JJH)
 	 * @return 대분류도 없을 경우 빈 문자열 반환. 
 	 * 중분류가 없을 경우 대분류만 반환. 예) "서울"
-	 * 
 	 */
 	public String getFullLocationByMedium() {
 		if (largeCity == null) return "";
