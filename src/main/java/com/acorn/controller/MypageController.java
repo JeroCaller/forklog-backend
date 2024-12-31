@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.acorn.dto.ReviewRequestDto;
 import com.acorn.dto.ReviewResponseDto;
+import com.acorn.entity.Eateries;
+import com.acorn.process.FavoritesProcess;
 import com.acorn.process.ReviewsProcess;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +31,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MypageController {
 	private final ReviewsProcess reviewsProcess;
+	
+	private final FavoritesProcess favoritesProcess;
+	
 	//회원별 리뷰 목록 조회
 	@GetMapping("/review/member/{no}")
 	public ResponseEntity<Object> getReviewsByMemberNo(
@@ -62,4 +70,16 @@ public class MypageController {
 		reviewsProcess.deleteReview(reviewNo);
 		return ResponseEntity.ok("리뷰 삭제에 성공했습니다.");
 	}
+	
+	// 마이페이지 즐겨찾기 조회 (@AuthenticationPrincipal : SecurityContext에서 인증된 사용자의 정보)
+	@GetMapping("/favorites/{no}")
+    public ResponseEntity<List<Eateries>> getFavoriteEateries(@PathVariable("no") int no,
+    		@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        int memberNo = Integer.parseInt(userDetails.getUsername()); // 사용자 번호 가져오기
+        List<Eateries> favoriteEateries = favoritesProcess.getFavoritesByMemberNo(memberNo);
+        return ResponseEntity.ok(favoriteEateries);
+    }
 }

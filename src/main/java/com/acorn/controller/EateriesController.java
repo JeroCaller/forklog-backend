@@ -24,9 +24,9 @@ public class EateriesController {
 	private final ReviewsProcess reviewsProcess;
 	
 	// 음식점 상세 보기
-    @GetMapping("/{id}")
-    public ResponseEntity<EateriesDto> getEateryById(@PathVariable("id") int id) {
-        Optional<EateriesDto> eateryDto = eateriesProcess.getEateryDtoById(id);
+    @GetMapping("/{no}")
+    public ResponseEntity<EateriesDto> getEateryById(@PathVariable("no") int no) {
+        Optional<EateriesDto> eateryDto = eateriesProcess.getEateryDtoById(no);
         return eateryDto
             .map(ResponseEntity::ok)         // EateriesDto를 그대로 반환
             .orElseGet(() -> ResponseEntity.notFound().build());
