@@ -1,7 +1,6 @@
 package com.acorn.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.dto.EateriesDto;
+import com.acorn.dto.location.LocationSplitDto;
+import com.acorn.exception.BadAlgorithmException;
+import com.acorn.exception.NoDataFoundException;
 import com.acorn.exception.category.NoCategoryFoundException;
 import com.acorn.process.EateriesMainProcess;
+import com.acorn.process.GeoLocationProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
+import com.acorn.utils.LocationUtil;
+import com.acorn.utils.PageUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +30,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
-@RequestMapping("/main/location")
+@RequestMapping("/main/locations")
 @RequiredArgsConstructor
 public class EateriesMainController {
 	
 	private final EateriesMainProcess eateriesMainProcess;
+	private final GeoLocationProcess geoLocationProcess;
 	
 	/**
 	 * 클라이언트에서 주소 입력 시 그에 해당하는 음식점 정보들을 반환. 
@@ -48,10 +54,10 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
-		Page<EateriesDto> eateriesDto = eateriesMainProcess
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		Page<EateriesDto> eateries = eateriesMainProcess
 				.getEateriesByLocation(location, pageRequest);
-		if (eateriesDto.getNumberOfElements() == 0) {
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
@@ -60,7 +66,7 @@ public class EateriesMainController {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateriesDto)
+					.data(eateries)
 					.build();
 		}
 		
@@ -80,7 +86,7 @@ public class EateriesMainController {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping("/{location}/category/large/{lid}")
+	@GetMapping("/{location}/categories/large/{lid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategoryLarge(
 			@PathVariable(name = "location") String location,
 			@PathVariable(name = "lid") int largeId,
@@ -89,7 +95,7 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = null;
 		try {
 			eateries = eateriesMainProcess
@@ -106,7 +112,7 @@ public class EateriesMainController {
 			return responseJson.toResponseEntity();
 		}
 		
-		if (eateries.getNumberOfElements() == 0) {
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
@@ -134,7 +140,7 @@ public class EateriesMainController {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping("/{location}/category/small/{sid}")
+	@GetMapping("/{location}/categories/small/{sid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategorySmall(
 			@PathVariable(name = "location") String location,
 			@PathVariable(name = "sid") int smallId,
@@ -143,7 +149,7 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = null;
 		try {
 			eateries = eateriesMainProcess
@@ -158,9 +164,105 @@ public class EateriesMainController {
 					.message(e.getMessage())
 					.build();
 			return responseJson.toResponseEntity();
+		} 
+		
+		//log.info("eateries: " + eateries.toString());
+		//log.info("" + eateries.getNumberOfElements());
+		//log.info("" + eateries.getTotalElements());
+		if (PageUtil.isEmtpy(eateries)) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.data(eateries)
+					.build();
+		} else {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.OK)
+					.message(ResponseStatusMessages.READ_SUCCESS)
+					.data(eateries)
+					.build();
 		}
 		
-		if (eateries.getNumberOfElements() == 0) {
+		return responseJson.toResponseEntity();
+	}
+	
+	/**
+	 * 사용자 GPS 경위도 정보를 토대로 그 주변 음식점 정보를 반환. 
+	 * 만약 사용자가 GPS 경위도 정보를 제공하지 않는 경우, x, y 요청 파라미터를 비우고 요청한다. 
+	 * 그러면 DB 내 음식점 주소들 중 임의로(랜덤으로 하나를 골라 그 주소에 해당하는 음식점 정보들을 반환한다. 
+	 * 
+	 * 테스트용 x, y 입력값 예) 사용자 GPS 위치 정보 제공한다고 가정. 
+	 * 예1) 강남역 2호선 (서울 강남구 강남대로 396) - x: 127.047377408384, y: 37.4981646510326
+	 * 예2) 국립서울현충원 (서울 동작구 현충로 210) - x: 126.978408414947, y: 37.4998236507216
+	 * -> swagger에서 확인.
+	 * 
+	 * 만약 사용자 GPS 위치 정보 미제공 시 DB 내 존재하는 주소들 중 하나를 랜덤으로 사용하는 것이 아니라, 
+	 * "서울 강남구"처럼 기본값을 정해서 하고자 할 때는 클라이언트 측에서
+	 * 이 클래스의 getEateriesByAddress() 메서드에 매핑된 REST API URI인 /main/locations/{locations}
+	 * 이용하는 것을 권고 -> REST API URI ex): /main/locations/서울 강남구
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@GetMapping("/gps/user")
+	public ResponseEntity<ResponseJson> getEateriesByUserLocation(
+			@RequestParam(name = "x", defaultValue = "") String x,
+			@RequestParam(name = "y", defaultValue = "") String y,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size
+	) {
+		ResponseJson responseJson = null;
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		
+		// 참고) 사용자 GPS 위치가 반드시 DB - eateries 내 존재하는 음식점들 중 하나의 
+		// 위치(longitude, latitude 필드)와 반드시 정확히 일치한다는 보장이 없다. 
+		// 따라서 카카오 API로부터 좌표를 주소로 변환하여 
+		// 이 주소를 토대로 음식점을 검색하는 것이 타당하다고 생각함. 
+		
+		// 사용자가 GPS 위치(x, y)를 입력하지 않은 경우, DB - eateries에 존재하는 주소를 
+		// 랜덤으로 하나 가져오게끔 한다.
+		LocationSplitDto locationSplitDto = null;
+		if (!x.isBlank() && !y.isBlank()) {
+			locationSplitDto = geoLocationProcess
+					.getOneLocationFromCoordinate(x, y);
+		}
+		
+		Page<EateriesDto> eateries = null;
+		String searchLocation = null; // 주소 대분류 - 중분류만으로 구성.
+		
+		if (locationSplitDto == null) {
+			// API로부터 조회된 주소가 없을 경우, DB - eateries에 존재하는 주소를
+			// 랜덤으로 하나 가져온다. 
+			EateriesDto oneEatery = null;
+			try {
+				oneEatery = eateriesMainProcess.getOneEateriesByRandom();
+			} catch (NoDataFoundException | BadAlgorithmException e) {
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.message(e.getMessage())
+						.build();
+				return responseJson.toResponseEntity();
+			} 
+			
+			searchLocation = LocationUtil
+					.getLocationMediumStringByFull(oneEatery.getAddress());
+			log.info("좌표로부터 주소 구성 방법 - DB로부터 랜덤으로 조회된 주소를 이용");
+			
+		} else {
+			// API로부터 조회한 주소 데이터로 대분류 - 중분류까지의 주소 문자열 구성.
+			// 예) "서울 강남구"
+			searchLocation = locationSplitDto.getFullLocationByMedium();
+			log.info("좌표로부터 주소 구성 방법 - 사용자 GPS 위치 이용");
+		}
+		
+		log.info("구성된 검색용 주소 문자열 : " + searchLocation);
+		
+		eateries = eateriesMainProcess.getEateriesByLocation(
+				searchLocation, 
+				pageRequest
+		);
+		
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)

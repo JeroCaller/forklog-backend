@@ -38,6 +38,8 @@ import lombok.ToString;
 @Getter
 @ToString  // For Logging
 public class ImageResponseDto {
+	
 	List<ImageDocumentDto> documents;
 	ImageMetaDto meta;
+	
 }

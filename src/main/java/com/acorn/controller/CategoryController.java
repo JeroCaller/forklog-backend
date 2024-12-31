@@ -16,7 +16,7 @@ import com.acorn.response.ResponseStatusMessages;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/main/category")
+@RequestMapping("/main/categories/filter")
 @RequiredArgsConstructor
 public class CategoryController {
 	
@@ -29,7 +29,7 @@ public class CategoryController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("/filter")
+	@GetMapping("/")
 	public ResponseEntity<ResponseJson> getCategoryAll() {
 		ResponseJson responseJson = null;
 		

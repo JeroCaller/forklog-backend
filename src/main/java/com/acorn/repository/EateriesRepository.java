@@ -16,7 +16,7 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	boolean existsByNameAndLongitudeAndLatitude(String name, BigDecimal longitude, BigDecimal latitude);	
 	Page<Eateries> findByAddressContaining(String address, Pageable pageRequest);
 	
-	Page<Eateries> findByAddressContainingAndCategory(
+	Page<Eateries> findByAddressContainsAndCategory(
 			String address, 
 			Categories categories,
 			Pageable pageRequest
@@ -46,4 +46,13 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	);
 	
 	Optional<Eateries> findByNameAndAddress(String name, String address);
+	
+	/**
+	 * DB에 현존하는 PK 값 중 가장 큰 값을 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@Query(value = "SELECT MAX(e.no) FROM Eateries e")
+	Integer findIdMax();
 }

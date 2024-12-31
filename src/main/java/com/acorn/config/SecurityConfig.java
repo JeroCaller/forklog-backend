@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
@@ -49,7 +47,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/uploads/**", "/main/**").permitAll() // 특정 요청 허용
+						.requestMatchers("/main/mypage/**").hasRole("USER")
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**").permitAll()
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정

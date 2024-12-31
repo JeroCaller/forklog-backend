@@ -25,6 +25,9 @@ public class RegisterRequestDto {
 	private String password;
 	
 	@NotBlank
+	private String role = "ROLE_USER";
+	
+	@NotBlank
 	@Pattern(regexp = "^[a-zA-Z가-힣]{2,20}$") // 2자 이상 20자 이하, 한글과 영어만 입력
 	private String name;
 	

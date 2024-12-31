@@ -20,6 +20,7 @@ public class MembersDto {
 	private Integer no;
 	private String email;
 	private String password;
+	private String role;
 	private Integer snsConnected;
 	private String name;
 	private String postcode;
@@ -41,6 +42,7 @@ public class MembersDto {
 				.no(members.getNo())
                 .email(members.getEmail())
                 .password(members.getPassword())
+                .role(members.getRole())
                 .snsConnected(members.getSnsConnected())
                 .name(members.getName())
                 .postcode(members.getPostcode())

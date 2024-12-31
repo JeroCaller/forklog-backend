@@ -16,7 +16,7 @@ import com.acorn.response.ResponseStatusMessages;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/main/location")
+@RequestMapping("/main/locations/filter")
 @RequiredArgsConstructor
 public class LocationController {
 	
@@ -30,7 +30,7 @@ public class LocationController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("/filter")
+	@GetMapping("/")
 	public ResponseEntity<ResponseJson> getLocationGroupsFilterAll() {
 		ResponseJson responseJson = null;
 		

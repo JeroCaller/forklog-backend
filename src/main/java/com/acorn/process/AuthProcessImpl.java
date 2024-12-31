@@ -43,7 +43,7 @@ public class AuthProcessImpl implements AuthProcess {
 	private final AuthenticationManager authenticationManager;
 	private final MembersRepository membersRepository;
 	private final CustomUserDetailService customUserDetailService;
-	//private final RefreshTokenRepository refreshTokenRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
 
@@ -104,6 +104,9 @@ public class AuthProcessImpl implements AuthProcess {
 	        // JWT 토큰 생성
 	        String accessToken = jwtUtil.createAccessToken(email);
 	        String refreshToken = jwtUtil.createRefreshToken(email);
+	        
+	        saveRefreshToken(email, refreshToken);
+	        //System.out.println("Saving refresh token for email: " + email);
 
 	        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
 	        accessTokenCookie.setHttpOnly(true);
@@ -139,26 +142,18 @@ public class AuthProcessImpl implements AuthProcess {
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 
 		try {
-//			// 클라이언트로부터 받은 리프레시 토큰을 쿠키에서 추출
-//			String refreshToken = null;
-//			Cookie[] cookies = request.getCookies();
-//			if (cookies != null) {
-//				for (Cookie cookie : cookies) {
-//					System.out.println("Cookie name: " + cookie.getName() + ", Cookie value: " + cookie.getValue());
-//					if ("refreshToken".equals(cookie.getName())) {
-//						refreshToken = cookie.getValue();
-//						System.out.println("Found refreshToken in cookie: " + refreshToken);
-//						break;
-//					}
-//				}
-//			}
-//			System.out.println("Received refreshToken: " + refreshToken); // 로그 찍어서 토큰 값 확인
-//
-//			if (refreshToken != null) {
-//				// 리프레시 토큰을 DB에서 삭제
-//				refreshTokenRepository.deleteByRefreshToken(refreshToken);
-//			}
-
+			// 현재 인증된 사용자 정보 가져오기
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        System.out.println("authentication : " + authentication);
+	        // 사용자 이메일 추출
+	        String email = authentication.getName();
+	        System.out.println("사용자 로그아웃 이메일 : " + email);
+	        
+	        // 리프레시 토큰 삭제
+	        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByEmail(email);
+	        refreshTokenOptional.ifPresent(refreshTokenRepository::delete);
+	        System.out.println("Refresh token deleted successfully!");
+	        
 			// 엑세스 토큰 쿠키 제거
 			Cookie accessTokenCookie = new Cookie("accessToken", null);
 			accessTokenCookie.setHttpOnly(true);
@@ -262,17 +257,19 @@ public class AuthProcessImpl implements AuthProcess {
 		}
 	}
 
-//	// 리프레쉬 토큰 DB 저장
-//	private void saveRefreshToken(String email, String refreshToken) {
-//		// 기존에 리프레시 토큰이 있으면 삭제하고 새로 저장
-//		Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
-//		existingToken.ifPresent(refreshTokenRepository::delete); // 기존 리프레시 토큰 삭제
-//
-//		// 새로운 리프레시 토큰 저장
-//		RefreshToken refreshTokenEntity = new RefreshToken();
-//		refreshTokenEntity.setEmail(email);
-//		refreshTokenEntity.setRefreshToken(refreshToken);
-//		refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusWeeks(1)); // 리프레시 토큰의 만료일을 설정 (1주일)
-//		refreshTokenRepository.save(refreshTokenEntity);
-//	}
+	// 리프레쉬 토큰 DB 저장
+	private void saveRefreshToken(String email, String refreshToken) {
+		// 기존에 리프레시 토큰이 있으면 삭제하고 새로 저장
+		Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
+		existingToken.ifPresent(refreshTokenRepository::delete); // 기존 리프레시 토큰 삭제
+
+		// 새로운 리프레시 토큰 저장
+		RefreshToken refreshTokenEntity = new RefreshToken();
+		refreshTokenEntity.setEmail(email);
+		refreshTokenEntity.setRefreshToken(refreshToken);
+		refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusWeeks(1)); // 리프레시 토큰의 만료일을 설정 (1주일)
+		//System.out.println("Before saving refresh token: " + refreshTokenEntity);
+		refreshTokenRepository.save(refreshTokenEntity);
+		//System.out.println("Refresh token saved successfully!");
+	}
 }

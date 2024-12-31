@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 //@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeywordRequestDto {
+	
 	private String query;
 	
 	@Builder.Default
@@ -33,4 +34,5 @@ public class KeywordRequestDto {
 	private Integer page;
 	private Integer size;
 	private String sort;
+	
 }

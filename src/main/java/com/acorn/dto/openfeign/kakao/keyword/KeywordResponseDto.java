@@ -61,6 +61,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class KeywordResponseDto {
+	
 	List<KeywordDocumentDto> documents;
 	KeywordMetaDto meta;
+	
 }
