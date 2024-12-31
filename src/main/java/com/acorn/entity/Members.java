@@ -35,6 +35,9 @@ public class Members {
 	@Column(name = "password")
 	private String password;
 	
+	@Column(name = "role")
+	private String role;
+	
 	@Column(name = "sns_connected")
 	private Integer snsConnected;
 	
@@ -82,6 +85,7 @@ public class Members {
 		return Members.builder()
 				.email(dto.getEmail())
 				.password(dto.getPassword())
+				.role(dto.getRole())
 				.snsConnected(dto.getSnsConnected())
 				.name(dto.getName())
 				.postcode(dto.getPostcode())

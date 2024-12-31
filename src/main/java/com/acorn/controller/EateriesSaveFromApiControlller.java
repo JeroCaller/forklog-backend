@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/development")  // 오로지 개발 용도로만 사용. 실제 클라이언트와의 소통 X
+@RequestMapping("/main/data")  // 오로지 개발 용도로만 사용. 실제 클라이언트와의 소통 X
 @Slf4j
 public class EateriesSaveFromApiControlller {
 	
@@ -34,11 +34,11 @@ public class EateriesSaveFromApiControlller {
 	 * 최대 하나의 검색어 당 45개의 데이터만 가져올 수 있음. 
 	 * @return
 	 */
-	@GetMapping("/")
+	@GetMapping("/eateries")
 	public ResponseEntity<ResponseJson> saveEateriesFromApi(
 			@RequestParam("query") String query,
 			@RequestParam(name = "startPage", defaultValue = "1") int startPage,
-			@RequestParam(name = "dataNum") int requestApiDataNum
+			@RequestParam(name = "dataNum", defaultValue = "45") int requestApiDataNum
 	) {
 		ResponseJson responseJson = null;
 		
