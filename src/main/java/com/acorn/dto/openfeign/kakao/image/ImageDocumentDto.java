@@ -18,6 +18,7 @@ import lombok.ToString;
 @ToString  // For Logging
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ImageDocumentDto {
+	
 	private String collection;
 	private String thumbnailUrl;
 	private String imageUrl;
@@ -26,4 +27,5 @@ public class ImageDocumentDto {
 	private String displaySitename;
 	private String docUrl;
 	private String datetime;
+	
 }

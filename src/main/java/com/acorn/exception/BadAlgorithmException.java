@@ -11,4 +11,5 @@ public class BadAlgorithmException extends Exception {
 	public BadAlgorithmException(String message) {
 		super(message);
 	}
+	
 }

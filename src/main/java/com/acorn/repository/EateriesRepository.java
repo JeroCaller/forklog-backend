@@ -18,7 +18,7 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	
 	Page<Eateries> findByAddressContaining(String address, Pageable pageRequest);
 	
-	Page<Eateries> findByAddressContainingAndCategory(
+	Page<Eateries> findByAddressContainsAndCategory(
 			String address, 
 			Categories categories,
 			Pageable pageRequest

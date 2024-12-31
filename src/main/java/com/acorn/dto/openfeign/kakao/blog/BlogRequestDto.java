@@ -36,4 +36,5 @@ public class BlogRequestDto {
 	
 	@Builder.Default
 	private int size = 1;
+	
 }
