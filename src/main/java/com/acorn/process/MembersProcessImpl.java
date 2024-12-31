@@ -36,6 +36,7 @@ public class MembersProcessImpl implements MembersProcess {
 			Members member = membersRepository.findByEmail(email);
 
 			MembersDto response = MembersDto.builder()
+					.no(member.getNo())
 					.nickname(member.getNickname())
 					.phone(member.getPhone())
 					.postcode(member.getPostcode())

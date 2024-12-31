@@ -47,12 +47,12 @@ public class ReviewsProcess {
 	private String uploadDir;
 	//member_no으로 ReviewResponseDto리스트 조회
 	public Page<ReviewResponseDto> getReviewsByMemberNo(String memberNo,int page){
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 5);
 		return reviewsRepository.getReviewsByMemberNo(pageable,memberNo).map(review -> getReviewResponseDto(review));
 	}
 	//eatery_no으로 ReviewResponseDto리스트 조회
 	public Page<ReviewResponseDto> getReviewsByEateryNo(String eateryNo,int page){
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 5);
 		return reviewsRepository.getReviewsByEateryNo(pageable,eateryNo).map(review -> getReviewResponseDto(review));
 	}
 	//review_no에 해당하는 ReviewImagesResponseDto리스트 조회
