@@ -50,7 +50,7 @@ public class Comments {
     @JoinColumn(name = "eatery_no")
     private Eateries eatery; // 식당
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_no")
     private Members member;
 
