@@ -52,6 +52,7 @@ public class EateriesMainProcess {
 	) {
 		Page<Eateries> eateries = eateriesRepository
 				.findByAddressContaining(location, pageRequest);
+		
 		return eateries.map(EateriesDto :: toDto);
 	}
 	
@@ -109,8 +110,19 @@ public class EateriesMainProcess {
 		categoryOpt.orElseThrow(() -> new NoCategoryFoundException(String.valueOf(smallId)));
 		Categories category = categoryOpt.get();
 		//log.info("조회된 카테고리: " + category.toString() + " " + category.getGroup().getName());
+		
 		Page<Eateries> eateries = eateriesRepository
-				.findByAddressContainingAndCategory(location, category, pageRequest);
+				.findByAddressContainsAndCategory(location, category, pageRequest);
+		
+		/*
+		log.info("조회된 eateries 출력");
+		eateries.forEach(eat -> {
+			log.info("good");
+			log.info(eat.toString());
+			log.info(eat.getName());
+		});
+		*/
+		
 		return eateries.map(EateriesDto :: toDto);
 	}
 	
@@ -126,7 +138,9 @@ public class EateriesMainProcess {
 			throws NoDataFoundException, BadAlgorithmException {
 		Integer maxId = eateriesRepository.findIdMax();
 		if (maxId == null) {
-			throw new NoDataFoundException("조회된 최대 ID값이 없습니다. DB에 데이터가 아예 없는 것인지 확인 필요");
+			throw new NoDataFoundException(
+				"조회된 최대 ID값이 없습니다. DB에 데이터가 아예 없는 것인지 확인 필요"
+			);
 		}
 		
 		// DB에 PK값이 불연속적으로 있을 수도 있음. 
@@ -143,8 +157,8 @@ public class EateriesMainProcess {
 			}
 		}
 		
-		throw new BadAlgorithmException("""
-			조회된 랜덤 음식점 정보가 없습니다. 반복 횟수를 늘리거나 다른 알고리즘이 필요할 듯 합니다.
-		""");
+		throw new BadAlgorithmException(
+			"조회된 랜덤 음식점 정보가 없습니다. 반복 횟수를 늘리거나 다른 알고리즘이 필요할 듯 합니다."
+		);
 	}
 }

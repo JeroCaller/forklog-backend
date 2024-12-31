@@ -1,7 +1,6 @@
 package com.acorn.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,7 @@ import com.acorn.process.GeoLocationProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
 import com.acorn.utils.LocationUtil;
+import com.acorn.utils.PageUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,10 +54,10 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
-		Page<EateriesDto> eateriesDto = eateriesMainProcess
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		Page<EateriesDto> eateries = eateriesMainProcess
 				.getEateriesByLocation(location, pageRequest);
-		if (eateriesDto.getNumberOfElements() == 0) {
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
@@ -66,7 +66,7 @@ public class EateriesMainController {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateriesDto)
+					.data(eateries)
 					.build();
 		}
 		
@@ -95,7 +95,7 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = null;
 		try {
 			eateries = eateriesMainProcess
@@ -112,7 +112,7 @@ public class EateriesMainController {
 			return responseJson.toResponseEntity();
 		}
 		
-		if (eateries.getNumberOfElements() == 0) {
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
@@ -149,7 +149,7 @@ public class EateriesMainController {
 	) {
 		ResponseJson responseJson = null;
 		
-		Pageable pageRequest = PageRequest.of(page, size);
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = null;
 		try {
 			eateries = eateriesMainProcess
@@ -164,12 +164,16 @@ public class EateriesMainController {
 					.message(e.getMessage())
 					.build();
 			return responseJson.toResponseEntity();
-		}
+		} 
 		
-		if (eateries.getNumberOfElements() == 0) {
+		//log.info("eateries: " + eateries.toString());
+		//log.info("" + eateries.getNumberOfElements());
+		//log.info("" + eateries.getTotalElements());
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.data(eateries)
 					.build();
 		} else {
 			responseJson = ResponseJson.builder()
@@ -208,7 +212,7 @@ public class EateriesMainController {
 			@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
-		Pageable pageRequest = PageRequest.of(page, size);
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		
 		// 참고) 사용자 GPS 위치가 반드시 DB - eateries 내 존재하는 음식점들 중 하나의 
 		// 위치(longitude, latitude 필드)와 반드시 정확히 일치한다는 보장이 없다. 
@@ -258,7 +262,7 @@ public class EateriesMainController {
 				pageRequest
 		);
 		
-		if (eateries.getNumberOfElements() == 0) {
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
