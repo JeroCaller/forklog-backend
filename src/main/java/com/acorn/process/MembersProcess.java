@@ -13,4 +13,7 @@ public interface MembersProcess {
 	ResponseEntity<?> deleteAccount(ProfileDto dto);
 	
 	ResponseEntity<?> checkNicknameDuplication(String nickname);
+	
+	//재욱
+	ResponseEntity<?> getMemberNo();
 }

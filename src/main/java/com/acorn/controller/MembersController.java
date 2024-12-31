@@ -45,4 +45,10 @@ public class MembersController {
     public ResponseEntity<?> checkNickname(@RequestParam("nickname") String nickname) {
         return membersProcess.checkNicknameDuplication(nickname);
     }
+	
+	// 재욱 : memberNo 조회 API
+	@GetMapping("/member-no")
+	public ResponseEntity<?> getMemberNo() {
+	    return membersProcess.getMemberNo();
+	}
 }
