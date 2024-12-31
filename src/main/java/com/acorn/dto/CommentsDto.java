@@ -24,6 +24,7 @@ public class CommentsDto {
     private boolean isDeleted;
     private int eateryNo;
     private int memberNo;
+    private String nickname;
     private Integer parentCommentNo;
     
     @Builder.Default
@@ -43,8 +44,9 @@ public class CommentsDto {
             .createdAt(comment.getCreatedAt())
             .updatedAt(comment.getUpdatedAt())
             .isDeleted(comment.isDeleted())
-            .eateryNo(comment.getEatery() != null ? comment.getEatery().getNo() : null)
-            .memberNo(comment.getMember() != null ? comment.getMember().getNo() : null)
+            .eateryNo(comment.getEatery().getNo())
+            .memberNo(comment.getMember().getNo())
+            .nickname(comment.getMember().getNickname())
             .parentCommentNo(comment.getParentComment() != null ? comment.getParentComment().getNo() : null)
             .childComments(childCommentDtos) // childComments 필드에 자식 댓글 리스트 추가
             .build();
