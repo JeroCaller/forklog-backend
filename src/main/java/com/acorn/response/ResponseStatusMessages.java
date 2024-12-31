@@ -25,4 +25,6 @@ public interface ResponseStatusMessages {
 	String DELETE_FAILED = "데이터 삭제 실패";
 	
 	String NO_REQUEST_ARGS = "입력된 요청 인자 없음.";
+	
+	String AUTHORIZED_MEMBER = "인증된 사용자입니다.";
 }
