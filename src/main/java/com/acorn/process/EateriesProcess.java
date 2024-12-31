@@ -13,31 +13,11 @@ import com.acorn.repository.EateriesRepository;
 public class EateriesProcess {
 	@Autowired
     private EateriesRepository eateriesRepository;
-
-    public Optional<Eateries> getEateryById(int id) {
-        return eateriesRepository.findById(id);
-    }
     
-    public Optional<EateriesDto> getEateryDtoById(int id) {
-        return eateriesRepository.findById(id).map(eatery -> {
-            // 주소를 조합
-//            String fullAddress = String.format("%s시 %s %s",
-//                eatery.getRoad().getLocations().getLocationGroups().getName(),  //시
-//                eatery.getRoad().getLocations().getName(),                     //구
-//                eatery.getRoad().getName()                                    //길
-//            );
+    // 음식점 no로 상세정보
+    public Optional<EateriesDto> getEateryDtoById(int no) {
+        return eateriesRepository.findById(no).map(eatery -> {
             
-            /*
-            return new EateriesDto(
-                eatery.getNo(),
-                eatery.getName(),
-                eatery.getRating(),
-                fullAddress,
-                eatery.getTel(),
-                eatery.getCategory().getName(),
-                eatery.getLatitude(),    // 위도 추가
-                eatery.getLongitude()    // 경도 추가
-            );*/
             return EateriesDto.builder()
             		.no(eatery.getNo())
             		.name(eatery.getName())

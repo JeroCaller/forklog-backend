@@ -175,4 +175,22 @@ public class MembersProcessImpl implements MembersProcess {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
 	}
+	
+	// 재욱
+	@Override
+	public ResponseEntity<?> getMemberNo() {
+	    try {
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String email = authentication.getName();
+	        Members member = membersRepository.findByEmail(email);
+
+	        return ResponseEntity.ok(member.getNo());
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+	    }
+	}
+
 }
