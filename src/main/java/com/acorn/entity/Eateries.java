@@ -57,7 +57,7 @@ public class Eateries {
 	private BigDecimal latitude;
 	
 	@ManyToOne
-	@JoinColumn(name = "category_no", referencedColumnName = "no")
+	@JoinColumn(name = "category_no", nullable = false)
 	private Categories category;
 	
 }
