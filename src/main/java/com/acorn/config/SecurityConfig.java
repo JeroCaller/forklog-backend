@@ -47,7 +47,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.authorizeHttpRequests(auth -> auth
-//						.requestMatchers("/main/mypage/**").hasRole("USER")
+						.requestMatchers("/main/mypage/**").hasRole("USER")
 						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**").permitAll()
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
