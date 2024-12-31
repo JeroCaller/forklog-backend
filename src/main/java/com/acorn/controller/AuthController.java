@@ -14,11 +14,8 @@ import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.LoginRequestDto;
 import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.RegisterResponseDto;
-import com.acorn.jwt.JwtUtil;
 import com.acorn.process.AuthProcess;
-import com.acorn.process.RefreshTokenProcess;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final JwtUtil jwtUtil;
 	private final AuthProcess authProcess;
-	private final RefreshTokenProcess refreshTokenProcess;
 
 	// 회원가입
 	@PostMapping("/register")
@@ -61,29 +56,15 @@ public class AuthController {
 		return logout;
 	}
 
-	// 리프레시 토큰으로 액세스 토큰 갱신
-	@PostMapping("/refresh")
-	public ResponseEntity<?> refreshAccessToken(@RequestBody String email) {
-
-		return refreshTokenProcess.verifyRefreshToken(email).map(rt -> {
-			String newAccessToken = jwtUtil.createAccessToken(email);
-			return ResponseEntity.ok().body(newAccessToken);
-		}).orElseGet(() -> ResponseEntity.status(401).body("Invalid or expired refresh token"));
-	}
-
 	// 이메일 찾기
 	@PostMapping("/find-email")
 	public ResponseEntity<Map<String, Object>> findEmail(@RequestBody Map<String, String> user) {
-		// System.out.println(user.get("name"));
-		// System.out.println(user.get("phone"));
 		return authProcess.findEmail(user);
 	}
 
 	// 비밀번호 찾기
 	@PostMapping("/find-password")
 	public ResponseEntity<String> findPassword(@RequestBody Map<String, String> user) {
-		// System.out.println(user.get("email"));
-		// System.out.println(user.get("phone"));
 		return authProcess.findPassword(user);
 	}
 }
