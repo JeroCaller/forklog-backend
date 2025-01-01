@@ -1,6 +1,7 @@
 package com.acorn.repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -55,4 +56,14 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 */
 	@Query(value = "SELECT MAX(e.no) FROM Eateries e")
 	Integer findIdMax();
+	
+	/**
+	 * 주어진 음식점 카테고리 소분류들 중 하나라도 해당하는 음식점들을 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param categories
+	 * @param pageRequest
+	 * @return
+	 */
+	Page<Eateries> findByCategoryIn(List<Categories> categories, Pageable pageRequest);
 }
