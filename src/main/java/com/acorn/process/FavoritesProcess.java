@@ -66,4 +66,9 @@ public class FavoritesProcess {
     public boolean checkFavoriteStatus(int memberNo, int eateryNo) {
         return favoritesRepository.existsByMemberNoAndEateryNo(memberNo, eateryNo);
     }
+    
+    // 특정 음식점의 즐겨찾기된 수를 조회(즐겨찾기 COUNT)
+    public int getFavoritesCountForEatery(int eateryNo) {
+        return favoritesRepository.countFavoritesByEateryNo(eateryNo);
+    }
 }
