@@ -2,6 +2,7 @@ package com.acorn.controller;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.LoginRequestDto;
 import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.RegisterResponseDto;
+import com.acorn.jwt.JwtAuthenticationFilter;
 import com.acorn.jwt.JwtUtil;
 import com.acorn.process.AuthProcess;
 import com.acorn.process.RefreshTokenProcess;
@@ -31,7 +33,7 @@ public class AuthController {
 	private final JwtUtil jwtUtil;
 	private final AuthProcess authProcess;
 	private final RefreshTokenProcess refreshTokenProcess;
-
+	
 	// 회원가입
 	@PostMapping("/register")
 	public ResponseEntity<? super RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto requestBody) {
