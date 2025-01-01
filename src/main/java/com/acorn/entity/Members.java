@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class Members {
 	
 	@Column(name = "password")
 	private String password;
+	
+	@Column(name = "role")
+	private String role;
 	
 	@Column(name = "sns_connected")
 	private Integer snsConnected;
@@ -81,6 +85,7 @@ public class Members {
 		return Members.builder()
 				.email(dto.getEmail())
 				.password(dto.getPassword())
+				.role(dto.getRole())
 				.snsConnected(dto.getSnsConnected())
 				.name(dto.getName())
 				.postcode(dto.getPostcode())

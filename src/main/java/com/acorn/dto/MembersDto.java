@@ -20,6 +20,7 @@ public class MembersDto {
 	private Integer no;
 	private String email;
 	private String password;
+	private String role;
 	private Integer snsConnected;
 	private String name;
 	private String postcode;
@@ -32,26 +33,29 @@ public class MembersDto {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String nickname;
 	
 	// toDto
-	public static MembersDto toDto(Members membersMain) {
+	public static MembersDto toDto(Members members) {
 		
 		return MembersDto.builder()
-				.no(membersMain.getNo())
-                .email(membersMain.getEmail())
-                .password(membersMain.getPassword())
-                .snsConnected(membersMain.getSnsConnected())
-                .name(membersMain.getName())
-                .postcode(membersMain.getPostcode())
-                .roadAddress(membersMain.getRoadAddress())
-                .detailAddress(membersMain.getDetailAddress())
-                .updatedAt(membersMain.getUpdatedAt())
-                .birthDate(membersMain.getBirthDate())
-                .gender(membersMain.getGender())
-                .phone(membersMain.getPhone())
-                .emailVerified(membersMain.getEmailVerified())
-                .status(membersMain.getStatus())
-                .createdAt(membersMain.getCreatedAt())
+				.no(members.getNo())
+                .email(members.getEmail())
+                .password(members.getPassword())
+                .role(members.getRole())
+                .snsConnected(members.getSnsConnected())
+                .name(members.getName())
+                .postcode(members.getPostcode())
+                .roadAddress(members.getRoadAddress())
+                .detailAddress(members.getDetailAddress())
+                .updatedAt(members.getUpdatedAt())
+                .birthDate(members.getBirthDate())
+                .gender(members.getGender())
+                .phone(members.getPhone())
+                .emailVerified(members.getEmailVerified())
+                .status(members.getStatus())
+                .createdAt(members.getCreatedAt())
+                .nickname(members.getNickname())
                 .build();
 	}
 }

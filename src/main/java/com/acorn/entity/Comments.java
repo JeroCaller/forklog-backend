@@ -18,6 +18,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,7 @@ public class Comments {
     @JoinColumn(name = "eatery_no")
     private Eateries eatery; // 식당
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_no")
     private Members member; // 회원
 
@@ -57,6 +59,7 @@ public class Comments {
     private Comments parentComment; // 부모댓글
     
     @Builder.Default
+    @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comments> childComments = new ArrayList<>(); // 자식댓글 목록
     

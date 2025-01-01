@@ -23,10 +23,12 @@ import lombok.ToString;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeywordMetaDto {
+	
 	private int totalCount = 0;
 	private int pageableCount = 0;
 	private boolean isEnd;
 	
 	// 지금은 불필요한 정보라 생각되어 Map으로 처리함.
 	private Map<String, Object> sameName;
+	
 }

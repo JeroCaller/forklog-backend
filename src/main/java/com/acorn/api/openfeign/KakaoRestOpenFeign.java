@@ -5,13 +5,14 @@ import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.acorn.dto.AddressResponseDto;
 import com.acorn.dto.openfeign.kakao.blog.BlogRequestDto;
 import com.acorn.dto.openfeign.kakao.blog.BlogResponseDto;
+import com.acorn.dto.openfeign.kakao.geo.location.GeoLocationResponseDto;
 import com.acorn.dto.openfeign.kakao.image.ImageRequestDto;
 import com.acorn.dto.openfeign.kakao.image.ImageResponseDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordRequestDto;
 import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
+
 
 @FeignClient(
 		name="KakaoRestOpenFeign", 
@@ -19,16 +20,11 @@ import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
 		configuration = KakaoOpenFeignConfig.class
 )
 public interface KakaoRestOpenFeign {
-
-	@GetMapping(value = "/local/geo/coord2address.json")
-	AddressResponseDto convertAddress(
-			@RequestParam("x") String longitude,
-			@RequestParam("y") String latitude
-	);
 	
-	@GetMapping(value = "local/search/address.json")
-	AddressResponseDto convertRoadAddress(
-			@RequestParam("query") String address
+	@GetMapping(value = "/local/geo/coord2address.json")
+	GeoLocationResponseDto getAddressFromCoordinate(
+			@RequestParam("x") String x,
+			@RequestParam("y") String y
 	);
 	
 	/**
@@ -52,7 +48,7 @@ public interface KakaoRestOpenFeign {
 	 * @return
 	 */
 	@GetMapping(value = "/search/image")
-	ImageResponseDto getEateryImage(@SpringQueryMap ImageRequestDto requestDto);
+ 	ImageResponseDto getEateryImage(@SpringQueryMap ImageRequestDto requestDto);
 	
 	/**
 	 * 특정 음식점의 상세 설명을 위해 블로그의 일부 글을 발췌

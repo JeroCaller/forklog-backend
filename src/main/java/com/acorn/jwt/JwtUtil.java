@@ -24,7 +24,7 @@ public class JwtUtil {
 	private String secretKey;
 
 	// 액세스 토큰 만료 시간 (1시간)
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 3 * 1000L;
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000L;
 
 	// 리프레시 토큰 만료 시간 (7일)
 	public static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
@@ -87,14 +87,4 @@ public class JwtUtil {
 		}
 	}
 
-	// 리프레시 토큰 만료 여부 확인
-	public boolean isRefreshTokenExpired(String token) {
-		try {
-			Claims claims = extractClaims(token);
-			return !claims.getExpiration().before(new Date());
-			
-		} catch (ExpiredJwtException e) {
-			return false;
-		}
-	}
 }

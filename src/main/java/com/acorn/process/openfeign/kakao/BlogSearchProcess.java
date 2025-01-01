@@ -16,7 +16,7 @@ public class BlogSearchProcess {
 	private final KakaoRestOpenFeign kakaoRestOpenFeign;
 	
 	/**
-	 * 블로그 한 건만 조사하여 반환
+	 * 블로그 한 건만 조회하여 반환
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @param query
@@ -28,8 +28,12 @@ public class BlogSearchProcess {
 				.build();
 		BlogResponseDto responseDto 
 			= kakaoRestOpenFeign.getEateryBlog(requestDto);
+		
 		BlogDocumentsDto result = null;
-		if (responseDto.getDocuments() != null) {
+		if (responseDto != null && 
+			responseDto.getDocuments() != null &&
+			responseDto.getDocuments().size() != 0
+		) {
 			result = responseDto.getDocuments().getFirst();
 		}
 		return result;

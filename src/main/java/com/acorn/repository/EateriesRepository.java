@@ -1,56 +1,69 @@
 package com.acorn.repository;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
+import com.acorn.entity.Categories;
 import com.acorn.entity.Eateries;
-import com.acorn.entity.Locations;
 
 public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	
-	boolean existsByNameAndLongitudeAndLatitude(String name, BigDecimal longitude, BigDecimal latitude);
+	boolean existsByNameAndLongitudeAndLatitude(String name, BigDecimal longitude, BigDecimal latitude);	
+	Page<Eateries> findByAddressContaining(String address, Pageable pageRequest);
+	
+	Page<Eateries> findByAddressContainsAndCategory(
+			String address, 
+			Categories categories,
+			Pageable pageRequest
+	);
 	
 	/**
-	 * eateries 테이블의 road_no 외래키 필드에 해당하는 특정 도로명 주소에 
-	 * 포함된 모든 음식점들을 DB로부터 가져온다. 
+	 * 음식 카테고리 대분류 및 지역명으로 검색
 	 * 
-	 * @param roadNo
+	 * @author JeroCaller (JJH)
+	 * @param address
+	 * @param categoryGroupNo
+	 * @param pageRequset
 	 * @return
 	 */
 	@Query(value = """
 		SELECT e
 		FROM Eateries e
-		JOIN e.road locR
-		ON locR.no = :road_no
+		JOIN e.category c
+		JOIN c.group cg
+		WHERE e.address like %:address% AND
+		cg.no = :paramNo
 	""")
-	Page<Eateries> findByRoadNo(
-			@Param("road_no") Integer roadNo,
-			Pageable pageRequest
+	Page<Eateries> findByCategoryGroup(
+			@Param("address") String address, 
+			@Param("paramNo") int categoryGroupNo, 
+			Pageable pageRequset
 	);
 	
+	Optional<Eateries> findByNameAndAddress(String name, String address);
+	
 	/**
-	 * 지역 중분류에 해당하는 Locations 엔티티 입력 시 
-	 * 이 지역에 해당하는 음식점들을 조회.
+	 * DB에 현존하는 PK 값 중 가장 큰 값을 반환.
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@Query(value = """
-		SELECT e
-		FROM Eateries e
-		JOIN e.road locR
-		JOIN locR.locations loc
-		JOIN loc.locationGroups locG
-		WHERE loc.name = :#{#locParam.name} AND
-		locG.name = :#{#locParam.locationGroups.name}
-	""")
-	Page<Eateries> findByLocation(
-			@Param("locParam") Locations locations, 
-			Pageable pageRequest
-	);
+	@Query(value = "SELECT MAX(e.no) FROM Eateries e")
+	Integer findIdMax();
+	
+	/**
+	 * 주어진 음식점 카테고리 소분류들 중 하나라도 해당하는 음식점들을 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param categories
+	 * @param pageRequest
+	 * @return
+	 */
+	Page<Eateries> findByCategoryIn(List<Categories> categories, Pageable pageRequest);
 }

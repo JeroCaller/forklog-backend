@@ -8,9 +8,7 @@ import com.acorn.dto.LoginRequestDto;
 import com.acorn.dto.RegisterRequestDto;
 import com.acorn.dto.LoginRepsonseDto;
 import com.acorn.dto.RegisterResponseDto;
-import com.acorn.dto.ResponseDto;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthProcess {

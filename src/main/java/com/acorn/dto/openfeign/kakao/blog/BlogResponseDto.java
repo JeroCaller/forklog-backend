@@ -34,6 +34,8 @@ import lombok.ToString;
 @Getter
 @ToString  // For Logging
 public class BlogResponseDto {
+	
 	List<BlogDocumentsDto> documents;
 	BlogMetaDto meta;
+	
 }

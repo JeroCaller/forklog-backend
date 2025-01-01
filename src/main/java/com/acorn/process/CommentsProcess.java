@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acorn.dto.CommentsDto;
 import com.acorn.entity.Comments;
@@ -24,6 +25,7 @@ public class CommentsProcess {
 	private final EateriesRepository eateryRepository;
 	
 	// Create
+	@Transactional
 	public CommentsDto createComment(CommentsDto dto) {
         Comments comment = dto.toEntity(memberRepository, eateryRepository);
 
@@ -61,7 +63,7 @@ public class CommentsProcess {
 	}
 
 	
-	// Update
+	// Update: 이건 @Transactional 없이 정상작동
 	public CommentsDto updateComment(int no, CommentsDto updatedDto) {
 	    Comments comment = commentRepository.findById(no)
 	    	.orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
@@ -70,21 +72,30 @@ public class CommentsProcess {
 	}
 
 	// Delete
+	@Transactional
 	public void deleteComment(int no) {
-        Comments comment = commentRepository.findById(no)
-        	.orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+	    Comments comment = commentRepository.findById(no)
+	        .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        if (comment.hasChildComments()) {
-            comment.toBuilder()
-            	.isDeleted(true)
-            	.content("이 댓글은 삭제되었습니다.")
-            	.build();
-            commentRepository.save(comment);
-        } else {
-            if (comment.getParentComment() != null) {
-                comment.getParentComment().getChildComments().remove(comment);
-            }
-            commentRepository.delete(comment);
-        }
-    }
+	    // 자식이 있는 부모 댓글을 삭제하면 부모 댓글을 삭제상태로 변경
+	    if (comment.hasChildComments()) {
+	        Comments deletedComment = comment.toBuilder()
+	            .isDeleted(true)
+	            .content("이 댓글은 삭제되었습니다.")
+	            .build();
+	        commentRepository.save(deletedComment);
+	    } else {
+	    	// 자식을 삭제할 때 부모댓글의 자식 목록에서 해당 댓글을 제거
+	    	Comments parentComment = comment.getParentComment();
+	        if (parentComment != null) {
+	        	parentComment.getChildComments().remove(comment);
+	        	
+	        	// 부모 댓글이 삭제상태이고 자식이 하나도 없을 경우 부모 댓글을 삭제
+	        	if (parentComment.isDeleted() && !parentComment.hasChildComments()) {
+	        		commentRepository.delete(parentComment);
+	        	}
+	        }
+	        commentRepository.delete(comment); // 자식이 없는 댓글은 바로 삭제
+	    }
+	}
 }

@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString // For Logging
 public class Categories {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
@@ -29,6 +31,7 @@ public class Categories {
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "group_no", referencedColumnName = "no")
+	@JoinColumn(name = "group_no", referencedColumnName = "no", nullable = false)
 	private CategoryGroups group;
+
 }

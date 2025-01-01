@@ -1,9 +1,6 @@
 package com.acorn.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,179 +11,271 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.dto.EateriesDto;
-import com.acorn.dto.openfeign.kakao.keyword.KeywordResponseDto;
-import com.acorn.entity.LocationRoads;
-import com.acorn.entity.Locations;
+import com.acorn.dto.location.LocationSplitDto;
+import com.acorn.exception.BadAlgorithmException;
 import com.acorn.exception.NoDataFoundException;
-import com.acorn.exception.location.NoLocationMediumFoundException;
+import com.acorn.exception.category.NoCategoryFoundException;
 import com.acorn.process.EateriesMainProcess;
-import com.acorn.process.EateriesWithApiProcess;
-import com.acorn.process.LocationProcess;
-import com.acorn.process.openfeign.kakao.KeywordSearchProcess;
+import com.acorn.process.GeoLocationProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
-import com.acorn.utils.ListUtil;
-import com.acorn.utils.LocationConverter;
+import com.acorn.utils.LocationUtil;
+import com.acorn.utils.PageUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * DB로부터 음식점(eateries) 정보 가져오는 컨트롤러 클래스.
+ */
 @RestController
 @Slf4j
-@RequestMapping("/main")
+@RequestMapping("/main/locations")
 @RequiredArgsConstructor
 public class EateriesMainController {
-	private final LocationProcess locationProcess;
-	private final EateriesWithApiProcess eateriesWithApiProcess;
-	private final LocationConverter locationConverter;
-	private final KeywordSearchProcess keywordSearchProcess;
+	
 	private final EateriesMainProcess eateriesMainProcess;
-	private final int MAX_PAGE_SIZE = 15;
-
+	private final GeoLocationProcess geoLocationProcess;
+	
 	/**
-	 * 지역을 랜덤으로 골라 그 지역의 음식점 정보들을 반환.
+	 * 클라이언트에서 주소 입력 시 그에 해당하는 음식점 정보들을 반환. 
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param page 음식점 정보들 중 요청할 페이지 번호 (kakao API의 page 요청 파라미터 관련)
+	 * @param location
+	 * @param page
+	 * @param size
 	 * @return
 	 */
-	@GetMapping("/locations/random")
-	public ResponseEntity<ResponseJson> getEateriesByRandomLocations(
-			@RequestParam(name = "page", defaultValue = "1") int page
+	@GetMapping("/{location}")
+	public ResponseEntity<ResponseJson> getEateriesByAddress(
+			@PathVariable("location") String location,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
-
-		// 랜덤으로 주소 한 곳을 얻어온다.
-		LocationRoads randomLocation = null;
-		try {
-			randomLocation = locationProcess.getRandomLocation();
-			// throw new NoDataFoundException(); // For Test
-		} catch (NoDataFoundException exception) {
-			// 해당 예외 발생 시 이에 대한 JSON 응답 데이터 구성 및 반환
-			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND) // 응답 데이터에 포함시키는 용도
-					.message(exception.getMessage())
-					.build();
-
-			return responseJson.toResponseEntity();
-		}
-
-		// 위 예외 이외에 알수 없는 이유로 null값이 나온 경우에 대한 응답 데이터 생성.
-		if (randomLocation == null) {
+		
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		Page<EateriesDto> eateries = eateriesMainProcess
+				.getEateriesByLocation(location, pageRequest);
+		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.NOT_FOUND)
 					.message(ResponseStatusMessages.NO_DATA_FOUND)
 					.build();
-
-			return responseJson.toResponseEntity();
-		}
-
-		Pageable pageRequest = PageRequest.of(page, MAX_PAGE_SIZE);
-
-		// 주소를 검색어로 입력하여 해당 주소 주변 식당을 검색
-		Page<EateriesDto> eateries = eateriesMainProcess
-				.getDataByLocationRoad(randomLocation, pageRequest);
-		String fullLocation = locationConverter.getLocationWithoutRoad(randomLocation);
-		responseJson = getEateriesLogic(eateries, fullLocation, page);
-
-		// log.info("eateries: " + eateries);
-
-		return responseJson.toResponseEntity();
-	}
-
-	/**
-	 * 주소 대분류 및 중분류 이름 입력 시 해당 지역 근처 음식점 정보를 반환.
-	 * 
-	 * 예) 서울 - 강남구
-	 * 
-	 * @author JeroCaller (JJH)
-	 * @param largeCity
-	 * @param mediumCity
-	 * @return
-	 */
-	@GetMapping("/locations/large/{largeName}/medium/{mediumName}")
-	public ResponseEntity<ResponseJson> getEateriesByLocation(
-			@PathVariable("largeName") String largeCity,
-			@PathVariable("mediumName") String mediumCity, 
-			@RequestParam(name = "page", defaultValue = "1") int page
-	) {
-		ResponseJson responseJson = null;
-
-		Locations locationsEntity = null;
-		try {
-			locationsEntity = locationProcess.getLocationMediumByName(
-					largeCity, 
-					mediumCity
-			);
-		} catch (NoLocationMediumFoundException e) {
-			responseJson = ResponseJson.builder()
-					.status(HttpStatus.BAD_REQUEST)
-					.message(e.getMessage())
-					.build();
-			return responseJson.toResponseEntity();
-		}
-
-		Pageable pageRequest = PageRequest.of(page, MAX_PAGE_SIZE);
-		Page<EateriesDto> eateries = eateriesMainProcess
-				.getEateriesByLocation(locationsEntity, pageRequest);
-		String fullLocation = locationConverter.getFullLocation(locationsEntity);
-		responseJson = getEateriesLogic(eateries, fullLocation, page);
-
-		return responseJson.toResponseEntity();
-	}
-	
-	/**
-	 * 컨트롤러 메서드들 내에 사용되는 음식점 정보 조회 공통 로직. 
-	 * 
-	 * @author JeroCaller (JJH)
-	 * @param eateries
-	 * @param fullLocation
-	 * @param page
-	 * @return
-	 */
-	private ResponseJson getEateriesLogic(
-			Page<EateriesDto> eateries, 
-			String fullLocation, 
-			int page
-	) {
-		ResponseJson responseJson = null;
-
-		// DB로부터 조회된 값이 없다면 API 요청으로 얻어온다.
-		if (eateries == null || eateries.getNumberOfElements() == 0) {
-			KeywordResponseDto apiResult = keywordSearchProcess.getApiResult(fullLocation, page);
-			eateries = eateriesWithApiProcess.saveApi(apiResult.getDocuments());
-		}
-
-		List<String> failedLocations = eateriesWithApiProcess.getFailedLocations();
-		// if (failedLocations != null && failedLocations.size() > 0) {
-		if (!ListUtil.isEmpty(failedLocations)) {
-			if (eateries == null || eateries.getNumberOfElements() == 0) {
-				// 위의 if문을 거쳤음에도 조회된 eateries가 없을 경우
-				responseJson = ResponseJson.builder()
-						.status(HttpStatus.NOT_FOUND)
-						.message(ResponseStatusMessages.NO_DATA_FOUND)
-						.build();
-			} else {
-				String allLocations = ListUtil.getStringList(failedLocations);
-				String responseMessage = "API로부터 가져온 주소 중 DB 내 조회되지 않은 주소 존재. 주소 명단) ";
-				responseMessage += allLocations;
-
-				responseJson = ResponseJson.builder()
-						.status(HttpStatus.PARTIAL_CONTENT) // 206
-						.message(responseMessage)
-						.data(eateries)
-						.build();
-			}
 		} else {
-			// log.info("eateries size: " + eateries.getNumberOfElements());
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
 					.message(ResponseStatusMessages.READ_SUCCESS)
 					.data(eateries)
 					.build();
 		}
-
-		return responseJson;
+		
+		return responseJson.toResponseEntity();
 	}
-
+	
+	/**
+	 * 지역 및 음식 카테고리 대분류 두 검색 조건이 적용되어 검색된 음식점 정보들을 반환.
+	 * 
+	 * 예를 들어 지역: 서울, 카테고리: 한식 입력 시 서울 지역 내 한식 카테고리에 해당하는 
+	 * 모든 음식점 정보들을 페이징하여 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param location
+	 * @param largeId
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@GetMapping("/{location}/categories/large/{lid}")
+	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategoryLarge(
+			@PathVariable(name = "location") String location,
+			@PathVariable(name = "lid") int largeId,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size
+	) {
+		ResponseJson responseJson = null;
+		
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		Page<EateriesDto> eateries = null;
+		try {
+			eateries = eateriesMainProcess
+					.getEateriesByLocationAndCategoryLarge(
+							location, 
+							largeId, 
+							pageRequest
+					);
+		} catch (NoCategoryFoundException e) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(e.getMessage())
+					.build();
+			return responseJson.toResponseEntity();
+		}
+		
+		if (PageUtil.isEmtpy(eateries)) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.build();
+		} else {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.OK)
+					.message(ResponseStatusMessages.READ_SUCCESS)
+					.data(eateries)
+					.build();
+		}
+		
+		return responseJson.toResponseEntity();
+	}
+	
+	/**
+	 * 지역 및 음식 카테고리 소분류 두 검색 조건이 적용되어 검색된 음식점 정보들을 반환.
+	 *
+	 * 카테고리 소분류 ID만 있어도 카테고리 대분류를 알아낼 수 있음.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param location
+	 * @param smallId
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@GetMapping("/{location}/categories/small/{sid}")
+	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategorySmall(
+			@PathVariable(name = "location") String location,
+			@PathVariable(name = "sid") int smallId,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size
+	) {
+		ResponseJson responseJson = null;
+		
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		Page<EateriesDto> eateries = null;
+		try {
+			eateries = eateriesMainProcess
+					.getEateriesByLocationAndCategorySmall(
+							location, 
+							smallId, 
+							pageRequest
+					);
+		} catch (NoCategoryFoundException e) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(e.getMessage())
+					.build();
+			return responseJson.toResponseEntity();
+		} 
+		
+		//log.info("eateries: " + eateries.toString());
+		//log.info("" + eateries.getNumberOfElements());
+		//log.info("" + eateries.getTotalElements());
+		if (PageUtil.isEmtpy(eateries)) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.data(eateries)
+					.build();
+		} else {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.OK)
+					.message(ResponseStatusMessages.READ_SUCCESS)
+					.data(eateries)
+					.build();
+		}
+		
+		return responseJson.toResponseEntity();
+	}
+	
+	/**
+	 * 사용자 GPS 경위도 정보를 토대로 그 주변 음식점 정보를 반환. 
+	 * 만약 사용자가 GPS 경위도 정보를 제공하지 않는 경우, x, y 요청 파라미터를 비우고 요청한다. 
+	 * 그러면 DB 내 음식점 주소들 중 임의로(랜덤으로 하나를 골라 그 주소에 해당하는 음식점 정보들을 반환한다. 
+	 * 
+	 * 테스트용 x, y 입력값 예) 사용자 GPS 위치 정보 제공한다고 가정. 
+	 * 예1) 강남역 2호선 (서울 강남구 강남대로 396) - x: 127.047377408384, y: 37.4981646510326
+	 * 예2) 국립서울현충원 (서울 동작구 현충로 210) - x: 126.978408414947, y: 37.4998236507216
+	 * -> swagger에서 확인.
+	 * 
+	 * 만약 사용자 GPS 위치 정보 미제공 시 DB 내 존재하는 주소들 중 하나를 랜덤으로 사용하는 것이 아니라, 
+	 * "서울 강남구"처럼 기본값을 정해서 하고자 할 때는 클라이언트 측에서
+	 * 이 클래스의 getEateriesByAddress() 메서드에 매핑된 REST API URI인 /main/locations/{locations}
+	 * 이용하는 것을 권고 -> REST API URI ex): /main/locations/서울 강남구
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @return
+	 */
+	@GetMapping("/gps/user")
+	public ResponseEntity<ResponseJson> getEateriesByUserLocation(
+			@RequestParam(name = "x", defaultValue = "") String x,
+			@RequestParam(name = "y", defaultValue = "") String y,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size
+	) {
+		ResponseJson responseJson = null;
+		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
+		
+		// 참고) 사용자 GPS 위치가 반드시 DB - eateries 내 존재하는 음식점들 중 하나의 
+		// 위치(longitude, latitude 필드)와 반드시 정확히 일치한다는 보장이 없다. 
+		// 따라서 카카오 API로부터 좌표를 주소로 변환하여 
+		// 이 주소를 토대로 음식점을 검색하는 것이 타당하다고 생각함. 
+		
+		// 사용자가 GPS 위치(x, y)를 입력하지 않은 경우, DB - eateries에 존재하는 주소를 
+		// 랜덤으로 하나 가져오게끔 한다.
+		LocationSplitDto locationSplitDto = null;
+		if (!x.isBlank() && !y.isBlank()) {
+			locationSplitDto = geoLocationProcess
+					.getOneLocationFromCoordinate(x, y);
+		}
+		
+		Page<EateriesDto> eateries = null;
+		String searchLocation = null; // 주소 대분류 - 중분류만으로 구성.
+		
+		if (locationSplitDto == null) {
+			// API로부터 조회된 주소가 없을 경우, DB - eateries에 존재하는 주소를
+			// 랜덤으로 하나 가져온다. 
+			EateriesDto oneEatery = null;
+			try {
+				oneEatery = eateriesMainProcess.getOneEateriesByRandom();
+			} catch (NoDataFoundException | BadAlgorithmException e) {
+				responseJson = ResponseJson.builder()
+						.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.message(e.getMessage())
+						.build();
+				return responseJson.toResponseEntity();
+			} 
+			
+			searchLocation = LocationUtil
+					.getLocationMediumStringByFull(oneEatery.getAddress());
+			log.info("좌표로부터 주소 구성 방법 - DB로부터 랜덤으로 조회된 주소를 이용");
+			
+		} else {
+			// API로부터 조회한 주소 데이터로 대분류 - 중분류까지의 주소 문자열 구성.
+			// 예) "서울 강남구"
+			searchLocation = locationSplitDto.getFullLocationByMedium();
+			log.info("좌표로부터 주소 구성 방법 - 사용자 GPS 위치 이용");
+		}
+		
+		log.info("구성된 검색용 주소 문자열 : " + searchLocation);
+		
+		eateries = eateriesMainProcess.getEateriesByLocation(
+				searchLocation, 
+				pageRequest
+		);
+		
+		if (PageUtil.isEmtpy(eateries)) {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.NOT_FOUND)
+					.message(ResponseStatusMessages.NO_DATA_FOUND)
+					.build();
+		} else {
+			responseJson = ResponseJson.builder()
+					.status(HttpStatus.OK)
+					.message(ResponseStatusMessages.READ_SUCCESS)
+					.data(eateries)
+					.build();
+		}
+		
+		return responseJson.toResponseEntity();
+	}
+	
 }

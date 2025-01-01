@@ -34,7 +34,7 @@ public class Eateries {
 	@Column(length = 11)
 	private int viewCount;
 	
-	@Column(length = 500)
+	@Column(length = 1000)
 	private String thumbnail;
 	
 	@Column(columnDefinition = "text") // mysql text type
@@ -57,6 +57,7 @@ public class Eateries {
 	private BigDecimal latitude;
 	
 	@ManyToOne
-	@JoinColumn(name = "category_no", referencedColumnName = "no")
+	@JoinColumn(name = "category_no", nullable = false)
 	private Categories category;
+	
 }
