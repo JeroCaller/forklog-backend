@@ -277,4 +277,5 @@ public class EateriesMainController {
 		
 		return responseJson.toResponseEntity();
 	}
+	
 }
