@@ -30,7 +30,7 @@ public class LocationController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<ResponseJson> getLocationGroupsFilterAll() {
 		ResponseJson responseJson = null;
 		
