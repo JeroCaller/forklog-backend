@@ -20,12 +20,13 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
     Optional<Favorites> findByMemberNoAndEateryNo(int memberNo, int eateryNo);
     
     // 즐겨찾기 상태 존재 여부만 확인
-    boolean existsByMemberNoAndEateryNo(int memberNo, int eateryNo);
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorites f WHERE f.memberNo = :memberNo AND f.eateryNo = :eateryNo AND f.status = 1")
+    boolean existsByMemberNoAndEateryNo(@Param("memberNo") int memberNo, @Param("eateryNo") int eateryNo);
     
-    // 회원 번호와 status가 true인 즐겨찾기 리스트 조회
-    @Query("SELECT f FROM Favorites f WHERE f.memberNo = :memberNo AND f.status = true")
+    // 회원 번호와 status가 1(활성화)인 즐겨찾기 리스트 조회
+    @Query("SELECT f FROM Favorites f WHERE f.memberNo = :memberNo AND f.status = 1")
     List<Favorites> findByMemberNoAndStatus(@Param("memberNo") int memberNo);
-    
-    // status가 true인 즐겨찾기만 조회
-    List<Favorites> findByMemberNoAndStatus(int memberNo, Boolean status);
+
+    // 특정 status 값을 기반으로 즐겨찾기 조회
+    List<Favorites> findByMemberNoAndStatus(int memberNo, int status);
 }

@@ -36,7 +36,7 @@ public class CommentsController {
 	@GetMapping("{eateryNo}/comments")
 	public ResponseEntity<Page<CommentsDto>> getCommentsByEatery(
 		@PathVariable("eateryNo") int eateryNo, @RequestParam(name = "page", defaultValue = "0") int page) {
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 20);
 		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo, pageable));
 	}
 	
