@@ -27,4 +27,5 @@ public interface ResponseStatusMessages {
 	String NO_REQUEST_ARGS = "입력된 요청 인자 없음.";
 	
 	String AUTHORIZED_MEMBER = "인증된 사용자입니다.";
+	String UNAUTHORIZED_MEMBER = "비로그인 또는 인증되지 않은 사용자입니다. 미인증 사용자에게는 제공되지 않는 기능입니다.";
 }
