@@ -47,7 +47,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 		SELECT DISTINCT e.category
 		FROM Favorites f
 		JOIN f.eatery e
-		ON f.member = :#{member}
+		ON f.member = :#{#member}
 	""")
 	List<Categories> findByMemberFavorite(@Param("member") Members member);
 }

@@ -69,7 +69,7 @@ public class MembersEateriesController {
 		
 		ResponseJson responseJson = null;
 		ResponseJson memberJson = getMemberInfo();
-		
+			
 		// 미인증 (비로그인) 사용자로 판별될 시 데이터 미제공.
 		if (!memberJson.getStatus().equals(HttpStatus.OK)) {
 			responseJson = ResponseJson.builder()
@@ -78,10 +78,10 @@ public class MembersEateriesController {
 					.build();
 			return responseJson.toResponseEntity();
 		}
-		
+			
 		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		MembersResponseDto memberInfo = (MembersResponseDto) memberJson.getData();
-		
+			
 		Page<EateriesDto> eateries = null;
 		boolean isException = true;
 		try {
@@ -102,7 +102,7 @@ public class MembersEateriesController {
 					.message(e.getMessage())
 					.build();
 		}
-		
+			
 		if (!isException) {
 			responseJson = ResponseJson.builder()
 					.status(HttpStatus.OK)
@@ -110,8 +110,9 @@ public class MembersEateriesController {
 					.data(eateries)
 					.build();
 		}
-		
+			
 		return responseJson.toResponseEntity();
+		
 	}
 	
 	/**

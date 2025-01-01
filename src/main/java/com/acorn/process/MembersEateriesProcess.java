@@ -29,9 +29,11 @@ import com.acorn.utils.ListUtil;
 import com.acorn.utils.PageUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MembersEateriesProcess {
 	
 	private final MembersRepository membersRepository;
@@ -105,12 +107,27 @@ public class MembersEateriesProcess {
 		Members member = membersOpt.orElseThrow(
 				() -> new NoMemberFoundException(String.valueOf(memberNo))
 		);
+		
+		/*
+		log.info("현재 로그인 사용자 정보");
+		log.info("이메일 : " + member.getEmail());
+		log.info("ID 번호: " + member.getNo());
+		*/
 
 		List<Categories> memberCategories = categoriesRepository
 				.findByMemberFavorite(member);
 		if (ListUtil.isEmpty(memberCategories)) {
 			throw new NoCategoryFoundException("사용자가 즐겨찾기한 음식점이 없는 듯 합니다.");
 		}
+		
+		/*
+		log.info("사용자가 즐겨찾기한 음식점들의 카테고리 정보");
+		memberCategories.forEach(cate -> {
+			log.info("카테고리 대분류 번호: " + cate.getGroup().getNo());
+			log.info("카테고리 소분류 번호: " + cate.getNo());
+			log.info("카테고리 명: " + cate.getGroup().getName() + " " + cate.getName());
+			log.info("-----------------");
+		}); */
 		
 		Page<Eateries> eateries = eateriesRepository
 				.findByCategoryIn(memberCategories, pageRequest);
