@@ -36,7 +36,7 @@ public class FavoritesController {
     }
     
     // 특정 음식점의 즐겨찾기 총 갯수 조회
-    @GetMapping("/{eateryNo}/favorites/count")
+    @GetMapping("/{eateryNo}/favorites")
     public ResponseEntity<Integer> getFavoritesCount(
         @PathVariable("eateryNo") int eateryNo
     ) {
