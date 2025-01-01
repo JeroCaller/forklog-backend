@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.acorn.entity.Comments;
 import com.acorn.repository.EateriesRepository;
@@ -26,6 +27,7 @@ public class CommentsDto {
     private int memberNo;
     private String nickname;
     private Integer parentCommentNo;
+    private Long likeCount;
     
     @Builder.Default
     private List<CommentsDto> childComments = new ArrayList<>();
@@ -51,7 +53,34 @@ public class CommentsDto {
             .childComments(childCommentDtos) // childComments 필드에 자식 댓글 리스트 추가
             .build();
     }
+    
+    // Entity -> Dto (Read Only)
+    public static CommentsDto fromEntityWithLikes(Comments comment, Map<Integer, Long> likeCounts) {
+        List<CommentsDto> childCommentDtos = new ArrayList<>();
+        if (comment.hasChildComments()) {
+            for (Comments childComment : comment.getChildComments()) {
+                // 자식 댓글을 DTO로 변환하고, 좋아요 개수는 likeCounts 맵에서 가져오기
+                childCommentDtos.add(fromEntityWithLikes(childComment, likeCounts));
+            }
+        }
+        
+        // 댓글 DTO 변환
+        return CommentsDto.builder()
+            .no(comment.getNo())
+            .content(comment.getContent())
+            .createdAt(comment.getCreatedAt())
+            .updatedAt(comment.getUpdatedAt())
+            .isDeleted(comment.isDeleted())
+            .eateryNo(comment.getEatery().getNo())
+            .memberNo(comment.getMember().getNo())
+            .nickname(comment.getMember().getNickname())
+            .parentCommentNo(comment.getParentComment() != null ? comment.getParentComment().getNo() : null)
+            .childComments(childCommentDtos) // 자식 댓글 리스트 추가
+            .likeCount(likeCounts.getOrDefault(comment.getNo(), 0L)) // 부모 댓글의 좋아요 개수
+            .build();
+    }
 
+    
     // Dto -> Entity
     public Comments toEntity(MembersRepository memberRepository, EateriesRepository eateryRepository) {
         return Comments.builder()
