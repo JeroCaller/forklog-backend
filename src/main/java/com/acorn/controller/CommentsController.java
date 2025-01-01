@@ -23,33 +23,28 @@ import lombok.RequiredArgsConstructor;
 public class CommentsController {
 	private final CommentsProcess process;
 	
-	// -- Create --
-	@PostMapping
+	/* -- Create: 댓글 작성 -- */
+	@PostMapping("comments")
 	public ResponseEntity<CommentsDto> createComment(@RequestBody CommentsDto dto) {
 		return ResponseEntity.ok(process.createComment(dto));
 	}
 	
-	// -- Read --
-	// 해당 식당에 작성된 댓글 목록 읽기
-	@GetMapping("/eateries/{eateryNo}")
-	public ResponseEntity<List<CommentsDto>> getCommentsByEatery(@PathVariable("eateryNo") int eateryNo) {
-		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo));
-	}
-
-	// 해당 회원이 작성한 댓글 목록 읽기
-	@GetMapping("/members/{memberNo}")
-	public ResponseEntity<List<CommentsDto>> getCommentsByMember(@PathVariable("memberNo") int memberNo) {
-		return ResponseEntity.ok(process.getCommentsByMember(memberNo));
+	/* -- Read: 특정 음식점의 댓글목록 읽기 -- */
+	@GetMapping("{eateryNo}/comments")
+	public ResponseEntity<Page<CommentsDto>> getCommentsByEatery(
+		@PathVariable("eateryNo") int eateryNo, @RequestParam(name = "page", defaultValue = "0") int page) {
+		Pageable pageable = PageRequest.of(page, 20);
+		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo, pageable));
 	}
 	
-	// -- Update --
-	@PutMapping("/comments/{no}")
+	/* -- Update: 댓글 수정 -- */
+	@PutMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> updateComment(@PathVariable("no") int no, @RequestBody CommentsDto dto){
 		return ResponseEntity.ok(process.updateComment(no, dto));
 	}
 	
-	// -- Delete --
-	@DeleteMapping("/comments/{no}")
+	/* -- Delete: 댓글 삭제 -- */
+	@DeleteMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> deleteComment(@PathVariable("no") int no) {
 		process.deleteComment(no);
 		return ResponseEntity.noContent().build();
