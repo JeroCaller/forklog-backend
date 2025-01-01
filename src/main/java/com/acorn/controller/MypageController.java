@@ -30,7 +30,6 @@ import com.acorn.repository.MembersRepository;
 
 import lombok.RequiredArgsConstructor;
 
-/*
 @RestController
 @RequestMapping("/main/mypage")
 @RequiredArgsConstructor
@@ -94,4 +93,3 @@ public class MypageController {
 	}
 
 }
-*/
