@@ -86,4 +86,22 @@ public class MembersEateriesController {
 		return responseJson.toResponseEntity();
 	}
 	
+	/**
+	 * 사용자 맞춤 추천 음식점 정보 반환
+	 * 
+	 * 추천 알고리즘
+	 * - 사용자 (로그인한 상황 가정) 즐겨찾기한 음식점 목록 추린 후, 
+	 * 음식점 목록 내 같은 카테고리의 다른 음식점 조회하여 반환.
+	 * 
+	 * @return
+	 */
+	@GetMapping("/eateries/recommends")
+	public ResponseEntity<ResponseJson> getEateriesForMember() {
+		
+		ResponseJson responseJson = null;
+		
+		// TODO 구현
+		
+		return responseJson.toResponseEntity();
+	}
 }
