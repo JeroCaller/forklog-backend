@@ -29,4 +29,8 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
 
     // 특정 status 값을 기반으로 즐겨찾기 조회
     List<Favorites> findByMemberNoAndStatus(int memberNo, int status);
+    
+    // 특정 음식점에 대해 즐겨찾기된 수 조회
+    @Query("SELECT COUNT(f) FROM Favorites f WHERE f.eateryNo = :eateryNo AND f.status = 1")
+    int countFavoritesByEateryNo(@Param("eateryNo") int eateryNo);
 }
