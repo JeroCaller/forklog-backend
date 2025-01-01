@@ -30,7 +30,6 @@ public class CustomUserDetailService implements UserDetailsService {
 		if (members == null) {
             throw new UsernameNotFoundException("가입된 계정을 찾을 수 없습니다.");
         }
-		
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		authorities.add(new SimpleGrantedAuthority(members.getRole()));
 		

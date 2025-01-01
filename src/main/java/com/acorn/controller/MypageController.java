@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.acorn.dto.EateryResponseDto;
 import com.acorn.dto.ReviewRequestDto;
 import com.acorn.dto.ReviewResponseDto;
-import com.acorn.entity.Eateries;
 import com.acorn.process.FavoritesProcess;
 import com.acorn.process.ReviewsProcess;
 import com.acorn.repository.MembersRepository;
