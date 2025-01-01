@@ -8,10 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +28,6 @@ import com.acorn.repository.MembersRepository;
 import com.acorn.repository.RefreshTokenRepository;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -40,7 +36,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthProcessImpl implements AuthProcess {
 
 	private final JwtUtil jwtUtil;
-	private final AuthenticationManager authenticationManager;
 	private final MembersRepository membersRepository;
 	private final CustomUserDetailService customUserDetailService;
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -142,17 +137,6 @@ public class AuthProcessImpl implements AuthProcess {
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 
 		try {
-			// 현재 인증된 사용자 정보 가져오기
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        System.out.println("authentication : " + authentication);
-	        // 사용자 이메일 추출
-	        String email = authentication.getName();
-	        System.out.println("사용자 로그아웃 이메일 : " + email);
-	        
-	        // 리프레시 토큰 삭제
-	        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByEmail(email);
-	        refreshTokenOptional.ifPresent(refreshTokenRepository::delete);
-	        System.out.println("Refresh token deleted successfully!");
 	        
 			// 엑세스 토큰 쿠키 제거
 			Cookie accessTokenCookie = new Cookie("accessToken", null);
@@ -172,10 +156,8 @@ public class AuthProcessImpl implements AuthProcess {
 
 			SecurityContextHolder.clearContext();
 
-			System.out.println(
-					"Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
-			System.out.println(
-					"Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
+			//System.out.println("Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
+			//System.out.println("Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
 
 			return ResponseEntity.ok().body("로그아웃 성공"); // 로그아웃 성공 시 응답
 		} catch (Exception e) {
@@ -268,8 +250,6 @@ public class AuthProcessImpl implements AuthProcess {
 		refreshTokenEntity.setEmail(email);
 		refreshTokenEntity.setRefreshToken(refreshToken);
 		refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusWeeks(1)); // 리프레시 토큰의 만료일을 설정 (1주일)
-		//System.out.println("Before saving refresh token: " + refreshTokenEntity);
 		refreshTokenRepository.save(refreshTokenEntity);
-		//System.out.println("Refresh token saved successfully!");
 	}
 }

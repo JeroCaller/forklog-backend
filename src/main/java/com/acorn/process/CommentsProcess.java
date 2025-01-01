@@ -37,7 +37,7 @@ public class CommentsProcess {
 	// Read
 	@Transactional(readOnly = true)
 	public Page<CommentsDto> getCommentsByEatery(int eateryNo, Pageable pageable) {
-		return commentRepository.findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(eateryNo, pageable).map(CommentsDto::fromEntity);
+		return commentRepository.findByEatery(eateryNo, pageable).map(CommentsDto::fromEntity);
 	}
 	
 	// Update: 이건 @Transactional 없이 정상작동

@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FavoritesDto {
     private int memberNo;
-    private Boolean status;
+    private int status; // 0: 비활성, 1: 활성
 }
