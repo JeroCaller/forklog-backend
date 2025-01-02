@@ -55,6 +55,7 @@ public class EateriesController {
 	 * EateriesController에 작성함. 
 	 * 
 	 * @author JeroCaller (JJH)
+	 * @param no - 음식점 엔티티의 no
 	 * @return
 	 */
 	@PutMapping("/{no}/view/counts")

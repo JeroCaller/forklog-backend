@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * DB로부터 음식점(eateries) 정보 가져오는 컨트롤러 클래스.
+ * 메인 페이지에 대해, DB로부터 특정 주소에 대한 음식점(eateries) 정보 가져오는 컨트롤러 클래스.
  */
 @RestController
 @Slf4j
@@ -41,7 +41,7 @@ public class EateriesMainController {
 	 * 클라이언트에서 주소 입력 시 그에 해당하는 음식점 정보들을 반환. 
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param location
+	 * @param location - 입력 예) "서울 강남구". 
 	 * @param page
 	 * @param size
 	 * @return
@@ -80,8 +80,8 @@ public class EateriesMainController {
 	 * 모든 음식점 정보들을 페이징하여 반환.
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param location
-	 * @param largeId
+	 * @param location - 문자열 형태의 지역 주소명
+	 * @param largeId - 카테고리 대분류 엔티티의 ID
 	 * @param page
 	 * @param size
 	 * @return
@@ -134,8 +134,8 @@ public class EateriesMainController {
 	 * 카테고리 소분류 ID만 있어도 카테고리 대분류를 알아낼 수 있음.
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param location
-	 * @param smallId
+	 * @param location - 문자열 형태의 지역 주소명
+	 * @param smallId - 카테고리 소분류 엔티티의 ID
 	 * @param page
 	 * @param size
 	 * @return
@@ -246,16 +246,16 @@ public class EateriesMainController {
 			
 			searchLocation = LocationUtil
 					.getLocationMediumStringByFull(oneEatery.getAddress());
-			log.info("좌표로부터 주소 구성 방법 - DB로부터 랜덤으로 조회된 주소를 이용");
+			//log.info("좌표로부터 주소 구성 방법 - DB로부터 랜덤으로 조회된 주소를 이용");
 			
 		} else {
 			// API로부터 조회한 주소 데이터로 대분류 - 중분류까지의 주소 문자열 구성.
 			// 예) "서울 강남구"
 			searchLocation = locationSplitDto.getFullLocationByMedium();
-			log.info("좌표로부터 주소 구성 방법 - 사용자 GPS 위치 이용");
+			//log.info("좌표로부터 주소 구성 방법 - 사용자 GPS 위치 이용");
 		}
 		
-		log.info("구성된 검색용 주소 문자열 : " + searchLocation);
+		//log.info("구성된 검색용 주소 문자열 : " + searchLocation);
 		
 		eateries = eateriesMainProcess.getEateriesByLocation(
 				searchLocation, 

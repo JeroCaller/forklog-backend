@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ResponseJson {
+	
 	private HttpStatus status;
 	private String message;
 	private Object data;
@@ -34,4 +35,5 @@ public class ResponseJson {
 				.status(this.status)
 				.body(this);
 	}
+	
 }

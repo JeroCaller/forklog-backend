@@ -18,4 +18,5 @@ public class LocationUtil {
 		
 		return tokens[0] + " " + tokens[1];
 	}
+	
 }
