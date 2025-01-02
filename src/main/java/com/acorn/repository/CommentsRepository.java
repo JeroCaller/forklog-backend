@@ -8,12 +8,15 @@ import org.springframework.data.repository.query.Param;
 
 import com.acorn.entity.Comments;
 
-public interface CommentsRepository extends JpaRepository<Comments, Integer>{
-	//Page<Comments> findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(int eateryNo, Pageable pageable);
-	
-	// SELECT c FROM Comment c LEFT JOIN FETCH c.member WHERE c.deleted = false ORDER BY c.createdAt DESC
-	@Query("SELECT c FROM Comments c LEFT JOIN FETCH c.member " +
-		   "WHERE c.eatery.no =:eateryNo AND c.parentComment IS NULL " +
-		   "ORDER BY c.createdAt DESC")
+public interface CommentsRepository extends JpaRepository<Comments, Integer> {
+	// Page<Comments> findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(int
+	// eateryNo, Pageable pageable);
+
+	@Query("SELECT c, COUNT(l) FROM Comments c " +
+			"LEFT JOIN FETCH c.member " +
+			"LEFT JOIN Likes l ON c.no = l.comment.no " +
+			"WHERE c.eatery.no = :eateryNo " +
+			"GROUP BY c.no " +
+			"ORDER BY c.createdAt DESC")
 	Page<Comments> findByEatery(@Param("eateryNo") int eateryNo, Pageable pageable);
 }
