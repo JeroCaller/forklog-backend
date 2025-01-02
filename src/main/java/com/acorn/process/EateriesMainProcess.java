@@ -6,6 +6,7 @@ import java.util.Random;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acorn.dto.EateriesDto;
 import com.acorn.entity.Categories;
@@ -36,6 +37,7 @@ public class EateriesMainProcess {
 	private final CategoriesRepository categoriesRepository;
 	private final CategoryGroupsRepository categoryGroupsRepository;
 	
+	// getOneEateriesByRandom() 메서드 내 사용을 위한 용도.
 	private final Random random = new Random();
 	
 	/**
@@ -60,13 +62,16 @@ public class EateriesMainProcess {
 	 * 지역 및 카테고리 대분류 ID(PK) 검색 조건에 해당하는 음식점 정보 조회 및 반환
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param location
-	 * @param largeId
+	 * @param location - 문자열 형태의 지역 주소명
+	 * @param largeId - 카테고리 대분류 엔티티의 ID
 	 * @param pageRequset
 	 * @return
 	 * @throws NoCategoryFoundException 입력된 카테고리 대분류 ID(largeId)가 DB 
 	 * 내에 조회되지 않은 경우 발생.
 	 */
+	// 각자 다른 repository로부터 조회하는 코드가 있으므로 이를 트랜잭션으로 묶는 게 
+	// 좋을 것 같다는 판단 하에 @Transactional 어노테이션 부여함.
+	@Transactional(readOnly = true)
 	public Page<EateriesDto> getEateriesByLocationAndCategoryLarge(
 			String location,
 			int largeId,
@@ -74,12 +79,12 @@ public class EateriesMainProcess {
 	) throws NoCategoryFoundException {
 		Optional<CategoryGroups> categoryGroupOpt = categoryGroupsRepository
 				.findById(largeId);
-		categoryGroupOpt.orElseThrow(
+
+		CategoryGroups categoryGroups = categoryGroupOpt.orElseThrow(
 				() -> new NoCategoryFoundException(
 						"카테고리 대분류 ID: " + String.valueOf(largeId)
 					)
 		);
-		CategoryGroups categoryGroups = categoryGroupOpt.get();
 		
 		Page<Eateries> eateries = eateriesRepository.findByCategoryGroup(
 				location, 
@@ -94,21 +99,25 @@ public class EateriesMainProcess {
 	 * 지역 및 카테고리 소분류 ID(PK) 검색 조건에 해당하는 음식점 정보 조회 및 반환
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param location
-	 * @param smallId
+	 * @param location - 문자열 형태의 지역 주소명
+	 * @param smallId - 카테고리 소분류 엔티티의 ID
 	 * @param pageRequest
 	 * @return
 	 * @throws NoCategoryFoundException 입력된 카테고리 소분류 ID(largeId)가 DB 
 	 * 내에 조회되지 않은 경우 발생.
 	 */
+	// 각자 다른 repository로부터 조회하는 코드가 있으므로 이를 트랜잭션으로 묶는 게 
+	// 좋을 것 같다는 판단 하에 @Transactional 어노테이션 부여함.
+	@Transactional(readOnly = true)
 	public Page<EateriesDto> getEateriesByLocationAndCategorySmall(
 			String location,
 			int smallId,
 			Pageable pageRequest
 	) throws NoCategoryFoundException {
 		Optional<Categories> categoryOpt = categoriesRepository.findById(smallId);
-		categoryOpt.orElseThrow(() -> new NoCategoryFoundException(String.valueOf(smallId)));
-		Categories category = categoryOpt.get();
+		Categories category = categoryOpt.orElseThrow(
+				() -> new NoCategoryFoundException(String.valueOf(smallId))
+		);
 		//log.info("조회된 카테고리: " + category.toString() + " " + category.getGroup().getName());
 		
 		Page<Eateries> eateries = eateriesRepository
@@ -131,9 +140,12 @@ public class EateriesMainProcess {
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @return
-	 * @throws NoDataFoundException
+	 * @throws NoDataFoundException - 조회된 eateries 엔티티가 없을 경우 발생
 	 * @throws BadAlgorithmException
 	 */
+	// 하나의 메서드에 repository 조회 작업이 둘 이상 있으므로 이를 트랜잭션으로 묶는 게 
+	// 좋을 것 같다는 판단 하에 아래 어노테이션 부여함.
+	@Transactional(readOnly = true)
 	public EateriesDto getOneEateriesByRandom() 
 			throws NoDataFoundException, BadAlgorithmException {
 		Integer maxId = eateriesRepository.findIdMax();

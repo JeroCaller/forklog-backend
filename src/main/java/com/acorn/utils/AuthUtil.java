@@ -2,10 +2,6 @@ package com.acorn.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.acorn.common.MemberRole;
-import com.acorn.dto.MembersResponseDto;
 
 public class AuthUtil {
 	

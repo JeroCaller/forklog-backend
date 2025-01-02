@@ -4,15 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acorn.common.MemberRole;
-import com.acorn.common.ResponseMessage;
 import com.acorn.dto.EateriesDto;
 import com.acorn.dto.MembersResponseDto;
 import com.acorn.exception.category.NoCategoryFoundException;
@@ -23,7 +20,6 @@ import com.acorn.exception.member.NotRegisteredMemberException;
 import com.acorn.process.MembersEateriesProcess;
 import com.acorn.response.ResponseJson;
 import com.acorn.response.ResponseStatusMessages;
-import com.acorn.utils.AuthUtil;
 import com.acorn.utils.PageUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 사용자 로그인 여부에 따른 로그인 정보 및 음식점 정보 관련 컨트롤러.
- *
  */
 @RestController
 @RequestMapping("/main/members")

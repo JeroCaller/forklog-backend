@@ -10,6 +10,7 @@ import feign.RequestInterceptor;
 
 @Configuration
 public class KakaoOpenFeignConfig {
+	
     @Value("${kakao.rest_api_key}")
     private String kakaoApiKey;
 
@@ -30,4 +31,5 @@ public class KakaoOpenFeignConfig {
     public Logger.Level feignLoggerLevel() {
     	return Level.FULL;
     }
+    
 }

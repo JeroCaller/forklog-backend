@@ -41,4 +41,5 @@ public class LocationSplitDto {
 		
 		return largeCity + " " + mediumCity;
 	}
+	
 }

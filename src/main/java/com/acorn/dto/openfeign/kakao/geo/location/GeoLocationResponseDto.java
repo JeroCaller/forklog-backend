@@ -13,9 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 카카오 API - "좌표를 주소로 변환하기" API 응답 데이터 구성 DTO 클래스
+ * 카카오 API - "좌표를 주소로 변환하기" API 응답 데이터 구성 DTO 클래스. 
+ * 아래의 참고 사이트에서 제공하는 응답 데이터 구조에 맞게 DTO 클래스를 구상하였음.
  * 
- * 참고 사이트
+ * 참고 사이트)
  * https://developers.kakao.com/tool/rest-api/open/get/v2-local-geo-coord2address.%7Bformat%7D
  * 
  * @author JeroCaller (JJH)

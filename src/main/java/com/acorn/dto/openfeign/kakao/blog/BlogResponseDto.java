@@ -11,25 +11,26 @@ import lombok.ToString;
  * 참고 자료
  * https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-blog
  * 
- * @author JeroCaller (JJH)
- * 
+ * 응답 데이터 예시)
  * {
-  "documents": [
-    {
-      "blogname": "...",
-      "contents": "...",
-      "datetime": "2024-12-18T23:13:00.000+09:00",
-      "thumbnail": "https://search2.kakaocdn.net/...",
-      "title": "...",
-      "url": "https://blog.naver.com/..."
-    }
-  ],
-  "meta": {
-    "is_end": false,
-    "pageable_count": 800,
-    "total_count": 6770
-  }
-}
+ * "documents": [
+ * {
+ *    "blogname": "...",
+ *    "contents": "...",
+ *    "datetime": "2024-12-18T23:13:00.000+09:00",
+ *    "thumbnail": "https://search2.kakaocdn.net/...",
+ *    "title": "...",
+ *    "url": "https://blog.naver.com/..."
+ *    }
+ * ],
+ * "meta": {
+ *    "is_end": false,
+ * 	  "pageable_count": 800,
+ * 	  "total_count": 6770
+ *   }
+ * }
+ * 
+ * @author JeroCaller (JJH)
  */
 @Getter
 @ToString  // For Logging
