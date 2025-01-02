@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -32,7 +34,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration // 스프링 설정 클래스
-@EnableWebSecurity // 스프링 시큐리티 기능을 활성화
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
@@ -44,11 +45,12 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
 				.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/review/**", "/main/**", "/members/**", "/development/**").permitAll() // 특정 요청 허용
+						.requestMatchers("/main/mypage/**").hasRole("USER")
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**").permitAll()
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정
 
 		return httpSecurity.build(); // 설정 완료 후 SecurityFilterChain 반환
@@ -88,6 +90,15 @@ public class SecurityConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/uploads/**").addResourceLocations("file:"+uploadPath+"/");
 		//"file:"+uploadPath+"/" : 파일 시스템의 uploads 디렉토리 경로를 나타냄
 		//"file:"접두사를 붙임으로 해서 이 경로가 파일 시스템의 경로임을 지정한다.
+	}
+	
+	@Bean
+	public HttpFirewall defaultHttpFirewall() {
+		return new DefaultHttpFirewall();
+	}
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+	    return (web) -> web.ignoring().requestMatchers("/uploads/**");
 	}
 }
 

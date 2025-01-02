@@ -12,6 +12,7 @@ import lombok.ToString;
  * 참고 자료
  * https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-blog
  * 
+ * 참고)
  * @JsonNaming -> JSON으로 응답받아 이를 자바 DTO로 받을 때 만약 API 측에서 
  * JSON 프로퍼티 키 네이밍 방식이 스네이크 케이스일 경우 이를 자바 내에서 카멜케이스로 변환하기 위해 
  * 사용됨. 외부로 들어오는 (또는 나가는) JSON 프로퍼티 키의 표기법을 명시한다. 
@@ -24,7 +25,9 @@ import lombok.ToString;
 @ToString  // For Logging
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BlogMetaDto {
+	
 	private int totalCount = 0;
 	private int pageableCount = 0;
 	private boolean isEnd;
+	
 }

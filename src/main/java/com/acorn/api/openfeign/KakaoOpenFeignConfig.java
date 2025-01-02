@@ -10,6 +10,7 @@ import feign.RequestInterceptor;
 
 @Configuration
 public class KakaoOpenFeignConfig {
+	
     @Value("${kakao.rest_api_key}")
     private String kakaoApiKey;
 
@@ -24,9 +25,11 @@ public class KakaoOpenFeignConfig {
      * Feign Logging을 위한 설정.
      * 
      * REST API 키가 이클립스 콘솔창에 노출되니 정말 필요할 때만 사용!
+     * @author JeroCaller (JJH)
      */
     @Bean
     public Logger.Level feignLoggerLevel() {
     	return Level.FULL;
     }
+    
 }

@@ -14,10 +14,12 @@ import lombok.ToString;
 @Getter
 @ToString // For Logging
 public class BlogDocumentsDto {
+	
 	private String title;
 	private String contents;
 	private String url;
 	private String blogname;
 	private String thumbnail;
 	private String datetime;
+	
 }

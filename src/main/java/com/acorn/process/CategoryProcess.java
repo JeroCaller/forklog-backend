@@ -5,28 +5,31 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.acorn.dto.CategoriesDto;
-import com.acorn.entity.Categories;
-import com.acorn.repository.CategoriesRepository;
+import com.acorn.dto.CategoryGroupsFilterDto;
+import com.acorn.entity.CategoryGroups;
+import com.acorn.repository.CategoryGroupsRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryProcess {
-	
-	private final CategoriesRepository categoriesRepository;
+
+	private final CategoryGroupsRepository categoryGroupsRepository;
 	
 	/**
-	 * 모든 카테고리 분류를 가져온다. 카테고리 소분류 내부에 대분류 포함되어 반환.
+	 * 모든 카테고리 대분류를 반환. 카테고리 대분류 내부에 소분류 포함되어 반환.
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	public List<CategoriesDto> getAllCategories() {
-		List<Categories> result = categoriesRepository.findAll();
+	public List<CategoryGroupsFilterDto> getAllCategoryGroups() {
+		List<CategoryGroups> result = categoryGroupsRepository
+				.findAll();
+		
 		return result.stream()
-				.map(CategoriesDto :: toDto)
+				.map(CategoryGroupsFilterDto :: toDto)
 				.collect(Collectors.toList());
 	}
+	
 }

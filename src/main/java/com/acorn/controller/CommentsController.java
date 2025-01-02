@@ -25,14 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class CommentsController {
 	private final CommentsProcess process;
 	
-	// -- Create --
+	/* -- Create: 댓글 작성 -- */
 	@PostMapping("comments")
 	public ResponseEntity<CommentsDto> createComment(@RequestBody CommentsDto dto) {
 		return ResponseEntity.ok(process.createComment(dto));
 	}
 	
-	// -- Read --
-	// 해당 식당에 작성된 댓글 목록 읽기
+	/* -- Read: 특정 음식점의 댓글목록 읽기 -- */
 	@GetMapping("{eateryNo}/comments")
 	public ResponseEntity<Page<CommentsDto>> getCommentsByEatery(
 		@PathVariable("eateryNo") int eateryNo, @RequestParam(name = "page", defaultValue = "0") int page) {
@@ -40,13 +39,13 @@ public class CommentsController {
 		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo, pageable));
 	}
 	
-	// -- Update --
+	/* -- Update: 댓글 수정 -- */
 	@PutMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> updateComment(@PathVariable("no") int no, @RequestBody CommentsDto dto){
 		return ResponseEntity.ok(process.updateComment(no, dto));
 	}
 	
-	// -- Delete --
+	/* -- Delete: 댓글 삭제 -- */
 	@DeleteMapping("comments/{no}")
 	public ResponseEntity<CommentsDto> deleteComment(@PathVariable("no") int no) {
 		process.deleteComment(no);

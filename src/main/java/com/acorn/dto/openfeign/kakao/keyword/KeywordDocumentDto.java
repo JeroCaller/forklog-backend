@@ -21,6 +21,7 @@ import lombok.ToString;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeywordDocumentDto {
+	
 	private String id;
 	private String placeName;
 	private String categoryName;
@@ -33,4 +34,5 @@ public class KeywordDocumentDto {
 	private String y;
 	private String placeUrl;
 	private String distance;
+	
 }
