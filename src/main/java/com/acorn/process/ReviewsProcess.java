@@ -1,5 +1,6 @@
 package com.acorn.process;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -191,4 +191,19 @@ public class ReviewsProcess {
 		//review 삭제
 		reviewsRepository.deleteById(Integer.parseInt(reviewNo));
 	}
+	
+	// 평균 별점 업데이트
+    @Transactional
+    public void updateEateryAverageRating(int eateryNo) {
+        // 해당 음식점의 모든 리뷰 별점의 평균을 계산
+        BigDecimal averageRating = reviewsRepository.calculateAverageRatingByEateryNo(eateryNo);
+        
+        // 리뷰가 없는 경우 0.0으로 설정
+        if (averageRating == null) {
+            averageRating = BigDecimal.ZERO;
+        }
+        
+        // 음식점의 평균 별점 업데이트
+        eateriesRepository.updateRating(eateryNo, averageRating);
+    }
 }

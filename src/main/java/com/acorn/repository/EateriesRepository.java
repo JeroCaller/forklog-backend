@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.acorn.entity.Categories;
@@ -66,4 +67,9 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 * @return
 	 */
 	Page<Eateries> findByCategoryIn(List<Categories> categories, Pageable pageRequest);
+	
+	// 리뷰가 crud 될때마다 rating 업데이트
+	@Modifying
+    @Query("UPDATE Eateries e SET e.rating = :rating WHERE e.no = :eateryNo")
+    void updateRating(@Param("eateryNo") int eateryNo, @Param("rating") BigDecimal rating);
 }
