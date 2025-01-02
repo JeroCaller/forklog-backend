@@ -133,13 +133,21 @@ public class MembersProcessImpl implements MembersProcess {
 	public ResponseEntity<?> checkNicknameDuplication(String nickname) {
 
 		try {
-			boolean existedNickname = membersRepository.existsByNickname(nickname);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String email = authentication.getName(); // 현재 사용자의 이메일 가져오기
+	        Members member = membersRepository.findByEmail(email); // 현재 사용자 정보 조회
+	        
+	        // 사용자가 입력한 닉네임이 자신의 닉네임과 동일한지 확인
+	        if (member.getNickname().equals(nickname)) {
+	            return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+	        }
 
-			if (existedNickname) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 닉네임입니다.");
-			}
+	        boolean existedNickname = membersRepository.existsByNickname(nickname);
+	        if (existedNickname) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 닉네임입니다.");
+	        }
 
-			return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+	        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
