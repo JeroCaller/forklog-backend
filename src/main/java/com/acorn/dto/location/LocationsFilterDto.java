@@ -26,4 +26,5 @@ public class LocationsFilterDto {
 				.name(entity.getName())
 				.build();
 	}
+	
 }

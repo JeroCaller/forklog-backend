@@ -36,4 +36,5 @@ public class LocationGroupsFilterDto {
 				.locationsFilterDtos(locationsFilterDtos)
 				.build();
 	}
+	
 }

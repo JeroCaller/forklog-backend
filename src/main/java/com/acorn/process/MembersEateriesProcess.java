@@ -55,6 +55,7 @@ public class MembersEateriesProcess {
 	public MembersResponseDto getLoginedMember()
 			throws AnonymousAlertException, NotRegisteredMemberException {
 		
+		// 현재 사용자 인증 정보 가져오기
 		Authentication authentication = SecurityContextHolder
 				.getContext()
 				.getAuthentication();
@@ -90,10 +91,10 @@ public class MembersEateriesProcess {
 	 * @throws NoCategoryFoundException 
 	 * @throws NoEateriesFoundException 
 	 */
-	// 여러 엔티티를 조회하므로 이 작업들을 하나의 트랙잰션으로 묶음
+	// 여러 엔티티를 조회하므로 이 작업들을 하나의 트랙잭션으로 묶음
 	// 또한 readOnly = true로 할 시 조회 과정만 있음을 명시할 수 있을 뿐만 아니라 
 	// 조회 과정의 속도가 더 빨라진다고 한다.
-	//@Transactional(readOnly = true)  
+	@Transactional(readOnly = true)  
 	public Page<EateriesDto> getEateriesByRecommend(
 			int memberNo, 
 			Pageable pageRequest

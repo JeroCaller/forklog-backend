@@ -11,26 +11,26 @@ import lombok.ToString;
  * 참고 사이트
  * https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-image
  * 
- * 응답 예시
+ * 응답 예시) 
  * {
-  "documents": [
-    {
-      "collection": "blog",
-      "datetime": "2024-01-26T00:00:48.000+09:00",
-      "display_sitename": "티스토리",
-      "doc_url": "https://...",
-      "height": 794,
-      "image_url": "https://blog.kakaocdn.net/.../.jpg",
-      "thumbnail_url": "https://...",
-      "width": 1123
-    }
-  ],
-  "meta": {
-    "is_end": false,
-    "pageable_count": 1083,
-    "total_count": 1085
-  }
-}
+ *     "documents": [
+ *     {
+ *         "collection": "blog",
+ *         "datetime": "2024-01-26T00:00:48.000+09:00",
+ *         "display_sitename": "티스토리",
+ *         "doc_url": "https://...",
+ *         "height": 794,
+ *         "image_url": "https://blog.kakaocdn.net/.../.jpg",
+ *         "thumbnail_url": "https://...",
+ *         "width": 1123
+ *     }
+ *   ],
+ * "meta": {
+ *     "is_end": false,
+ *     "pageable_count": 1083,
+ *     "total_count": 1085
+ *   }
+ * }
  * 
  * @author JeroCaller (JJH)
  * 
