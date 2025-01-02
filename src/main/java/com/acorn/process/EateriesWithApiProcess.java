@@ -23,6 +23,7 @@ import com.acorn.repository.CategoriesRepository;
 import com.acorn.repository.CategoryGroupsRepository;
 import com.acorn.repository.EateriesRepository;
 import com.acorn.response.ResponseJson;
+import com.acorn.utils.ListUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class EateriesWithApiProcess {
 	 * 대용량의 API 데이터 호출하여 DB에 저장.
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param searchKeyword - API의 검색어 요청 파라미터
+	 * @param searchKeyword - API의 검색어 요청 파라미터. 주로 "서울 강남구"와 같은 지역 중분류까지의 주소.
 	 * @param startPage - API 응답 데이터 상 가져오기 시작하고자 하는 페이지 번호.
 	 * @param requestApiDataNum - API로부터 요청하여 가져올 총 데이터 수. 예) 45개
 	 * @return
@@ -64,14 +65,14 @@ public class EateriesWithApiProcess {
 	) {
 		ResponseJson responseJson = null;
 		
-		int calledDataNum = 0;
+		int calledDataNum = 0;  // 현재까지 API 호출한 누적 개수 저장용.
 		int currentPage = startPage;
 		
 		while (calledDataNum < requestApiDataNum) {
 			KeywordResponseDto apiResult = keywordSearchProcess
 					.getApiResult(searchKeyword, currentPage);
 			
-			if (apiResult.getDocuments() == null || apiResult.getDocuments().size() == 0) {
+			if (ListUtil.isEmpty(apiResult.getDocuments())) {
 				String message = "조회 결과 없음.";
 				log.info(message);
 				responseJson = ResponseJson.builder()
@@ -131,6 +132,7 @@ public class EateriesWithApiProcess {
 	 * @return 
 	 * @throws DuplicatedInDBException - API로부터 가져온 데이터가 DB에 이미 있을 경우 발생하는 커스텀 예외.
 	 */
+	@Transactional
 	private int saveApi(List<KeywordDocumentDto> response) throws DuplicatedInDBException {
 		List<Eateries> eateries = new ArrayList<Eateries>();
 
@@ -144,6 +146,7 @@ public class EateriesWithApiProcess {
 							document.getRoadAddressName()
 					);	
 			if (duplicated.isPresent()) {
+				// 응답 데이터 전송을 위해 컨트롤러에 넘길 데이터를 커스텀 예외 객체에 저장.
 				DuplicatedInDBException customException = new DuplicatedInDBException();
 				customException.setDuplicated(duplicated.get());
 				customException.setSavedNum(eateries.size());
@@ -231,14 +234,15 @@ public class EateriesWithApiProcess {
 	 * saveApi 메서드에서 사용됨.
 	 * 
 	 * @author JeroCaller (JJH)
-	 * @param largeCate - 음식 대분류 카테고리
-	 * @param smallCate - 음식 소분류 카테고리
+	 * @param largeCate - 음식 대분류 카테고리명
+	 * @param smallCate - 음식 소분류 카테고리명
 	 * @return
 	 */
 	@Transactional
 	private Categories saveAndReturnCategory(String largeCate, String smallCate) {
 		Categories categoryEntity = null;
-
+		
+		// 음식점 카테고리 소분류가 입력되지 않아도 대분류만으로도 조회할 수 있도록 구성.
 		if (smallCate == null || smallCate.trim().equals("")) {
 			if (largeCate != null && !largeCate.trim().equals("")) {
 				smallCate = "기타";
@@ -274,4 +278,5 @@ public class EateriesWithApiProcess {
 
 		return categoryEntity;
 	}
+	
 }

@@ -12,17 +12,23 @@ package com.acorn.response;
  * @author JeroCaller (JJH)
  */
 public interface ResponseStatusMessages {
+	
 	String NO_DATA_FOUND = "조회된 데이터가 없습니다.";
-	String READ_SUCCESS = "데이터 조회 성공";
+	String READ_SUCCESS = "데이터 조회 성공.";
 	
-	String CREATE_SUCCESS = "데이터 삽입 성공";
-	String CREATE_FAILED = "데이터 삽입 실패";
+	String CREATE_SUCCESS = "데이터 삽입 성공.";
+	String CREATE_FAILED = "데이터 삽입 실패.";
 	
-	String UPDATE_SUCCESS = "데이터 변경 성공";
-	String UPDATE_FAILED = "데이터 변경 실패";
+	String UPDATE_SUCCESS = "데이터 변경 성공.";
+	String UPDATE_FAILED = "데이터 변경 실패.";
 	
-	String DELETE_SUCCESS = "데이터 삭제 성공";
-	String DELETE_FAILED = "데이터 삭제 실패";
+	String DELETE_SUCCESS = "데이터 삭제 성공.";
+	String DELETE_FAILED = "데이터 삭제 실패.";
 	
 	String NO_REQUEST_ARGS = "입력된 요청 인자 없음.";
+	
+	String AUTHORIZED_MEMBER = "인증된 사용자입니다.";
+	String UNAUTHORIZED_MEMBER 
+		= "비로그인 또는 인증되지 않은 사용자입니다. 미인증 사용자에게는 제공되지 않는 기능입니다.";
+	
 }

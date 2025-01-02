@@ -35,7 +35,7 @@ public class LikesController {
 			@RequestParam("memberNo") int memberNo) {
 		return ResponseEntity.ok(process.findLikesByEateryAndMember(eateryNo, memberNo));
 	}
-
+  
 	/* -- 좋아요 취소하기 -- */
 	@DeleteMapping("/{no}")
 	public ResponseEntity<LikesDto> cancelLike(@PathVariable("no") int no) {

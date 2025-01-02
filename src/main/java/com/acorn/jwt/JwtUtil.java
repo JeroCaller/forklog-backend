@@ -87,14 +87,4 @@ public class JwtUtil {
 		}
 	}
 
-	// 리프레시 토큰 만료 여부 확인
-	public boolean isRefreshTokenExpired(String token) {
-		try {
-			Claims claims = extractClaims(token);
-			return !claims.getExpiration().before(new Date());
-			
-		} catch (ExpiredJwtException e) {
-			return false;
-		}
-	}
 }

@@ -24,4 +24,5 @@ public class DuplicatedInDBException extends Exception {
 	public DuplicatedInDBException() {
 		super("API 호출 결과가 DB에 이미 존재하는 데이터이므로 DB 저장 방지함.");
 	}
+	
 }
