@@ -1,5 +1,8 @@
 package com.acorn.process;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.acorn.dto.LikesDto;
@@ -26,8 +29,9 @@ public class LikesProcess {
 	}
 	
 	// Read
-	public LikesDto getLike(int memberNo, int CommentNo) {
-		return LikesDto.fromEntity(likesRepository.findByMemberNoAndCommentNo(memberNo, CommentNo));
+	public List<LikesDto> findLikesByEateryAndMember(int eateryNo, int memberNo) {
+		return likesRepository.findByEateryAndMember(eateryNo, memberNo)
+			.stream().map(LikesDto::fromEntity).collect(Collectors.toList());
 	}
 	
 	// Delete
