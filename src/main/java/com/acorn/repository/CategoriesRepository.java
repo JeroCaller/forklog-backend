@@ -50,4 +50,5 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 		ON f.member = :#{#member}
 	""")
 	List<Categories> findByMemberFavorite(@Param("member") Members member);
+	
 }

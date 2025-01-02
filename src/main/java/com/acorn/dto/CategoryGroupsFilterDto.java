@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CategoryGroupsFilterDto {
+	
 	private Integer no;
 	private String name;
 	private List<CategoriesFilterDto> categoriesFilterDtos;
@@ -37,4 +38,5 @@ public class CategoryGroupsFilterDto {
 				.categoriesFilterDtos(categoriesFilterDtos)
 				.build();
 	}
+	
 }

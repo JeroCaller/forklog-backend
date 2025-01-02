@@ -44,8 +44,9 @@ public class EateriesProcess {
      * 그렇지 않으면 내용이 DB에 반영되지 않음을 확인함.
      * 
      * @author JeroCaller (JJH)
-     * @param eateriesNo
-     * @return
+     * @param eateriesNo - 음식점 엔티티 No
+     * @return - true 시 특정 음식점 조회수 1 증가 DB 반영 성공. false 시 입력된 no 값에 
+     * 해당하는 음식점 데이터를 DB에서 조회하지 못함을 의미.
      */
     @Transactional
     public boolean updateViewCount(int eateriesNo) {

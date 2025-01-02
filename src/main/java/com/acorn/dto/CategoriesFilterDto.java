@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CategoriesFilterDto {
+	
 	private Integer no;
 	private String name;
 	
@@ -27,4 +28,5 @@ public class CategoriesFilterDto {
 				.name(entity.getName())
 				.build();
 	}
+	
 }

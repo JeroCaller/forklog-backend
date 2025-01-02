@@ -17,6 +17,16 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	boolean existsByNameAndLongitudeAndLatitude(String name, BigDecimal longitude, BigDecimal latitude);	
 	Page<Eateries> findByAddressContaining(String address, Pageable pageRequest);
 	
+	/**
+	 * 주어진 주소를 포함하면서 그와 동시에 주어진 음식점 카테고리 소분류를 만족시키는 
+	 * 음식점 데이터를 페이징하여 반환.
+	 * 
+	 * @author JeroCaller (JJH)
+	 * @param address - 검색하고자 하는 지역 주소
+	 * @param categories - 검색하고자 하는 음식점 카테고리 소분류
+	 * @param pageRequest
+	 * @return
+	 */
 	Page<Eateries> findByAddressContainsAndCategory(
 			String address, 
 			Categories categories,
@@ -66,4 +76,5 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 * @return
 	 */
 	Page<Eateries> findByCategoryIn(List<Categories> categories, Pageable pageRequest);
+	
 }
