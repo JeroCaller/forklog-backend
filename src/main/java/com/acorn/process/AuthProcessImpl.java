@@ -29,6 +29,7 @@ import com.acorn.repository.RefreshTokenRepository;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -252,6 +253,7 @@ public class AuthProcessImpl implements AuthProcess {
 	}
 
 	// 리프레쉬 토큰 DB 저장
+	@Transactional
 	private void saveRefreshToken(String email, String refreshToken) {
 		// 기존에 리프레시 토큰이 있으면 삭제하고 새로 저장
 		Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
