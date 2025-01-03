@@ -74,68 +74,62 @@ public class AuthProcessImpl implements AuthProcess {
 
 		return RegisterResponseDto.success(); // 성공 응답
 	}
-	
+
 	// 로그인
 	@Override
 	public ResponseEntity<? super LoginRepsonseDto> login(@RequestBody LoginRequestDto dto,
-	                                                      HttpServletResponse response) {
-	    String email = dto.getEmail();
-	    String password = dto.getPassword();
+			HttpServletResponse response) {
+		String email = dto.getEmail();
+		String password = dto.getPassword();
 
-	    try {
-	        // 이메일 유효성 검사
-	        UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
-	        if (userDetails == null) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                                 .body("가입된 계정이 없습니다.");
-	        }
-	        
-	        // 회원 상태 확인 (Inactive 상태 확인)
-	        Members member = membersRepository.findByEmail(email);
-	        if (member == null || "Inactive".equalsIgnoreCase(member.getStatus())) {
-	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	                                 .body("비활성화된 계정입니다. 고객센터에 문의해주세요.");
-	        }
+		try {
+			// 이메일 유효성 검사
+			UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
+			if (userDetails == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입된 계정이 없습니다.");
+			}
 
-	        // 비밀번호 유효성 검사
-	        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                                 .body("이메일 또는 비밀번호가 잘못되었습니다.");
-	        }
+			// 회원 상태 확인 (Inactive 상태 확인)
+			Members member = membersRepository.findByEmail(email);
+			if (member == null || "Inactive".equalsIgnoreCase(member.getStatus())) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("비활성화된 계정입니다. 고객센터에 문의해주세요.");
+			}
 
-	        // JWT 토큰 생성
-	        String accessToken = jwtUtil.createAccessToken(email);
-	        String refreshToken = jwtUtil.createRefreshToken(email);
-	        
-	        saveRefreshToken(email, refreshToken);
-	        //System.out.println("Saving refresh token for email: " + email);
+			// 비밀번호 유효성 검사
+			if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
+			}
 
-	        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-	        accessTokenCookie.setHttpOnly(true);
-	        accessTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-	        accessTokenCookie.setPath("/");
-	        accessTokenCookie.setMaxAge(3600);
-	        response.addCookie(accessTokenCookie);
+			// JWT 토큰 생성
+			String accessToken = jwtUtil.createAccessToken(email);
+			String refreshToken = jwtUtil.createRefreshToken(email);
 
-	        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-	        refreshTokenCookie.setHttpOnly(true);
-	        refreshTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-	        refreshTokenCookie.setPath("/");
-	        refreshTokenCookie.setMaxAge(604800);
-	        response.addCookie(refreshTokenCookie);
+			saveRefreshToken(email, refreshToken);
+			// System.out.println("Saving refresh token for email: " + email);
 
-	        return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
+			Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+			accessTokenCookie.setHttpOnly(true);
+			accessTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
+			accessTokenCookie.setPath("/");
+			accessTokenCookie.setMaxAge(3600);
+			response.addCookie(accessTokenCookie);
 
-	    } catch (BadCredentialsException e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                             .body("이메일 또는 비밀번호가 잘못되었습니다.");
-	    } catch (UsernameNotFoundException e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                             .body("가입된 계정이 없습니다.");
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body("로그인 중 오류가 발생했습니다.");
-	    }
+			Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+			refreshTokenCookie.setHttpOnly(true);
+			refreshTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
+			refreshTokenCookie.setPath("/");
+			refreshTokenCookie.setMaxAge(604800);
+			response.addCookie(refreshTokenCookie);
+
+			return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
+
+		} catch (BadCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
+		} catch (UsernameNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입된 계정이 없습니다.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로그인 중 오류가 발생했습니다.");
+		}
 	}
 
 	// 로그아웃
@@ -143,7 +137,7 @@ public class AuthProcessImpl implements AuthProcess {
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 
 		try {
-	        
+
 			// 엑세스 토큰 쿠키 제거
 			Cookie accessTokenCookie = new Cookie("accessToken", null);
 			accessTokenCookie.setHttpOnly(true);
@@ -162,8 +156,8 @@ public class AuthProcessImpl implements AuthProcess {
 
 			SecurityContextHolder.clearContext();
 
-			//System.out.println("Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
-			//System.out.println("Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
+			// System.out.println("Logout accessToken : " + accessTokenCookie.getName() + "=" + accessTokenCookie.getValue());
+			// System.out.println("Logout refreshToken : " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
 
 			return ResponseEntity.ok().body("로그아웃 성공"); // 로그아웃 성공 시 응답
 		} catch (Exception e) {
@@ -192,6 +186,13 @@ public class AuthProcessImpl implements AuthProcess {
 			Members membersMain = memberOptional.get();
 			String name = membersMain.getName();
 			String inputName = user.get("name");
+
+			// 회원 상태 확인
+			if ("Inactive".equalsIgnoreCase(membersMain.getStatus())) {
+				response.put("status", "error");
+				response.put("message", "비활성화된 계정입니다. 고객센터에 문의하세요.");
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+			}
 
 			if (name.equals(inputName)) {
 				try {
@@ -225,6 +226,11 @@ public class AuthProcessImpl implements AuthProcess {
 			Members membersMain = memberOptional.get();
 			String phone = membersMain.getPhone();
 			String inputPhone = user.get("phone");
+
+			// 회원 상태 확인
+			if ("Inactive".equalsIgnoreCase(membersMain.getStatus())) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("비활성화된 계정입니다. 고객센터에 문의하세요.");
+			}
 
 			if (phone.equals(inputPhone)) {
 				// CompletableFuture를 사용하여 비동기적으로 메일 전송
