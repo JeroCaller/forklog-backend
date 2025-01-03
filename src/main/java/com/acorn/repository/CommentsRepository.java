@@ -17,6 +17,6 @@ public interface CommentsRepository extends JpaRepository<Comments, Integer> {
 		   "LEFT JOIN Likes l ON c.no = l.comment.no " +
 		   "WHERE c.eatery.no = :eateryNo " +
 		   "GROUP BY c.no " +
-		   "ORDER BY c.createdAt DESC")
+		   "ORDER BY c.parentComment ASC, c.createdAt DESC")
 	Page<Object[]> findByEatery(@Param("eateryNo") int eateryNo, Pageable pageable);
 }
