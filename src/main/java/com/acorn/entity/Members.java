@@ -1,5 +1,6 @@
 package com.acorn.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.acorn.dto.RegisterRequestDto;
@@ -59,7 +60,7 @@ public class Members {
 	private LocalDateTime updatedAt;
 	
 	@Column(name = "birth_date")
-	private String birthDate;
+	private LocalDate birthDate;
 	
 	@Column(name = "gender")
 	private String gender;
