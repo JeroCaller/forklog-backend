@@ -48,7 +48,7 @@ public class MembersProcessImpl implements MembersProcess {
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
 	}
@@ -65,7 +65,7 @@ public class MembersProcessImpl implements MembersProcess {
 			}
 
 			String email = authentication.getName();
-			System.out.println("인증된 사용자 이메일: " + email);
+			//System.out.println("인증된 사용자 이메일: " + email);
 			
 			// 이메일이 비어있는 경우
 			if (email == null || email.isEmpty()) {
@@ -123,7 +123,7 @@ public class MembersProcessImpl implements MembersProcess {
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
 	}
@@ -149,7 +149,7 @@ public class MembersProcessImpl implements MembersProcess {
 
 	        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
 	}
@@ -161,7 +161,7 @@ public class MembersProcessImpl implements MembersProcess {
 			// 현재 인증된 사용자 가져오기
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String email = authentication.getName();
-			System.out.println("인증된 사용자 이메일: " + email); // 인증된 이메일 출력
+			//System.out.println("인증된 사용자 이메일: " + email); // 인증된 이메일 출력
 			// 회원 정보 조회
 			Members member = membersRepository.findByEmail(email);
 
@@ -173,9 +173,11 @@ public class MembersProcessImpl implements MembersProcess {
 			if (!member.getPhone().equals(dto.getPhone())) {
 				throw new RuntimeException("휴대전화 번호가 일치하지 않습니다.");
 			}
+			
+			member.setStatus("Inactive");
 
-			// 회원 삭제
-			membersRepository.delete(member); // 실제 삭제
+			// 회원 상태 변경
+			membersRepository.save(member);
 
 			return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
 		} catch (RuntimeException e) {

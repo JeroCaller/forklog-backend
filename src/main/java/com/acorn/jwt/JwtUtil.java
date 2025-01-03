@@ -79,10 +79,10 @@ public class JwtUtil {
 			return !claims.getExpiration().before(new Date());
 
 		} catch (ExpiredJwtException e) {
-			System.err.println("JWT has expired: " + e.getMessage());
+			//System.err.println("JWT has expired: " + e.getMessage());
 			return false;
 		} catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-			System.err.println("Invalid JWT: " + e.getMessage());
+			//System.err.println("Invalid JWT: " + e.getMessage());
 			return false;
 		}
 	}

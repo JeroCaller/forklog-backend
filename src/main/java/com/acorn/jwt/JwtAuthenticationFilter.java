@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String accessToken = null;
 
 		String authHeader = request.getHeader("Authorization");
-		System.out.println("authHeader : " + authHeader);
+		//System.out.println("authHeader : " + authHeader);
 		// 토큰을 얻는 방법 두 가지: 다양한 클라이언트 환경 및 요청에 대해 유연한 대처가 필요하다.
 		// 헤더에서 토큰 얻기
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -115,7 +115,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String refreshToken = null;
 
 		String authHeader = request.getHeader("Authorization");
-		System.out.println("authHeader : " + authHeader);
+		//System.out.println("authHeader : " + authHeader);
 
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			refreshToken = authHeader.substring(7);
