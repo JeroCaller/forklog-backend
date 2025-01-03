@@ -89,6 +89,13 @@ public class AuthProcessImpl implements AuthProcess {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
 	                                 .body("가입된 계정이 없습니다.");
 	        }
+	        
+	        // 회원 상태 확인 (Inactive 상태 확인)
+	        Members member = membersRepository.findByEmail(email);
+	        if (member == null || "Inactive".equalsIgnoreCase(member.getStatus())) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                                 .body("비활성화된 계정입니다. 고객센터에 문의해주세요.");
+	        }
 
 	        // 비밀번호 유효성 검사
 	        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
@@ -126,9 +133,8 @@ public class AuthProcessImpl implements AuthProcess {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
 	                             .body("가입된 계정이 없습니다.");
 	    } catch (Exception e) {
-	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body("로그인 중 오류 발생: " + e.getMessage());
+	                             .body("로그인 중 오류가 발생했습니다.");
 	    }
 	}
 
