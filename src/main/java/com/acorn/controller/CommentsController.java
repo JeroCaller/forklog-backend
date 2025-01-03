@@ -35,7 +35,7 @@ public class CommentsController {
 	@GetMapping("{eateryNo}/comments")
 	public ResponseEntity<Page<CommentsDto>> getCommentsByEatery(
 		@PathVariable("eateryNo") int eateryNo, @RequestParam(name = "page", defaultValue = "0") int page) {
-		Pageable pageable = PageRequest.of(page, 1);
+		Pageable pageable = PageRequest.of(page, 512); // 페이지당 항목 수 512개, 사실상 무한스크롤 취소
 		return ResponseEntity.ok(process.getCommentsByEatery(eateryNo, pageable));
 	}
 	
