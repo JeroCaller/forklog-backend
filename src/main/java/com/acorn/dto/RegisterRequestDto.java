@@ -1,10 +1,12 @@
 package com.acorn.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +34,9 @@ public class RegisterRequestDto {
 	private String name;
 	
 	@NotBlank
-	@Pattern(regexp = "^\\d{8}$") // 숫자 8자리로 입력
-	private String birthDate;
+	@Past
+	@Pattern(regexp = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$") // YYYY-MM-DD 형식으로 입력
+	private LocalDate birthDate;
 	
 	@NotBlank
 	@Pattern(regexp ="^[0-9]{11}$") // 숫자 11자리만 허용
