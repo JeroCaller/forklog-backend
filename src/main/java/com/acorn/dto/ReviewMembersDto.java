@@ -14,13 +14,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReviewMembersDto {	
 	private Integer no;
-	private String name;
+	private String nickname;
 	
 	// toDto
 	public static ReviewMembersDto toDto(Members members) {		
 		return ReviewMembersDto.builder()
 				.no(members.getNo())
-                .name(members.getName())
+                .nickname(members.getNickname())
                 .build();
 	}
 }

@@ -128,7 +128,6 @@ public class ReviewsProcess {
 			registReviewImages(review,files);
 		}
 	}
-	//review_image, review 수정은 등록으로부터 3일 이내만 가능=>프론트에서 수정버튼 on,off로 해결
 	//review_image 수정
 	@Transactional
 	public void updateReviewImage(String reviewNo, List<MultipartFile> files) throws Exception {
