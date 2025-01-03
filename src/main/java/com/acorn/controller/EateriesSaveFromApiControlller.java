@@ -27,6 +27,7 @@ public class EateriesSaveFromApiControlller {
 	/**
 	 * 검색어 및 DB에 저장하고자 하는 레코드 수 지정 시 API 호출하여 가져온 데이터를 DB에 저장.
 	 * 
+	 * @author JeroCaller (JJH)
 	 * @param query - 지역명 입력 권고
 	 * @param startPage - kakao API에서는 하나의 검색어 당 실질적으로 
 	 * 1~3페이지(1페이지 당 데이터 수 15개일 경우)만 호출 가능. 그 이상은 똑같은 데이터가 반복됨.
@@ -64,4 +65,5 @@ public class EateriesSaveFromApiControlller {
 		return responseJson.toResponseEntity();
 				
 	}
+	
 }

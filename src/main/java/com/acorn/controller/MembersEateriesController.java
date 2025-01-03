@@ -54,6 +54,7 @@ public class MembersEateriesController {
 	 * - 사용자 (로그인한 상황 가정) 즐겨찾기한 음식점 목록 추린 후, 
 	 * 음식점 목록 내 같은 카테고리의 다른 음식점 조회하여 반환.
 	 * 
+	 * @author JeroCaller (JJH)
 	 * @return
 	 */
 	@GetMapping("/eateries/recommends")
