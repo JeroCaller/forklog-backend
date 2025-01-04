@@ -30,9 +30,9 @@ public class MembersProcessImpl implements MembersProcess {
 
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			System.out.println("authentication" +authentication);
+//			System.out.println("authentication" +authentication);
 			String email = authentication.getName(); // 현재 사용자의 이메일 가져오기
-			System.out.println("인증된 사용자 이메일: " + email); // 인증된 이메일 출력
+//			System.out.println("인증된 사용자 이메일: " + email); // 인증된 이메일 출력
 			Members member = membersRepository.findByEmail(email);
 
 			MembersDto response = MembersDto.builder()
