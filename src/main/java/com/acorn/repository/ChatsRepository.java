@@ -9,4 +9,7 @@ import com.acorn.entity.Chats;
 public interface ChatsRepository extends JpaRepository<Chats, Integer>{
 	
 	List<Chats> findByUserNo(Integer userNo); 
+	
+	List<Chats> findAllByOrderByCreatedAtAsc();
+	
 }
