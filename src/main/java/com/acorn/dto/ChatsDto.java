@@ -2,6 +2,8 @@ package com.acorn.dto;
 
 import java.time.LocalDateTime;
 
+import com.acorn.entity.Chats;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +20,14 @@ public class ChatsDto {
 	
     private LocalDateTime createdAt;
 	
-	private ChatUsersDto user;
+	private MembersDto member;
+	
+    public static ChatsDto fromEntity(Chats entity) {
+        return ChatsDto.builder()
+                .no(entity.getNo())
+                .content(entity.getContent())
+                .createdAt(entity.getCreatedAt())
+                .member(MembersDto.toDto(entity.getMember()))
+                .build();
+    }
 }
