@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -169,6 +170,15 @@ public class AuthProcessImpl implements AuthProcess {
 	// 이메일 중복 체크
 	@Override
 	public ResponseEntity<? super RegisterResponseDto> checkEmailDuplication(String email) {
+		
+		// 이메일 형식 검증을 위한 정규식
+	    String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+	    boolean isValidEmail = Pattern.matches(emailRegex, email);
+
+	    if (!isValidEmail) {
+	        return RegisterResponseDto.invalidEmailFormat(); // 잘못된 이메일 형식
+	    }
+	    
 		boolean existedEmail = membersRepository.existsByEmail(email);
 		if (existedEmail) {
 			return RegisterResponseDto.duplicateEmail(); // 중복된 이메일

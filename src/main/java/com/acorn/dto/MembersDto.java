@@ -1,5 +1,6 @@
 package com.acorn.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.acorn.entity.Members;
@@ -26,7 +27,7 @@ public class MembersDto {
 	private String postcode;
 	private String roadAddress;
 	private String detailAddress;
-	private String birthDate;
+	private LocalDate birthDate;
     private String gender;
     private String phone;
     private Boolean emailVerified;
