@@ -36,24 +36,6 @@ public class Chats {
     private LocalDateTime createdAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_no")
-	private ChatUsers user;
-	
-	public static Chats toEntity(ChatsDto dto, Members member) {
-		return Chats.builder()
-					.no(dto.getNo())
-					.content(dto.getContent())
-					.user(ChatUsers.toEntity(dto.getUser(), member))
-					.build();
-	}
-	
-	
-	public static ChatsDto fromEntity(Chats entity, Members member) {
-		return ChatsDto.builder()
-					.no(entity.getNo())
-					.content(entity.getContent())
-					.createdAt(entity.getCreatedAt())
-					.user(ChatUsers.fromEntity(entity.getUser(), member))
-					.build();
-	}
+	@JoinColumn(name = "member_no")
+	private Members member;
 }
