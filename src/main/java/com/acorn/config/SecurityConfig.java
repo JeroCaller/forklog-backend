@@ -65,6 +65,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.addAllowedOriginPattern("http://localhost:3000"); // React의 로컬 서버 주소
+		configuration.addAllowedOriginPattern("https://*.sel4.cloudtype.app"); // Cloudtype 패턴의 주소 와일드카드로 허용 설정
 		configuration.setAllowedMethods(List.of("*")); // 모든 HTTP 메서드 허용
 		configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 인증 정보 포함 요청 허용 (쿠키 등)
