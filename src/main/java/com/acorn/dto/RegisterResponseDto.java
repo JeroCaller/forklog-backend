@@ -39,4 +39,10 @@ public class RegisterResponseDto extends ResponseDto {
 		ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_PHONE, ResponseMessage.DUPLICATE_PHONE);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 	}
+	
+	// 이메일 형식이 아닐 시 응답 메소드
+	public static ResponseEntity<ResponseDto> invalidEmailFormat() {
+		ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, ResponseMessage.VALIDATION_FAILED);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+	}
 }
