@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatsDto {
+public class ChatsResponseDto {
 	private Integer no;
 	
 	private String content;
 	
     private LocalDateTime createdAt;
-	
+    
 	private MembersDto member;
 	
-    public static ChatsDto fromEntity(Chats entity) {
-        return ChatsDto.builder()
+    public static ChatsResponseDto fromEntity(Chats entity) {
+        return ChatsResponseDto.builder()
                 .no(entity.getNo())
                 .content(entity.getContent())
                 .createdAt(entity.getCreatedAt())
