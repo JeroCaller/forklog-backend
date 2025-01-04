@@ -12,6 +12,7 @@ import com.acorn.dto.ChatsResponseDto;
 import com.acorn.dto.MembersDto;
 import com.acorn.entity.Chats;
 import com.acorn.entity.Members;
+import com.acorn.exception.NotFoundException;
 import com.acorn.repository.ChatsRepository;
 import com.acorn.repository.MembersRepository;
 
@@ -28,21 +29,21 @@ public class ChatsProcess {
     // 모든 메시지 조회
     public List<ChatsResponseDto> getAllMessages() {
         List<Chats> chats = chatsRepository.findAllByOrderByCreatedAtAsc();
-        return chats.stream().map(chat -> ChatsResponseDto.fromEntity(chat)).toList();
+        return chats.stream().map(ChatsResponseDto::fromEntity).toList();
     }
 
-    // 새 메시지 저장 및 브로드캐스트
+
     /**
-     * Authentication context로부터 사용자의 로그인 여부 및 회원 정보를 반환하여
-     * 등록한 메시지를 DB에 저장하고 저장된 메시지를 모든 사용자에게 브로드캐스트 
-     * @param content
+     * 등록한 메시지를 DB에 저장하고 저장된 메시지를 모든 사용자에게 브로드캐스트
+     * @param RequestDTO : content, memberNo
      */
     @Transactional
     public void saveAndBroadcastMessage(ChatsRequestDto request) {
         // 메시지 엔티티 생성 후 저장
         Chats chats = Chats.builder()
                 .content(request.getContent())
-                .member(membersRepository.findById(request.getMemberNo()).orElseThrow(() -> new IllegalArgumentException("회원 정보 조회 실패")))
+                .member(membersRepository.findById(request.getMemberNo())
+                						 .orElseThrow(() -> new NotFoundException("회원 정보 조회 실패")))
                 .build();
         Chats savedChat = chatsRepository.save(chats);
 
