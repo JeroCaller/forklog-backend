@@ -20,14 +20,16 @@ public class ChatsResponseDto {
 	
     private LocalDateTime createdAt;
     
-	private MembersDto member;
+    private Integer memberNo;
+    private String nickname;
 	
     public static ChatsResponseDto fromEntity(Chats entity) {
         return ChatsResponseDto.builder()
                 .no(entity.getNo())
                 .content(entity.getContent())
                 .createdAt(entity.getCreatedAt())
-                .member(MembersDto.toDto(entity.getMember()))
+                .memberNo(entity.getMember().getNo()) // 멤버 번호만 포함
+                .nickname(entity.getMember().getNickname())
                 .build();
     }
 }
