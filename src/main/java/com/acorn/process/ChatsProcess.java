@@ -26,10 +26,16 @@ public class ChatsProcess {
     private final MembersRepository membersRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
+    public MembersDto getMember() {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String email = authentication.getName();
+    	return MembersDto.toDto(membersRepository.findByEmail(email));
+    }
+    
     // 모든 메시지 조회
     public List<ChatsResponseDto> getAllMessages() {
         List<Chats> chats = chatsRepository.findAllByOrderByCreatedAtAsc();
-        return chats.stream().map(ChatsResponseDto::fromEntity).toList();
+        return chats.stream().map( ChatsResponseDto :: fromEntity ).toList();
     }
 
 
