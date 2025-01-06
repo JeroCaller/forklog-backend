@@ -48,7 +48,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/main/mypage/**").hasRole("USER")
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**", "/chat/**", "/ws/**", "/pub/**").permitAll()
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**", "/chat/**", "/ws/**", "/pub/**", "/index.html", "/static/**", "/*.png", "/favicon.ico").permitAll()
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정
@@ -64,7 +64,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 	// CORS 설정 메서드
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOriginPattern("http://localhost:3000"); // React의 로컬 서버 주소
+		configuration.addAllowedOriginPattern("http://localhost:*"); // React의 로컬 서버 주소
 		configuration.addAllowedOriginPattern("https://*.sel4.cloudtype.app"); // Cloudtype 패턴의 주소 와일드카드로 허용 설정
 		configuration.setAllowedMethods(List.of("*")); // 모든 HTTP 메서드 허용
 		configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
