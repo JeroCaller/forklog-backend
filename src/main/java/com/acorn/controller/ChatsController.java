@@ -1,10 +1,7 @@
 package com.acorn.controller;
 
-import java.util.List;
 
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +10,6 @@ import com.acorn.dto.ChatsRequestDto;
 import com.acorn.dto.ChatsResponseDto;
 import com.acorn.dto.MembersDto;
 import com.acorn.process.ChatsProcess;
-import com.acorn.response.ResponseJson;
-import com.acorn.response.ResponseStatusMessages;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

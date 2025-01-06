@@ -48,7 +48,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/main/mypage/**").hasRole("USER")
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**", "/chat/**", "/ws/**").permitAll()
+						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**", "/chat/**", "/ws/**", "/index.html", "/static/**", "/*.png", "/favicon.ico").permitAll()
 						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정
