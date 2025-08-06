@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,9 @@ import lombok.RequiredArgsConstructor;
 @Configuration // 스프링 설정 클래스
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
+
+	@Value("${file.upload-dir}")
+	private String uploadBaseDir;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -84,7 +88,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		//정적리소스(이미지,css,js,데이터 경로) 추가 설정
 		//지금은 업로드 경로 설정이 목적
-		Path uploadDir = Paths.get("./uploads");
+		//Path uploadDir = Paths.get("./uploads");
+		Path uploadDir = Paths.get(uploadBaseDir);
 		//uploads 절대 경로 얻기
 		String uploadPath = uploadDir.toFile().getAbsolutePath();
 		//	/uploads/test.png라는 url이 들어오면 uploads디렉토리 내의 test.png를 반환

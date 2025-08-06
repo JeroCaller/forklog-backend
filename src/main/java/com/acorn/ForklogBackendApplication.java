@@ -20,10 +20,10 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerial
 @SpringBootApplication
 @EnableFeignClients(basePackages = "com.acorn.api.openfeign")
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
-public class AcornPrivateApplication {
+public class ForklogBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AcornPrivateApplication.class, args);
+		SpringApplication.run(ForklogBackendApplication.class, args);
 	}
 
 }

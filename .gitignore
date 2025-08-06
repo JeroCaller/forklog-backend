@@ -43,4 +43,4 @@ out/
 .metadata/
 
 settings.gradle
-
+application-*.yml
