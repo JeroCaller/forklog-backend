@@ -48,6 +48,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 		FROM Favorites f
 		JOIN f.eatery e
 		ON f.member = :#{#member}
+		WHERE f.status = 1
 	""")
 	List<Categories> findByMemberFavorite(@Param("member") Members member);
 	
