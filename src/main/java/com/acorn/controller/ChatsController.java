@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
-import com.acorn.dto.ChatsRequestDto;
-import com.acorn.dto.ChatsResponseDto;
-import com.acorn.dto.MembersDto;
+import com.acorn.dto.chats.ChatsRequestDto;
+import com.acorn.dto.chats.ChatsResponseDto;
+import com.acorn.dto.members.MembersDto;
 import com.acorn.process.ChatsProcess;
 
 import lombok.RequiredArgsConstructor;

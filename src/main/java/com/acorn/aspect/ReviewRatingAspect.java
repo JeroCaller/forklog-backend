@@ -6,9 +6,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-import com.acorn.dto.ReviewRequestDto;
+import com.acorn.dto.eateries.reviews.ReviewRequestDto;
 import com.acorn.entity.Reviews;
-import com.acorn.process.ReviewsProcess;
+import com.acorn.process.eateries.reviews.ReviewsProcess;
 import com.acorn.repository.ReviewsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ReviewRatingAspect {
 
     // 리뷰 등록 후 평균 별점 업데이트
     @AfterReturning(
-        pointcut = "execution(* com.acorn.process.ReviewsProcess.registReview(..))"
+        pointcut = "execution(* com.acorn.process.eateries.reviews.ReviewsProcess.registReview(..))"
     )
     public void afterReviewRegist(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
@@ -35,7 +35,7 @@ public class ReviewRatingAspect {
 
     // 리뷰 수정 후 평균 별점 업데이트
     @AfterReturning(
-        pointcut = "execution(* com.acorn.process.ReviewsProcess.updateReview(..))"
+        pointcut = "execution(* com.acorn.process.eateries.reviews.ReviewsProcess.updateReview(..))"
     )
     public void afterReviewUpdate(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
@@ -46,7 +46,7 @@ public class ReviewRatingAspect {
     }
 
     // 리뷰 삭제 전에 음식점 번호 저장
-    @Before("execution(* com.acorn.process.ReviewsProcess.deleteReview(..))")
+    @Before("execution(* com.acorn.process.eateries.reviews.ReviewsProcess.deleteReview(..))")
     public void beforeReviewDelete(JoinPoint joinPoint) {
         String reviewNo = (String) joinPoint.getArgs()[0];
         Reviews review = reviewsRepository.findById(Integer.parseInt(reviewNo))
@@ -55,7 +55,7 @@ public class ReviewRatingAspect {
     }
 
     // 리뷰 삭제 후 평균 별점 업데이트
-    @AfterReturning("execution(* com.acorn.process.ReviewsProcess.deleteReview(..))")
+    @AfterReturning("execution(* com.acorn.process.eateries.reviews.ReviewsProcess.deleteReview(..))")
     public void afterReviewDelete(JoinPoint joinPoint) {
         try {
             Integer eateryNo = eateryNoHolder.get();

@@ -3,7 +3,7 @@ package com.acorn.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.acorn.dto.RegisterRequestDto;
+import com.acorn.dto.members.RegisterRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

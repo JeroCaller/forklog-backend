@@ -15,9 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.acorn.dto.ChatsRequestDto;
-import com.acorn.dto.ChatsResponseDto;
-import com.acorn.dto.MembersDto;
+import com.acorn.dto.chats.ChatsRequestDto;
+import com.acorn.dto.chats.ChatsResponseDto;
+import com.acorn.dto.members.MembersDto;
 import com.acorn.entity.Chats;
 import com.acorn.exception.NotFoundException;
 import com.acorn.repository.ChatsRepository;
