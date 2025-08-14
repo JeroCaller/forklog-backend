@@ -10,11 +10,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ *
+ * @author Jerocaller
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class EateriesDto {
+
 	private Integer no;
 	private String name;
 	
@@ -40,17 +45,17 @@ public class EateriesDto {
 	
 	public static EateriesDto toDto(Eateries entity) {
 		return EateriesDto.builder()
-				.no(entity.getNo())
-				.name(entity.getName())
-				.viewCount(entity.getViewCount())
-				.thumbnail(entity.getThumbnail())
-				.description(entity.getDescription())
-				.tel(entity.getTel())
-				.rating(entity.getRating())
-				.address(entity.getAddress())
-				.longitude(entity.getLongitude())
-				.latitude(entity.getLatitude())
-				.categoryDto(CategoriesDto.toDto(entity.getCategory()))
-				.build();
+			.no(entity.getNo())
+			.name(entity.getName())
+			.viewCount(entity.getViewCount())
+			.thumbnail(entity.getThumbnail())
+			.description(entity.getDescription())
+			.tel(entity.getTel())
+			.rating(entity.getRating())
+			.address(entity.getAddress())
+			.longitude(entity.getLongitude())
+			.latitude(entity.getLatitude())
+			.categoryDto(CategoriesDto.toDto(entity.getCategory()))
+			.build();
 	}
 }

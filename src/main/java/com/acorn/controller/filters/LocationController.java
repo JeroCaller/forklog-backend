@@ -30,27 +30,26 @@ public class LocationController {
 	 * @author JeroCaller (JJH)
 	 * @return
 	 */
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<ResponseJson> getLocationGroupsFilterAll() {
 		ResponseJson responseJson = null;
 		
 		List<LocationGroupsFilterDto> result = locationProcess
-				.getLocationGroupsFilterAll();
+			.getLocationGroupsFilterAll();
 		
 		if (result.size() == 0) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(result)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(result)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
 	}
-	
 }

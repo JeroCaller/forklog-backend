@@ -36,9 +36,9 @@ public class PageUtil {
 	 * @return
 	 */
 	public static Pageable getPageRequestOf(
-			int page, 
-			int size, 
-			Sort sort
+		int page,
+		int size,
+		Sort sort
 	) {
 		return PageRequest.of(page - 1, size, sort);
 	}

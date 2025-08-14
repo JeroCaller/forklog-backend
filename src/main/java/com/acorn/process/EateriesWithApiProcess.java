@@ -31,11 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 대용량의 API 데이터 호출하여 DB에 저장하는 용도의 서비스 클래스.
- * 
  * API 호출은 초기 DB 저장용으로만 사용한다.
- * 
  * API - DB 연동 로직이 긴 관계로, 음식점과 관계된 다른 로직 작성 필요 시 별도의 클래스에 작성 요망.
- * 
+ *
+ * @author JeroCaller
  */
 @Service
 @Slf4j
@@ -59,9 +58,9 @@ public class EateriesWithApiProcess {
 	 * @return
 	 */
 	public ResponseJson saveEateriesAll(
-			String searchKeyword, 
-			int startPage, 
-			int requestApiDataNum
+		String searchKeyword,
+		int startPage,
+		int requestApiDataNum
 	) {
 		ResponseJson responseJson = null;
 		
@@ -70,16 +69,16 @@ public class EateriesWithApiProcess {
 		
 		while (calledDataNum < requestApiDataNum) {
 			KeywordResponseDto apiResult = keywordSearchProcess
-					.getApiResult(searchKeyword, currentPage);
+				.getApiResult(searchKeyword, currentPage);
 			
 			if (ListUtil.isEmpty(apiResult.getDocuments())) {
 				String message = "조회 결과 없음.";
 				log.info(message);
 				responseJson = ResponseJson.builder()
-						.status(HttpStatus.NOT_FOUND)
-						.message(message)
-						.data(calledDataNum)
-						.build();
+					.status(HttpStatus.NOT_FOUND)
+					.message(message)
+					.data(calledDataNum)
+					.build();
 				return responseJson;
 			}
 			
@@ -92,10 +91,10 @@ public class EateriesWithApiProcess {
 				// 그 이전 페이지까지는 정상적으로 처리되므로 일부 데이터만 처리되었다는 의미에서
 				// Http status를 PARTIAL_CONTENT로 설정함.
 				responseJson = ResponseJson.builder()
-						.status(HttpStatus.PARTIAL_CONTENT) // 206
-						.message(e.getMessage() + " " + e.getDuplicated().toString())
-						.data(calledDataNum)
-						.build();
+					.status(HttpStatus.PARTIAL_CONTENT) // 206
+					.message(e.getMessage() + " " + e.getDuplicated().toString())
+					.data(calledDataNum)
+					.build();
 				return responseJson;
 			}
 			
@@ -103,23 +102,25 @@ public class EateriesWithApiProcess {
 			if (apiResult.getMeta().isEnd()) {
 				String message = "마지막 응답 페이지 도달로 API DB 저장 작업 조기 종료.";
 				log.info(message);
+
 				// 원래 사용자가 원하고자 했던 데이터의 일부만 처리한 셈이므로 PARTIAL_CONTENT로 
 				// response HTTP status로 지정함.
 				responseJson = ResponseJson.builder()
-						.status(HttpStatus.PARTIAL_CONTENT) // 206
-						.message(message)
-						.data(calledDataNum)
-						.build();
+					.status(HttpStatus.PARTIAL_CONTENT) // 206
+					.message(message)
+					.data(calledDataNum)
+					.build();
 				return responseJson;
 			}
+
 			++currentPage;
 		}
 		
 		responseJson = ResponseJson.builder()
-				.status(HttpStatus.OK)
-				.message("DB 영속화 작업 완료")
-				.data(calledDataNum)
-				.build();
+			.status(HttpStatus.OK)
+			.message("DB 영속화 작업 완료")
+			.data(calledDataNum)
+			.build();
 		log.info("현재 페이지 수: " + (currentPage - 1));
 		return responseJson;
 	}
@@ -141,10 +142,10 @@ public class EateriesWithApiProcess {
 			// 똑같은 데이터가 반복적으로 응답되는 현상을 확인함.
 			// 따라서 중복 데이터 삽입을 방지.
 			Optional<Eateries> duplicated = eateriesRepository
-					.findByNameAndAddress(
-							document.getPlaceName(), 
-							document.getRoadAddressName()
-					);	
+				.findByNameAndAddress(
+					document.getPlaceName(),
+					document.getRoadAddressName()
+				);
 			if (duplicated.isPresent()) {
 				// 응답 데이터 전송을 위해 컨트롤러에 넘길 데이터를 커스텀 예외 객체에 저장.
 				DuplicatedInDBException customException = new DuplicatedInDBException();
@@ -210,21 +211,20 @@ public class EateriesWithApiProcess {
 			}
 			
 			Eateries newEateries = Eateries.builder()
-					.name(document.getPlaceName())
-					.longitude(new BigDecimal(document.getX()))
-					.latitude(new BigDecimal(document.getY()))
-					.address(document.getRoadAddressName())
-					.category(categoryEntity)
-					.tel(document.getPhone())
-					.thumbnail(imageResult)
-					.description(blogResult)
-					.build();
+				.name(document.getPlaceName())
+				.longitude(new BigDecimal(document.getX()))
+				.latitude(new BigDecimal(document.getY()))
+				.address(document.getRoadAddressName())
+				.category(categoryEntity)
+				.tel(document.getPhone())
+				.thumbnail(imageResult)
+				.description(blogResult)
+				.build();
 			eateriesRepository.save(newEateries);
 			eateries.add(newEateries);
 		}
 		
 		return eateries.size();
-
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class EateriesWithApiProcess {
 		if (categoryGroupEntity == null) {
 			// API로부터 새로 들어온 음식 대분류 카테고리 정보를 DB에 저장.
 			categoryGroupEntity = categoryGroupsRepository.save(
-					CategoryGroups.builder()
+				CategoryGroups.builder()
 					.name(largeCate)
 					.build()
 			);
@@ -267,7 +267,7 @@ public class EateriesWithApiProcess {
 		if (categoryEntity == null) {
 			// 새 카테고리 DB에 삽입
 			categoryEntity = categoriesRepository.save(
-					Categories.builder()
+				Categories.builder()
 					.name(smallCate)
 					.group(categoryGroupEntity)
 					.build()
@@ -278,5 +278,4 @@ public class EateriesWithApiProcess {
 
 		return categoryEntity;
 	}
-	
 }

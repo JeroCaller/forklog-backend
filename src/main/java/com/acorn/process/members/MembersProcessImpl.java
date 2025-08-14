@@ -24,10 +24,14 @@ public class MembersProcessImpl implements MembersProcess {
 	private final MembersRepository membersRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	// 계정 조회
+	/**
+	 * 계정 조회
+	 *
+	 * @author YYUMMMMMMMM, EaseHee, rmk
+	 * @return
+	 */
 	@Override
 	public ResponseEntity<?> readAccount() {
-
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //			System.out.println("authentication" +authentication);
@@ -36,24 +40,31 @@ public class MembersProcessImpl implements MembersProcess {
 			Members member = membersRepository.findByEmail(email);
 
 			MembersDto response = MembersDto.builder()
-					.no(member.getNo())
-					.nickname(member.getNickname())
-					.phone(member.getPhone())
-					.postcode(member.getPostcode())
-					.roadAddress(member.getRoadAddress())
-					.detailAddress(member.getDetailAddress())
-					.build();
+				.no(member.getNo())
+				.nickname(member.getNickname())
+				.phone(member.getPhone())
+				.postcode(member.getPostcode())
+				.roadAddress(member.getRoadAddress())
+				.detailAddress(member.getDetailAddress())
+				.build();
 
 			return ResponseEntity.ok(response);
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
 		} catch (Exception e) {
 			//e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("서버 오류가 발생했습니다.");
 		}
 	}
 
-	// 수정
+	/**
+	 * 수정
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @return
+	 */
 	@Override
 	public ResponseEntity<?> updateAccount(@RequestBody ProfileDto dto) {
 		try {
@@ -69,7 +80,8 @@ public class MembersProcessImpl implements MembersProcess {
 			
 			// 이메일이 비어있는 경우
 			if (email == null || email.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자 이메일을 가져올 수 없습니다.");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body("사용자 이메일을 가져올 수 없습니다.");
 			}
 
 			// 사용자 정보 조회
@@ -80,12 +92,14 @@ public class MembersProcessImpl implements MembersProcess {
 
 			// 입력된 현재 비밀번호와 DB에 저장된 비밀번호 비교
 			if (!passwordEncoder.matches(dto.getCurrentPassword(), member.getPassword())) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("현재 비밀번호가 일치하지 않습니다.");
 			}
 
 			// 닉네임 중복 체크
-			if (membersRepository.existsByNickname(dto.getNickname())
-					&& !dto.getNickname().equals(member.getNickname())) {
+			if (membersRepository.existsByNickname(dto.getNickname()) &&
+				!dto.getNickname().equals(member.getNickname())
+			) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복된 닉네임입니다.");
 			}
 
@@ -96,7 +110,8 @@ public class MembersProcessImpl implements MembersProcess {
 
 				// 로그인한 사용자의 전화번호와 비교하여 다르면 중복으로 처리
 				if (!existMember.getEmail().equals(member.getEmail())) {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복된 휴대전화 번호입니다.");
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body("중복된 휴대전화 번호입니다.");
 				}
 			}
 
@@ -124,14 +139,20 @@ public class MembersProcessImpl implements MembersProcess {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (Exception e) {
 			//e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("서버 오류가 발생했습니다.");
 		}
 	}
 
-	// 닉네임 중복 검사
+	/**
+	 * 닉네임 중복 검사
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param nickname
+	 * @return
+	 */
 	@Override
 	public ResponseEntity<?> checkNicknameDuplication(String nickname) {
-
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String email = authentication.getName(); // 현재 사용자의 이메일 가져오기
@@ -144,17 +165,25 @@ public class MembersProcessImpl implements MembersProcess {
 
 	        boolean existedNickname = membersRepository.existsByNickname(nickname);
 	        if (existedNickname) {
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 닉네임입니다.");
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("이미 사용 중인 닉네임입니다.");
 	        }
 
 	        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
 		} catch (Exception e) {
 			//e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("서버 오류가 발생했습니다.");
 		}
 	}
 
-	// 탈퇴
+	/**
+	 * 탈퇴
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @return
+	 */
 	@Override
 	public ResponseEntity<?> deleteAccount(ProfileDto dto) {
 		try {
@@ -183,11 +212,16 @@ public class MembersProcessImpl implements MembersProcess {
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("서버 오류가 발생했습니다.");
 		}
 	}
-	
-	// 재욱
+
+	/**
+	 *
+	 * @author jaeuk-choi
+	 * @return
+	 */
 	@Override
 	public ResponseEntity<?> getMemberNo() {
 	    try {
@@ -200,8 +234,8 @@ public class MembersProcessImpl implements MembersProcess {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("서버 오류가 발생했습니다.");
 	    }
 	}
-
 }

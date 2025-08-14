@@ -7,11 +7,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ *
+ * @author jeauk-choi
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class EateryResponseDto {
+
 	private Integer no;
     private String name;
     private String thumbnail;

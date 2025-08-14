@@ -37,18 +37,17 @@ public class CategoryController {
 			= categoryProcess.getAllCategoryGroups();
 		if (categoryGroupsFilterDtos.size() == 0) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(categoryGroupsFilterDtos)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(categoryGroupsFilterDtos)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
 	}
-	
 }

@@ -8,6 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.acorn.entity.Chats;
 
+/**
+ *
+ * @author EaseHee
+ */
 public interface ChatsRepository extends JpaRepository<Chats, Integer>{
 	
 	List<Chats> findAllByOrderByCreatedAtAsc();

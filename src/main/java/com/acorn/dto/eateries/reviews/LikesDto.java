@@ -12,14 +12,27 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter @Builder @NoArgsConstructor @AllArgsConstructor
+/**
+ *
+ * @author kai-jang99
+ */
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LikesDto {
+
 	private int no;
 	private int commentNo;
 	private int memberNo;
 	private LocalDateTime createdAt;
-	
-	// Entity -> Dto
+
+	/**
+	 * Entity -> Dto
+	 *
+	 * @param likes
+	 * @return
+	 */
 	public static LikesDto fromEntity(Likes likes) {
 		return LikesDto.builder()
 			.no(likes.getNo())
@@ -28,13 +41,23 @@ public class LikesDto {
 			.createdAt(likes.getCreatedAt())
 			.build();
 	}
-	
-	// Dto -> Entity
+
+	/**
+	 * Dto -> Entity
+	 *
+	 * @param commentsRepository
+	 * @param membersRepository
+	 * @return
+	 */
 	public Likes toEntity(CommentsRepository commentsRepository, MembersRepository membersRepository) {
 		return Likes.builder()
 			.no(this.no)
-			.comment(commentsRepository.findById(this.commentNo).orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다.")))
-			.member(membersRepository.findById(this.memberNo).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다.")))
+			.comment(commentsRepository.findById(this.commentNo)
+				.orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."))
+			)
+			.member(membersRepository.findById(this.memberNo)
+				.orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."))
+			)
 			.createdAt(this.createdAt)
 			.build();
 	}

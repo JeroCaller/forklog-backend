@@ -10,5 +10,4 @@ public class AnonymousAlertException extends Exception {
 	public AnonymousAlertException() {
 		super("현재 사용자는 익명의 비로그인 사용자입니다.");
 	}
-	
 }

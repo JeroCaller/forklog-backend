@@ -53,12 +53,11 @@ public class MembersEateriesProcess {
 	 * - 현재 사용자가 로그인한 사람으로 인식되었으나 DB에 등록되지 않은 사용자일 때 발생.
 	 */
 	public MembersResponseDto getLoginedMember()
-			throws AnonymousAlertException, NotRegisteredMemberException {
-		
+		throws AnonymousAlertException, NotRegisteredMemberException {
 		// 현재 사용자 인증 정보 가져오기
 		Authentication authentication = SecurityContextHolder
-				.getContext()
-				.getAuthentication();
+			.getContext()
+			.getAuthentication();
 		
 		String email = authentication.getName();
 		String role = AuthUtil.getRole(authentication);
@@ -77,12 +76,18 @@ public class MembersEateriesProcess {
 		}
 		
 		return MembersResponseDto.toDto(members);
-		
 	}
 	
 	/**
 	 * 현재 사용자가 즐겨찾기한 음식점들의 카테고리와 동일한 카테고리를 가지는 모든 
 	 * 음식점들을 가져와 반환한다.
+	 *
+	 * <p>
+	 *     참고 <br/>
+	 *     여러 엔티티를 조회하므로 이 작업들을 하나의 트랙잭션으로 묶음.
+	 *     또한 readOnly = true로 할 시 조회 과정만 있음을 명시할 수 있을 뿐만 아니라
+	 *     조회 과정의 속도가 더 빨라진다고 한다.
+	 * </p>
 	 * 
 	 * @author JeroCaller (JJH)
 	 * @param memberNo
@@ -91,22 +96,16 @@ public class MembersEateriesProcess {
 	 * @throws NoCategoryFoundException 
 	 * @throws NoEateriesFoundException 
 	 */
-	// 여러 엔티티를 조회하므로 이 작업들을 하나의 트랙잭션으로 묶음
-	// 또한 readOnly = true로 할 시 조회 과정만 있음을 명시할 수 있을 뿐만 아니라 
-	// 조회 과정의 속도가 더 빨라진다고 한다.
 	@Transactional(readOnly = true)  
-	public Page<EateriesDto> getEateriesByRecommend(
-			int memberNo, 
-			Pageable pageRequest
-	) throws NoMemberFoundException, 
+	public Page<EateriesDto> getEateriesByRecommend(int memberNo, Pageable pageRequest)
+		throws NoMemberFoundException,
 		NoCategoryFoundException, 
 		NoEateriesFoundException 
 	{
-		
 		// 멤버 ID에 해당하는 멤버 엔티티 조회.
 		Optional<Members> membersOpt = membersRepository.findById(memberNo);
 		Members member = membersOpt.orElseThrow(
-				() -> new NoMemberFoundException(String.valueOf(memberNo))
+			() -> new NoMemberFoundException(String.valueOf(memberNo))
 		);
 		
 		/*
@@ -116,7 +115,7 @@ public class MembersEateriesProcess {
 		*/
 
 		List<Categories> memberCategories = categoriesRepository
-				.findByMemberFavorite(member);
+			.findByMemberFavorite(member);
 		if (ListUtil.isEmpty(memberCategories)) {
 			throw new NoCategoryFoundException("사용자가 즐겨찾기한 음식점이 없는 듯 합니다.");
 		}
@@ -131,7 +130,7 @@ public class MembersEateriesProcess {
 		}); */
 		
 		Page<Eateries> eateries = eateriesRepository
-				.findByCategoryIn(memberCategories, pageRequest);
+			.findByCategoryIn(memberCategories, pageRequest);
 		
 		if (PageUtil.isEmtpy(eateries)) {
 			throw new NoEateriesFoundException();
@@ -139,5 +138,4 @@ public class MembersEateriesProcess {
 		
 		return eateries.map(EateriesDto :: toDto);
 	}
-	
 }

@@ -19,5 +19,4 @@ public class NotRegisteredMemberException extends Exception {
 	public NotRegisteredMemberException() {
 		super("로그인 사용자로 인식되었으나 등록되지 않은 사용자입니다. ");
 	}
-	
 }

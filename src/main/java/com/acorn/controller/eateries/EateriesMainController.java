@@ -48,26 +48,26 @@ public class EateriesMainController {
 	 */
 	@GetMapping("/{location}")
 	public ResponseEntity<ResponseJson> getEateriesByAddress(
-			@PathVariable("location") String location,
-			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size
+		@PathVariable("location") String location,
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
 		
 		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = eateriesMainProcess
-				.getEateriesByLocation(location, pageRequest);
+			.getEateriesByLocation(location, pageRequest);
 		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(eateries)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
@@ -88,10 +88,10 @@ public class EateriesMainController {
 	 */
 	@GetMapping("/{location}/categories/large/{lid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategoryLarge(
-			@PathVariable(name = "location") String location,
-			@PathVariable(name = "lid") int largeId,
-			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size
+		@PathVariable(name = "location") String location,
+		@PathVariable(name = "lid") int largeId,
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
 		
@@ -99,30 +99,30 @@ public class EateriesMainController {
 		Page<EateriesDto> eateries = null;
 		try {
 			eateries = eateriesMainProcess
-					.getEateriesByLocationAndCategoryLarge(
-							location, 
-							largeId, 
-							pageRequest
-					);
+				.getEateriesByLocationAndCategoryLarge(
+					location,
+					largeId,
+					pageRequest
+				);
 		} catch (NoCategoryFoundException e) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(e.getMessage())
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(e.getMessage())
+				.build();
 			return responseJson.toResponseEntity();
 		}
 		
 		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(eateries)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
@@ -142,27 +142,26 @@ public class EateriesMainController {
 	 */
 	@GetMapping("/{location}/categories/small/{sid}")
 	public ResponseEntity<ResponseJson> getEateriesByLocationAndCategorySmall(
-			@PathVariable(name = "location") String location,
-			@PathVariable(name = "sid") int smallId,
-			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size
+		@PathVariable(name = "location") String location,
+		@PathVariable(name = "sid") int smallId,
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
 		
 		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
 		Page<EateriesDto> eateries = null;
 		try {
-			eateries = eateriesMainProcess
-					.getEateriesByLocationAndCategorySmall(
-							location, 
-							smallId, 
-							pageRequest
-					);
+			eateries = eateriesMainProcess.getEateriesByLocationAndCategorySmall(
+				location,
+				smallId,
+				pageRequest
+			);
 		} catch (NoCategoryFoundException e) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(e.getMessage())
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(e.getMessage())
+				.build();
 			return responseJson.toResponseEntity();
 		} 
 		
@@ -171,16 +170,16 @@ public class EateriesMainController {
 		//log.info("" + eateries.getTotalElements());
 		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.data(eateries)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(eateries)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
@@ -206,10 +205,10 @@ public class EateriesMainController {
 	 */
 	@GetMapping("/gps/user")
 	public ResponseEntity<ResponseJson> getEateriesByUserLocation(
-			@RequestParam(name = "x", defaultValue = "") String x,
-			@RequestParam(name = "y", defaultValue = "") String y,
-			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size
+		@RequestParam(name = "x", defaultValue = "") String x,
+		@RequestParam(name = "y", defaultValue = "") String y,
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		ResponseJson responseJson = null;
 		Pageable pageRequest = PageUtil.getPageRequestOf(page, size);
@@ -224,7 +223,7 @@ public class EateriesMainController {
 		LocationSplitDto locationSplitDto = null;
 		if (!x.isBlank() && !y.isBlank()) {
 			locationSplitDto = geoLocationProcess
-					.getOneLocationFromCoordinate(x, y);
+				.getOneLocationFromCoordinate(x, y);
 		}
 		
 		Page<EateriesDto> eateries = null;
@@ -238,14 +237,14 @@ public class EateriesMainController {
 				oneEatery = eateriesMainProcess.getOneEateriesByRandom();
 			} catch (NoDataFoundException | BadAlgorithmException e) {
 				responseJson = ResponseJson.builder()
-						.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.message(e.getMessage())
-						.build();
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.message(e.getMessage())
+					.build();
 				return responseJson.toResponseEntity();
 			} 
 			
 			searchLocation = LocationUtil
-					.getLocationMediumStringByFull(oneEatery.getAddress());
+				.getLocationMediumStringByFull(oneEatery.getAddress());
 			//log.info("좌표로부터 주소 구성 방법 - DB로부터 랜덤으로 조회된 주소를 이용");
 			
 		} else {
@@ -258,21 +257,21 @@ public class EateriesMainController {
 		//log.info("구성된 검색용 주소 문자열 : " + searchLocation);
 		
 		eateries = eateriesMainProcess.getEateriesByLocation(
-				searchLocation, 
-				pageRequest
+			searchLocation,
+			pageRequest
 		);
 		
 		if (PageUtil.isEmtpy(eateries)) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.NO_DATA_FOUND)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.NO_DATA_FOUND)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(eateries)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();

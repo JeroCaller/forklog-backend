@@ -15,7 +15,11 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
-// MailProcess : 이메일에 난수를 포함한 링크를 보내주는 서비스
+/**
+ * 이메일에 난수를 포함한 링크를 보내주는 서비스
+ *
+ * @author YYUMMMMMMMM
+ */
 @Service
 @RequiredArgsConstructor
 public class MailProcess {
@@ -25,8 +29,8 @@ public class MailProcess {
 	private final MembersRepository membersRepository;
 	private final PasswordEncoder passwordEncoder;
 	
-	public void sendEmailForCertification(String email) throws NoSuchAlgorithmException, MessagingException {
-		
+	public void sendEmailForCertification(String email)
+        throws NoSuchAlgorithmException, MessagingException {
 		// 비밀번호 생성
 		String certificationPassword = certificationGenerator.createCertificationPassword();
 		
@@ -36,9 +40,10 @@ public class MailProcess {
 		// System.out.println("Link: " + link);
 		System.out.println("Certification Password: " + certificationPassword);
 
-		String content = String.format("<br> 임시비밀번호: %s <br><br><br> 로그인 후 마이페이지에서 비밀번호를 수정해주세요.",
-	            certificationPassword
-	           );
+		String content = String.format(
+            "<br> 임시비밀번호: %s <br><br><br> 로그인 후 마이페이지에서 비밀번호를 수정해주세요.",
+            certificationPassword
+        );
 
         // 비밀번호 해싱
         String password = passwordEncoder.encode(certificationPassword);
@@ -51,7 +56,8 @@ public class MailProcess {
         	member.setPassword(password); // 비밀번호 설정
         	membersRepository.save(member); // 변경된 비밀번호를 DB 저장
         } else {
-            System.out.println("No member found with email: " + email); // 이메일로 회원을 찾을 수 없을 때
+            // 이메일로 회원을 찾을 수 없을 때
+            System.out.println("No member found with email: " + email);
         }
 
         // 이메일 전송
@@ -60,7 +66,6 @@ public class MailProcess {
     }
 
     private void sendPasswordMail(String email, String content) throws MessagingException {
-
         // 이메일 객체 생성
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);

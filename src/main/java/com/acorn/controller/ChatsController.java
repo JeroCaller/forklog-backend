@@ -41,8 +41,8 @@ public class ChatsController {
      */
     @GetMapping("/chat/message")
     public ResponseEntity<Slice<ChatsResponseDto>> getMessages(
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "30") int size
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "30") int size
 	) {
 //    	log.info("========== page: {}, size : {} ==========", page, size);
         return ResponseEntity.ok().body(chatsProcess.getMessages(page, size));

@@ -17,11 +17,17 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ReviewRatingAspect {
+
     private final ReviewsProcess reviewsProcess;
     private final ReviewsRepository reviewsRepository;
     private final ThreadLocal<Integer> eateryNoHolder = new ThreadLocal<>();
 
-    // 리뷰 등록 후 평균 별점 업데이트
+    /**
+     * 리뷰 등록 후 평균 별점 업데이트
+     *
+     * @author jaeuk-choi
+     * @param joinPoint
+     */
     @AfterReturning(
         pointcut = "execution(* com.acorn.process.eateries.reviews.ReviewsProcess.registReview(..))"
     )
@@ -33,7 +39,12 @@ public class ReviewRatingAspect {
         }
     }
 
-    // 리뷰 수정 후 평균 별점 업데이트
+    /**
+     * 리뷰 수정 후 평균 별점 업데이트
+     *
+     * @author jaeuk-choi
+     * @param joinPoint
+     */
     @AfterReturning(
         pointcut = "execution(* com.acorn.process.eateries.reviews.ReviewsProcess.updateReview(..))"
     )
@@ -45,7 +56,12 @@ public class ReviewRatingAspect {
         }
     }
 
-    // 리뷰 삭제 전에 음식점 번호 저장
+    /**
+     * 리뷰 삭제 전에 음식점 번호 저장
+     *
+     * @author jaeuk-choi
+     * @param joinPoint
+     */
     @Before("execution(* com.acorn.process.eateries.reviews.ReviewsProcess.deleteReview(..))")
     public void beforeReviewDelete(JoinPoint joinPoint) {
         String reviewNo = (String) joinPoint.getArgs()[0];
@@ -54,7 +70,12 @@ public class ReviewRatingAspect {
         eateryNoHolder.set(review.getEateries().getNo());
     }
 
-    // 리뷰 삭제 후 평균 별점 업데이트
+    /**
+     * 리뷰 삭제 후 평균 별점 업데이트
+     *
+     * @author jaeuk-choi
+     * @param joinPoint
+     */
     @AfterReturning("execution(* com.acorn.process.eateries.reviews.ReviewsProcess.deleteReview(..))")
     public void afterReviewDelete(JoinPoint joinPoint) {
         try {

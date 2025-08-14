@@ -28,15 +28,15 @@ public class CategoryGroupsFilterDto {
 	
 	public static CategoryGroupsFilterDto toDto(CategoryGroups entity) {
 		List<CategoriesFilterDto> categoriesFilterDtos = entity.getCategories()
-				.stream()
-				.map(CategoriesFilterDto :: toDto)
-				.collect(Collectors.toList());
+			.stream()
+			.map(CategoriesFilterDto :: toDto)
+			.collect(Collectors.toList());
 		
 		return CategoryGroupsFilterDto.builder()
-				.no(entity.getNo())
-				.name(entity.getName())
-				.categoriesFilterDtos(categoriesFilterDtos)
-				.build();
+			.no(entity.getNo())
+			.name(entity.getName())
+			.categoriesFilterDtos(categoriesFilterDtos)
+			.build();
 	}
 	
 }

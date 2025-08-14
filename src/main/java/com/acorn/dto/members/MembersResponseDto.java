@@ -31,14 +31,14 @@ public class MembersResponseDto {
 	
 	public static MembersResponseDto toDto(Members entity) {
 		return MembersResponseDto.builder()
-				.no(entity.getNo())
-				.email(entity.getEmail())
-				.role(entity.getRole())
-				.nickname(entity.getNickname())
-				.mediumRoadAddress(LocationUtil
-					.getLocationMediumStringByFull(entity.getRoadAddress())
-				)
-				.build();
+			.no(entity.getNo())
+			.email(entity.getEmail())
+			.role(entity.getRole())
+			.nickname(entity.getNickname())
+			.mediumRoadAddress(LocationUtil
+				.getLocationMediumStringByFull(entity.getRoadAddress())
+			)
+			.build();
 	}
 	
 }

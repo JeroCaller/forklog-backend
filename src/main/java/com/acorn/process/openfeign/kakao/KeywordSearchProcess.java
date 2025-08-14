@@ -26,10 +26,10 @@ public class KeywordSearchProcess {
 	 */
 	public KeywordResponseDto getApiResult(String searchKeyword, int page) {
 		KeywordRequestDto requestDto = KeywordRequestDto.builder()
-				.query(searchKeyword)
-				.page(page)
-				//.categoryGroupCode("FD6")
-				.build();
+			.query(searchKeyword)
+			.page(page)
+			//.categoryGroupCode("FD6")
+			.build();
 
 		//log.info("카테고리 코드 - " + requestDto.getCategory_group_code());
 		//log.info(String.valueOf(requestDto.getCategory_group_code().length()));

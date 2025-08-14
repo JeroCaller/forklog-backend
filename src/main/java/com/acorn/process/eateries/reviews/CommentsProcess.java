@@ -17,14 +17,24 @@ import com.acorn.repository.MembersRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+/**
+ *
+ * @author kai-jang99
+ */
 @Service
 @RequiredArgsConstructor
 public class CommentsProcess {
+
 	private final CommentsRepository commentRepository;
 	private final MembersRepository memberRepository;
 	private final EateriesRepository eateryRepository;
-	
-	// Create
+
+	/**
+	 * Create
+	 *
+	 * @param dto
+	 * @return
+	 */
 	@Transactional
 	public CommentsDto createComment(CommentsDto dto) {
         Comments comment = dto.toEntity(memberRepository, eateryRepository);
@@ -36,8 +46,14 @@ public class CommentsProcess {
         }
         return CommentsDto.fromEntity(commentRepository.save(comment));
     }
-	
-	// Read
+
+	/**
+	 * Read
+	 *
+	 * @param eateryNo
+	 * @param pageable
+	 * @return
+	 */
 	@Transactional(readOnly = true)
 	public Page<CommentsDto> getCommentsByEatery(int eateryNo, Pageable pageable) {
 	    // 레포지토리 메서드 호출
@@ -62,16 +78,31 @@ public class CommentsProcess {
 	    });
 	}
 
-	
-	// Update: 이건 @Transactional 없이 정상작동
+	/**
+	 * Update: @Transactional 없이 정상작동함.
+	 *
+	 * @param no
+	 * @param updatedDto
+	 * @return
+	 */
 	public CommentsDto updateComment(int no, CommentsDto updatedDto) {
 	    Comments comment = commentRepository.findById(no)
 	    	.orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 	    
-	    return CommentsDto.fromEntity(commentRepository.save(comment.toBuilder().content(updatedDto.getContent()).build()));
+	    return CommentsDto.fromEntity(
+			commentRepository.save(
+				comment.toBuilder()
+					.content(updatedDto.getContent())
+					.build()
+			)
+		);
 	}
 
-	// Delete
+	/**
+	 * Delete
+	 *
+	 * @param no
+	 */
 	@Transactional
 	public void deleteComment(int no) {
 	    Comments comment = commentRepository.findById(no)

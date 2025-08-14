@@ -36,26 +36,55 @@ public class SecurityConfig implements WebMvcConfigurer {
 	private String uploadBaseDir;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+	public SecurityFilterChain securityFilterChain(
+		HttpSecurity httpSecurity,
+		JwtAuthenticationFilter jwtAuthenticationFilter
+	) throws Exception {
 		// CORS 설정과 CSRF 비활성화, 세션 관리 정책 설정
 		httpSecurity
-				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
-				.csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
-				.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책 설정
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/main/mypage/**").hasRole("USER")
-						.requestMatchers("/", "/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**","/main/eateries/**", "/uploads/**", "/main/**", "/development/**", "/proxy/image/**", "/chat/**", "/ws/**", "/pub/**", "/index.html", "/static/**", "/*.png", "/favicon.ico").permitAll()
-						.anyRequest().authenticated() // 그외 다른 요청은 인증 필요
-				)
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 인증 실패 시 처리 로직 설정
+			// CORS 설정
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+			.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			) // 세션 관리 정책 설정
+			// JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/main/mypage/**").hasRole("USER")
+				.requestMatchers(
+					"/",
+					"/auth/**",
+					"/swagger-ui.html",
+					"/swagger-ui/**",
+					"/v3/api-docs/**","/main/eateries/**",
+					"/uploads/**",
+					"/main/**",
+					"/development/**",
+					"/proxy/image/**",
+					"/chat/**",
+					"/ws/**",
+					"/pub/**",
+					"/index.html",
+					"/static/**",
+					"/*.png",
+					"/favicon.ico"
+				).permitAll()
+				.anyRequest()
+				.authenticated() // 그외 다른 요청은 인증 필요
+			)
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+			); // 인증 실패 시 처리 로직 설정
 
 		return httpSecurity.build(); // 설정 완료 후 SecurityFilterChain 반환
 	}
 	
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	public AuthenticationManager authenticationManager(
+		AuthenticationConfiguration authenticationConfiguration
+	) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
@@ -63,13 +92,17 @@ public class SecurityConfig implements WebMvcConfigurer {
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.addAllowedOriginPattern("http://localhost:*"); // React의 로컬 서버 주소
-		configuration.addAllowedOriginPattern("https://*.sel4.cloudtype.app"); // Cloudtype 패턴의 주소 와일드카드로 허용 설정
+
+		// Cloudtype 패턴의 주소 와일드카드로 허용 설정
+		configuration.addAllowedOriginPattern("https://*.sel4.cloudtype.app");
 		configuration.setAllowedMethods(List.of("*")); // 모든 HTTP 메서드 허용
 		configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 인증 정보 포함 요청 허용 (쿠키 등)
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 설정을 적용
+
+		// 모든 경로에 대해 CORS 설정을 적용
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
 
@@ -84,10 +117,13 @@ public class SecurityConfig implements WebMvcConfigurer {
 		//지금은 업로드 경로 설정이 목적
 		//Path uploadDir = Paths.get("./uploads");
 		Path uploadDir = Paths.get(uploadBaseDir);
+
 		//uploads 절대 경로 얻기
 		String uploadPath = uploadDir.toFile().getAbsolutePath();
+
 		//	/uploads/test.png라는 url이 들어오면 uploads디렉토리 내의 test.png를 반환
-		registry.addResourceHandler("/uploads/**").addResourceLocations("file:"+uploadPath+"/");
+		registry.addResourceHandler("/uploads/**")
+			.addResourceLocations("file:"+uploadPath+"/");
 		//"file:"+uploadPath+"/" : 파일 시스템의 uploads 디렉토리 경로를 나타냄
 		//"file:"접두사를 붙임으로 해서 이 경로가 파일 시스템의 경로임을 지정한다.
 	}
@@ -96,6 +132,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 	public HttpFirewall defaultHttpFirewall() {
 		return new DefaultHttpFirewall();
 	}
+
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 	    return (web) -> web.ignoring().requestMatchers("/uploads/**");

@@ -12,7 +12,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// RegisterRequestDto : 회원가입 시 클라이언트로부터 데이터를 받아오는 DTO
+/**
+ * 회원가입 시 클라이언트로부터 데이터를 받아오는 DTO
+ *
+ * @author YYUMMMMMMMM
+ */
 @Getter
 @Setter
 @NoArgsConstructor

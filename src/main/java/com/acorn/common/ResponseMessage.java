@@ -1,6 +1,10 @@
 package com.acorn.common;
 
-//HTTP Status 응답 메세지 인터페이스
+/**
+ * HTTP Status 응답 메세지 인터페이스
+ *
+ * @author YYUMMMMMMMM
+ */
 public interface ResponseMessage {
 
 	// HTTP Status 200

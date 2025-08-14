@@ -11,6 +11,10 @@ import com.acorn.dto.members.RegisterResponseDto;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ *
+ * @author YYUMMMMMMMM
+ */
 public interface AuthProcess {
 	
 	ResponseEntity<? super RegisterResponseDto> register(RegisterRequestDto dto);

@@ -5,6 +5,11 @@ import java.security.SecureRandom;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * 사용자의 "비밀번호 찾기" 기능을 위해 임시 비밀번호를 발급하는 클래스.
+ *
+ * @author YYUMMMMMMMM
+ */
 @Component
 public class CertificationGenerator {
 

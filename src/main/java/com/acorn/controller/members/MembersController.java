@@ -21,32 +21,60 @@ import lombok.RequiredArgsConstructor;
 public class MembersController {
 	
 	private final MembersProcess membersProcess;
-	
-	// 조회
+
+	/**
+	 * 조회
+	 *
+	 * @author YYUMMMMMMMM
+	 * @return
+	 */
 	@GetMapping("/read")
 	public ResponseEntity<?> readAccount() {
 		return membersProcess.readAccount();
 	}
-	
-	// 수정
+
+	/**
+	 * 수정
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @return
+	 */
 	@PutMapping("/update")
 	public ResponseEntity<?> updateAccount(@RequestBody @Valid ProfileDto dto) {
 		return membersProcess.updateAccount(dto);
 	}
-	
-	// 탈퇴
+
+	/**
+	 * 탈퇴
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @return
+	 */
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteAccount(@RequestBody @Valid ProfileDto dto) {
 		return membersProcess.deleteAccount(dto);
 	}
-	
-	// 닉네임 중복 검사
+
+	/**
+	 * 닉네임 중복 검사
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param nickname
+	 * @return
+	 */
 	@GetMapping("/check-nickname")
     public ResponseEntity<?> checkNickname(@RequestParam("nickname") String nickname) {
         return membersProcess.checkNicknameDuplication(nickname);
     }
-	
-	// 재욱 : memberNo 조회 API
+
+	/**
+	 * memberNo 조회 API
+	 *
+	 * @author jaeuk-choi
+	 * @return
+	 */
 	@GetMapping("/member-no")
 	public ResponseEntity<?> getMemberNo() {
 	    return membersProcess.getMemberNo();

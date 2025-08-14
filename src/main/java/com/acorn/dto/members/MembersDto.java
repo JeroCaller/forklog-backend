@@ -11,6 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ *
+ * @author YYUMMMMMMMM
+ */
 @Getter
 @Setter
 @Builder
@@ -35,28 +39,26 @@ public class MembersDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String nickname;
-	
-	// toDto
+
 	public static MembersDto toDto(Members members) {
-		
 		return MembersDto.builder()
-				.no(members.getNo())
-                .email(members.getEmail())
-                .password(members.getPassword())
-                .role(members.getRole())
-                .snsConnected(members.getSnsConnected())
-                .name(members.getName())
-                .postcode(members.getPostcode())
-                .roadAddress(members.getRoadAddress())
-                .detailAddress(members.getDetailAddress())
-                .updatedAt(members.getUpdatedAt())
-                .birthDate(members.getBirthDate())
-                .gender(members.getGender())
-                .phone(members.getPhone())
-                .emailVerified(members.getEmailVerified())
-                .status(members.getStatus())
-                .createdAt(members.getCreatedAt())
-                .nickname(members.getNickname())
-                .build();
+			.no(members.getNo())
+			.email(members.getEmail())
+			.password(members.getPassword())
+			.role(members.getRole())
+			.snsConnected(members.getSnsConnected())
+			.name(members.getName())
+			.postcode(members.getPostcode())
+			.roadAddress(members.getRoadAddress())
+			.detailAddress(members.getDetailAddress())
+			.updatedAt(members.getUpdatedAt())
+			.birthDate(members.getBirthDate())
+			.gender(members.getGender())
+			.phone(members.getPhone())
+			.emailVerified(members.getEmailVerified())
+			.status(members.getStatus())
+			.createdAt(members.getCreatedAt())
+			.nickname(members.getNickname())
+			.build();
 	}
 }

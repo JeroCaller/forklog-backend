@@ -7,19 +7,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ *
+ * @author rmk
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewEateriesDto {
+
 	private Integer no;
 	private String name;
-	
-	// toDto
+
 	public static ReviewEateriesDto toDto(Eateries eateries) {
 		return ReviewEateriesDto.builder()
-				.no(eateries.getNo())
-				.name(eateries.getName())
-				.build();
+			.no(eateries.getNo())
+			.name(eateries.getName())
+			.build();
 	}
 }

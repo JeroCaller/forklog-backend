@@ -26,12 +26,11 @@ public class LocationProcess {
 	 * @return
 	 */
 	public List<LocationGroupsFilterDto> getLocationGroupsFilterAll() {
-		List<LocationGroups> locationGroupsFilterDtos 
-			= locationGroupsRepository.findAll();
+		List<LocationGroups> locationGroupsFilterDtos = locationGroupsRepository.findAll();
 		
 		return locationGroupsFilterDtos.stream()
-				.map(LocationGroupsFilterDto :: toDto)
-				.collect(Collectors.toList());
+			.map(LocationGroupsFilterDto :: toDto)
+			.collect(Collectors.toList());
 	}
 	
 }

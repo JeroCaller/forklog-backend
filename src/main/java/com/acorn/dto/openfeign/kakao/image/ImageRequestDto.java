@@ -9,10 +9,14 @@ import lombok.Setter;
 
 /**
  * 카카오 API - "이미지 검색하기"에서 이미지 요청을 위한 DTO 클래스.
- * 
- * 참고 사이트
- * https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-image
- * 
+ *
+ * <p>
+ * 참고 사이트 <br/>
+ * <a href="https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-image">
+ *     https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-image
+ * </a>
+ * </p>
+ *
  * @author JeroCaller (JJH)
  */
 @Getter
@@ -37,7 +41,6 @@ public class ImageRequestDto {
 	
 	@Builder.Default
 	private int size = 1;
-	
 }
 
 

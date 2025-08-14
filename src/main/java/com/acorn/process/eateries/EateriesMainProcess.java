@@ -49,11 +49,11 @@ public class EateriesMainProcess {
 	 * @return
 	 */
 	public Page<EateriesDto> getEateriesByLocation(
-			String location,
-			Pageable pageRequest
+		String location,
+		Pageable pageRequest
 	) {
 		Page<Eateries> eateries = eateriesRepository
-				.findByAddressContaining(location, pageRequest);
+			.findByAddressContaining(location, pageRequest);
 		
 		return eateries.map(EateriesDto :: toDto);
 	}
@@ -73,23 +73,23 @@ public class EateriesMainProcess {
 	// 좋을 것 같다는 판단 하에 @Transactional 어노테이션 부여함.
 	@Transactional(readOnly = true)
 	public Page<EateriesDto> getEateriesByLocationAndCategoryLarge(
-			String location,
-			int largeId,
-			Pageable pageRequset
+		String location,
+		int largeId,
+		Pageable pageRequset
 	) throws NoCategoryFoundException {
 		Optional<CategoryGroups> categoryGroupOpt = categoryGroupsRepository
-				.findById(largeId);
+			.findById(largeId);
 
 		CategoryGroups categoryGroups = categoryGroupOpt.orElseThrow(
-				() -> new NoCategoryFoundException(
-						"카테고리 대분류 ID: " + String.valueOf(largeId)
-					)
+			() -> new NoCategoryFoundException(
+				"카테고리 대분류 ID: " + String.valueOf(largeId)
+			)
 		);
 		
 		Page<Eateries> eateries = eateriesRepository.findByCategoryGroup(
-				location, 
-				categoryGroups.getNo(), 
-				pageRequset
+			location,
+			categoryGroups.getNo(),
+			pageRequset
 		);
 		
 		return eateries.map(EateriesDto :: toDto);
@@ -110,18 +110,18 @@ public class EateriesMainProcess {
 	// 좋을 것 같다는 판단 하에 @Transactional 어노테이션 부여함.
 	@Transactional(readOnly = true)
 	public Page<EateriesDto> getEateriesByLocationAndCategorySmall(
-			String location,
-			int smallId,
-			Pageable pageRequest
+		String location,
+		int smallId,
+		Pageable pageRequest
 	) throws NoCategoryFoundException {
 		Optional<Categories> categoryOpt = categoriesRepository.findById(smallId);
 		Categories category = categoryOpt.orElseThrow(
-				() -> new NoCategoryFoundException(String.valueOf(smallId))
+			() -> new NoCategoryFoundException(String.valueOf(smallId))
 		);
 		//log.info("조회된 카테고리: " + category.toString() + " " + category.getGroup().getName());
 		
 		Page<Eateries> eateries = eateriesRepository
-				.findByAddressContainsAndCategory(location, category, pageRequest);
+			.findByAddressContainsAndCategory(location, category, pageRequest);
 		
 		/*
 		log.info("조회된 eateries 출력");

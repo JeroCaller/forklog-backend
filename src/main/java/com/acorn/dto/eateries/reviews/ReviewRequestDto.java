@@ -6,11 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ *
+ * @author rmk
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequestDto {
+
 	private Integer no;
 	private BigDecimal rating;
 	private String content;

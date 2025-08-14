@@ -21,22 +21,44 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/main/eateries/comments/likes")
 @RequiredArgsConstructor
 public class LikesController {
+
 	private final LikesProcess process;
 
-	/* -- 좋아요 누르기 -- */
+	/**
+	 * 좋아요 누르기
+	 *
+	 * @author kai-jang99
+	 * @param dto
+	 * @return
+	 */
 	@PostMapping
 	public ResponseEntity<LikesDto> pressLike(@RequestBody LikesDto dto) {
 		return ResponseEntity.ok(process.createLike(dto));
 	}
 
-	/* -- 로그인한 회원이 해당 음식점의 댓글에 남긴 모든 좋아요 읽기 -- */
+	/**
+	 * 로그인한 회원이 해당 음식점의 댓글에 남긴 모든 좋아요 읽기
+	 *
+	 * @author kai-jang99
+	 * @param eateryNo
+	 * @param memberNo
+	 * @return
+	 */
 	@GetMapping
-	public ResponseEntity<List<LikesDto>> readLikes(@RequestParam("eateryNo") int eateryNo,
-			@RequestParam("memberNo") int memberNo) {
+	public ResponseEntity<List<LikesDto>> readLikes(
+		@RequestParam("eateryNo") int eateryNo,
+		@RequestParam("memberNo") int memberNo
+	) {
 		return ResponseEntity.ok(process.findLikesByEateryAndMember(eateryNo, memberNo));
 	}
-  
-	/* -- 좋아요 취소하기 -- */
+
+	/**
+	 * 좋아요 취소하기
+	 *
+	 * @author kai-jang99
+	 * @param no
+	 * @return
+	 */
 	@DeleteMapping("/{no}")
 	public ResponseEntity<LikesDto> cancelLike(@PathVariable("no") int no) {
 		process.deleteLike(no);

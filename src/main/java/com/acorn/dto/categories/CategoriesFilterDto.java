@@ -24,9 +24,9 @@ public class CategoriesFilterDto {
 	
 	public static CategoriesFilterDto toDto(Categories entity) {
 		return CategoriesFilterDto.builder()
-				.no(entity.getNo())
-				.name(entity.getName())
-				.build();
+			.no(entity.getNo())
+			.name(entity.getName())
+			.build();
 	}
 	
 }

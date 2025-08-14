@@ -24,42 +24,86 @@ public class AuthController {
 
 	private final AuthProcess authProcess;
 
-	// 회원가입
+	/**
+	 * 회원가입
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param requestBody
+	 * @return
+	 */
 	@PostMapping("/register")
-	public ResponseEntity<? super RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto requestBody) {
+	public ResponseEntity<? super RegisterResponseDto> register(
+		@RequestBody @Valid RegisterRequestDto requestBody
+	) {
 		// 회원가입 처리 및 응답 반환
 		ResponseEntity<? super RegisterResponseDto> response = authProcess.register(requestBody);
 		return response;
 	}
 
-	// 이메일 중복검사
+	/**
+	 * 이메일 중복검사
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param email
+	 * @return
+	 */
 	@GetMapping("/check-email")
-	public ResponseEntity<? super RegisterResponseDto> checkEmailDuplication(@RequestParam("email") String email) {
+	public ResponseEntity<? super RegisterResponseDto> checkEmailDuplication(
+		@RequestParam("email") String email
+	) {
 		return authProcess.checkEmailDuplication(email);
 	}
 
-	// 로그인
+	/**
+	 * 로그인
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @param response
+	 * @return
+	 */
 	@PostMapping("/login")
-	public ResponseEntity<? super LoginRepsonseDto> login(@RequestBody @Valid LoginRequestDto dto, HttpServletResponse response) {
+	public ResponseEntity<? super LoginRepsonseDto> login(
+		@RequestBody @Valid LoginRequestDto dto,
+		HttpServletResponse response
+	) {
 		// 로그인 처리 및 응답 반환
 		ResponseEntity<? super LoginRepsonseDto> loginResponse = authProcess.login(dto, response);
 		return loginResponse;
 	}
-	
-	// 로그아웃
+
+	/**
+	 * 로그아웃
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param response
+	 * @return
+	 */
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 		ResponseEntity<?> logout = authProcess.logout(response);
 		return logout;
 	}
 
-	// 이메일 찾기
+	/**
+	 * 이메일 찾기
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param user
+	 * @return
+	 */
 	@PostMapping("/find-email")
 	public ResponseEntity<Map<String, Object>> findEmail(@RequestBody Map<String, String> user) {
 		return authProcess.findEmail(user);
 	}
 
-	// 비밀번호 찾기
+	/**
+	 * 비밀번호 찾기
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param user
+	 * @return
+	 */
 	@PostMapping("/find-password")
 	public ResponseEntity<String> findPassword(@RequestBody Map<String, String> user) {
 		return authProcess.findPassword(user);

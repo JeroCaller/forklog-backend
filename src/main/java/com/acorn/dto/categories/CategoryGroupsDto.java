@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CategoryGroupsDto {
+
 	private Integer no;
 	private String name;
 	
 	public static CategoryGroupsDto toDto(CategoryGroups entity) {
 		return CategoryGroupsDto.builder()
-				.no(entity.getNo())
-				.name(entity.getName())
-				.build();
+			.no(entity.getNo())
+			.name(entity.getName())
+			.build();
 	}
 }

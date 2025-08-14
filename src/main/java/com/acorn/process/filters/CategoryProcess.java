@@ -25,11 +25,11 @@ public class CategoryProcess {
 	 */
 	public List<CategoryGroupsFilterDto> getAllCategoryGroups() {
 		List<CategoryGroups> result = categoryGroupsRepository
-				.findAll();
+			.findAll();
 		
 		return result.stream()
-				.map(CategoryGroupsFilterDto :: toDto)
-				.collect(Collectors.toList());
+			.map(CategoryGroupsFilterDto :: toDto)
+			.collect(Collectors.toList());
 	}
 	
 }

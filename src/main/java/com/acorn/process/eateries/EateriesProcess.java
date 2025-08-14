@@ -16,33 +16,39 @@ import lombok.RequiredArgsConstructor;
 public class EateriesProcess {
 
 	private final EateriesRepository eateriesRepository;
-    
-    // 음식점 no로 상세정보
+
+	/**
+	 * 음식점 no로 상세정보
+	 *
+	 * @author jaeuk-choi
+	 * @param no
+	 * @return
+	 */
     public Optional<EateriesDto> getEateryDtoById(int no) {
-        return eateriesRepository.findById(no).map(eatery -> {
-            
-            return EateriesDto.builder()
-            		.no(eatery.getNo())
-            		.name(eatery.getName())
-            		.rating(eatery.getRating())
-            		.thumbnail(eatery.getThumbnail())
-            		.address(eatery.getAddress())
-            		.tel(eatery.getTel())
-            		.categoryName(eatery.getCategory().getName())
-            		.latitude(eatery.getLatitude())
-            		.longitude(eatery.getLongitude())
-            		.build();
-        });
+        return eateriesRepository.findById(no).map(eatery -> EateriesDto.builder()
+			.no(eatery.getNo())
+			.name(eatery.getName())
+			.rating(eatery.getRating())
+			.thumbnail(eatery.getThumbnail())
+			.address(eatery.getAddress())
+			.tel(eatery.getTel())
+			.categoryName(eatery.getCategory().getName())
+			.latitude(eatery.getLatitude())
+			.longitude(eatery.getLongitude())
+			.build()
+        );
     }
     
     /**
      * 특정 음식점의 조회수 1 증가 시키는 메서드.
-     * 
-     * 참고) 
-     * Dirty Checking을 이용하여 update하는 방법 사용 시에는 
-     * 업데이트 내용을 반영하기 위해 반드시 @Transactional 어노테이션을 부여해야 함.
-     * 그렇지 않으면 내용이 DB에 반영되지 않음을 확인함.
-     * 
+     *
+	 * <p>
+	 * 참고) <br/>
+	 * Dirty Checking을 이용하여 update하는 방법 사용 시에는
+	 * 업데이트 내용을 반영하기 위해 반드시 @Transactional 어노테이션을 부여해야 함.
+	 * 그렇지 않으면 내용이 DB에 반영되지 않음을 확인함.
+	 * </p>
+     *
      * @author JeroCaller (JJH)
      * @param eateriesNo - 음식점 엔티티 No
      * @return - true 시 특정 음식점 조회수 1 증가 DB 반영 성공. false 시 입력된 no 값에 

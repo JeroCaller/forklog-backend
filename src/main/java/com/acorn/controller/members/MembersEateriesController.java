@@ -59,8 +59,8 @@ public class MembersEateriesController {
 	 */
 	@GetMapping("/eateries/recommends")
 	public ResponseEntity<ResponseJson> getEateriesForMember(
-			@RequestParam(name = "page", defaultValue = "1") int page, 
-			@RequestParam(name = "size", defaultValue = "10") int size
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		
 		ResponseJson responseJson = null;
@@ -69,9 +69,9 @@ public class MembersEateriesController {
 		// 미인증 (비로그인) 사용자로 판별될 시 데이터 미제공.
 		if (!memberJson.getStatus().equals(HttpStatus.OK)) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.UNAUTHORIZED)
-					.message(ResponseStatusMessages.UNAUTHORIZED_MEMBER)
-					.build();
+				.status(HttpStatus.UNAUTHORIZED)
+				.message(ResponseStatusMessages.UNAUTHORIZED_MEMBER)
+				.build();
 			return responseJson.toResponseEntity();
 		}
 			
@@ -82,33 +82,32 @@ public class MembersEateriesController {
 		boolean isException = true;
 		try {
 			eateries = memberEateriesProcess.getEateriesByRecommend(
-						memberInfo.getNo() , 
-						pageRequest
+				memberInfo.getNo(),
+				pageRequest
 			);
 			isException = false;
 		} catch (NoMemberFoundException e) {
 			// 미인증된 사용자로 판별
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.UNAUTHORIZED)
-					.message(e.getMessage())
-					.build();
+				.status(HttpStatus.UNAUTHORIZED)
+				.message(e.getMessage())
+				.build();
 		} catch ( NoCategoryFoundException | NoEateriesFoundException e) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(e.getMessage())
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(e.getMessage())
+				.build();
 		}
 			
 		if (!isException) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.READ_SUCCESS)
-					.data(eateries)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.READ_SUCCESS)
+				.data(eateries)
+				.build();
 		}
 			
 		return responseJson.toResponseEntity();
-		
 	}
 	
 	/**
@@ -127,37 +126,36 @@ public class MembersEateriesController {
 			isException = false;
 		} catch (AnonymousAlertException e) {
 			memberDto = MembersResponseDto.builder()
-					.role(MemberRole.ROLE_ANONYMOUS)
-					.build();
+				.role(MemberRole.ROLE_ANONYMOUS)
+				.build();
 			
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.UNAUTHORIZED)
-					.message(e.getMessage())
-					.data(memberDto)
-					.build();
+				.status(HttpStatus.UNAUTHORIZED)
+				.message(e.getMessage())
+				.data(memberDto)
+				.build();
 			
 		} catch (NotRegisteredMemberException e) {
 			memberDto = MembersResponseDto.builder()
-					.email(e.getEmail())
-					.role(e.getRole())
-					.build();
+				.email(e.getEmail())
+				.role(e.getRole())
+				.build();
 			
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.BAD_REQUEST)
-					.message(e.getMessage())
-					.data(memberDto)
-					.build();
+				.status(HttpStatus.BAD_REQUEST)
+				.message(e.getMessage())
+				.data(memberDto)
+				.build();
 		}
 		
 		if (!isException) {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.AUTHORIZED_MEMBER)
-					.data(memberDto)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.AUTHORIZED_MEMBER)
+				.data(memberDto)
+				.build();
 		}
 		
 		return responseJson;
 	}
-	
 }

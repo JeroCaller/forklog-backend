@@ -25,10 +25,17 @@ import java.util.Optional;
 @RequestMapping("/main/eateries")
 @RequiredArgsConstructor
 public class EateriesController {
+
     private final EateriesProcess eateriesProcess;
 	private final ReviewsProcess reviewsProcess;
-	
-	// 음식점 상세 보기
+
+	/**
+	 * 음식점 상세 보기
+	 *
+	 * @author jaeuk-choi
+	 * @param no
+	 * @return
+	 */
     @GetMapping("/{no}")
     public ResponseEntity<EateriesDto> getEateryById(@PathVariable("no") int no) {
         Optional<EateriesDto> eateryDto = eateriesProcess.getEateryDtoById(no);
@@ -36,11 +43,20 @@ public class EateriesController {
             .map(ResponseEntity::ok)         // EateriesDto를 그대로 반환
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
-	//음식점별 리뷰 목록 조회
+
+	/**
+	 * 음식점별 리뷰 목록 조회
+	 *
+	 * @author rmk
+	 * @param page
+	 * @param eateryNo
+	 * @return
+	 */
 	@GetMapping("/{no}/reviews")
 	public ResponseEntity<Object> getReviewsByEateryNo(
-				@RequestParam(value = "page", required = false, defaultValue = "1" ) int page,
-				@PathVariable("no") String eateryNo){
+		@RequestParam(value = "page", required = false, defaultValue = "1" ) int page,
+		@PathVariable("no") String eateryNo
+	) {
 		Page<ReviewResponseDto> list= reviewsProcess.getReviewsByEateryNo(eateryNo, page-1);
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
@@ -59,23 +75,21 @@ public class EateriesController {
 	 * @return
 	 */
 	@PutMapping("/{no}/view/counts")
-	public ResponseEntity<ResponseJson> addViewCount(
-			@PathVariable("no") int no
-	) {
+	public ResponseEntity<ResponseJson> addViewCount(@PathVariable("no") int no) {
 		ResponseJson responseJson = null;
 		
 		boolean isUpdated = eateriesProcess.updateViewCount(no);
 		if (!isUpdated) {
 			String addtionalMessage = " 입력한 음식점 번호가 조회되지 않았습니다.";
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.NOT_FOUND)
-					.message(ResponseStatusMessages.UPDATE_FAILED + addtionalMessage)
-					.build();
+				.status(HttpStatus.NOT_FOUND)
+				.message(ResponseStatusMessages.UPDATE_FAILED + addtionalMessage)
+				.build();
 		} else {
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.OK)
-					.message(ResponseStatusMessages.UPDATE_SUCCESS)
-					.build();
+				.status(HttpStatus.OK)
+				.message(ResponseStatusMessages.UPDATE_SUCCESS)
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
