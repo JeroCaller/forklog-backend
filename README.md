@@ -14,21 +14,21 @@
   <tbody>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/debd7d5f-1980-4875-a0f4-f99187b48129" />
+        <img alt="forklog 시연 - 사용자 현재 위치에 따른 근처 음식점 정보 제공" src="https://github.com/user-attachments/assets/debd7d5f-1980-4875-a0f4-f99187b48129" />
         <p>사용자 현재 위치에 따른 근처 음식점 정보 제공</p>
       </td>
       <td>
-        <img src="https://github.com/user-attachments/assets/538b8ba2-cdc3-47ee-994c-6d90a6f401d7" />
+        <img alt="forklog 시연 - 카테고리 및 지역 필터에 따른 음식점 정보 조회" src="https://github.com/user-attachments/assets/538b8ba2-cdc3-47ee-994c-6d90a6f401d7" />
         <p>카테고리 및 지역 필터에 따른 음식점 정보 조회</p>
       </td>
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/ecbf3ec6-427b-40b6-bd12-62495dd4505d" />
+        <img alt="forklog 시연 - 특정 음식점 상세 페이지 및 즐겨찾기 추가 (로그인)" src="https://github.com/user-attachments/assets/ecbf3ec6-427b-40b6-bd12-62495dd4505d" />
         <p>특정 음식점 상세 페이지 및 즐겨찾기 추가 (로그인)</p>
       </td>
       <td>
-        <img src="https://github.com/user-attachments/assets/8fb2cb64-f3ed-4254-aa0d-5d7125bd3157" />
+        <img alt="forklog 시연 - 사용자가 즐겨찾기한 음식점들의 카테고리와 동일한 다른 음식점 추천" src="https://github.com/user-attachments/assets/8fb2cb64-f3ed-4254-aa0d-5d7125bd3157" />
         <p>사용자가 즐겨찾기한 음식점들의 카테고리와 동일한 다른 음식점 추천</p>
       </td>
     </tr>
@@ -39,19 +39,19 @@
 
 ## 주요 기능
 <div align="center">
-  <img width="80%" alt="메인 페이지 - 목록 및 필터" src="https://github.com/user-attachments/assets/2dc1a2e8-2be7-4075-b9b3-0c87d51386cf" />
-  <img width="80%" alt="메인 페이지 - 추천 및 페이징" src="https://github.com/user-attachments/assets/4f1ae676-2525-439c-85d0-816023e9b793" />
-  <img width="80%" alt="상세 페이지 - 음식점 정보 및 즐겨찾기" src="https://github.com/user-attachments/assets/d43a0b09-14d7-42bc-ba7d-05c28ecca11c" />
-  <img width="80%" alt="상세 페이지 - 지도" src="https://github.com/user-attachments/assets/fed8be9f-904c-46f0-88b8-3327bb78412d" />
-  <img width="80%" alt="상세 페이지 - 블로그 리뷰" src="https://github.com/user-attachments/assets/6e65232b-0230-47c6-86c7-ddeb0503d3a8" />
-  <img width="80%" alt="상세 페이지 - 별점 리뷰" src="https://github.com/user-attachments/assets/88b40f1b-1b2d-4fff-8d0d-7e0fc08cc961" />
-  <img width="80%" alt="마이 페이지 - 별점 리뷰" src="https://github.com/user-attachments/assets/b4094905-b14a-4f89-b1d5-36bd14649211" />
-  <img width="80%" alt="상세 페이지 - 자유 댓글 (비로그인)" src="https://github.com/user-attachments/assets/2e6bc9ce-a861-4917-b1a5-bf9c781b0e66" />
-  <img width="80%" alt="상세 페이지 - 자유 댓글 (로그인)" src="https://github.com/user-attachments/assets/a38a0994-d594-4cb2-a9af-e6ba322198e4" />
-  <img width="80%" alt="마이 페이지 - 즐겨 찾기" src="https://github.com/user-attachments/assets/8067f942-e438-4923-ba7c-68183fa23878" />
-  <img width="80%" alt="로그인 페이지" src="https://github.com/user-attachments/assets/b964d4ca-2e4a-4c1d-8d46-ae22994fc97f" />
-  <img width="80%" alt="회원가입 페이지" src="https://github.com/user-attachments/assets/a7f71607-c0d0-408a-84c6-0335b3695e00" />
-  <img width="80%" alt="오픈 채팅" src="https://github.com/user-attachments/assets/3fafe452-834f-476d-aebc-bf3fcb939022" />
+  <img width="90%" alt="메인 페이지 - 목록 및 필터" src="https://github.com/user-attachments/assets/2dc1a2e8-2be7-4075-b9b3-0c87d51386cf" />
+  <img width="90%" alt="메인 페이지 - 추천 및 페이징" src="https://github.com/user-attachments/assets/4f1ae676-2525-439c-85d0-816023e9b793" />
+  <img width="90%" alt="상세 페이지 - 음식점 정보 및 즐겨찾기" src="https://github.com/user-attachments/assets/d43a0b09-14d7-42bc-ba7d-05c28ecca11c" />
+  <img width="90%" alt="상세 페이지 - 지도" src="https://github.com/user-attachments/assets/fed8be9f-904c-46f0-88b8-3327bb78412d" />
+  <img width="90%" alt="상세 페이지 - 블로그 리뷰" src="https://github.com/user-attachments/assets/6e65232b-0230-47c6-86c7-ddeb0503d3a8" />
+  <img width="90%" alt="상세 페이지 - 별점 리뷰" src="https://github.com/user-attachments/assets/88b40f1b-1b2d-4fff-8d0d-7e0fc08cc961" />
+  <img width="90%" alt="마이 페이지 - 별점 리뷰" src="https://github.com/user-attachments/assets/b4094905-b14a-4f89-b1d5-36bd14649211" />
+  <img width="90%" alt="상세 페이지 - 자유 댓글 (비로그인)" src="https://github.com/user-attachments/assets/2e6bc9ce-a861-4917-b1a5-bf9c781b0e66" />
+  <img width="90%" alt="상세 페이지 - 자유 댓글 (로그인)" src="https://github.com/user-attachments/assets/a38a0994-d594-4cb2-a9af-e6ba322198e4" />
+  <img width="90%" alt="마이 페이지 - 즐겨 찾기" src="https://github.com/user-attachments/assets/8067f942-e438-4923-ba7c-68183fa23878" />
+  <img width="90%" alt="로그인 페이지" src="https://github.com/user-attachments/assets/b964d4ca-2e4a-4c1d-8d46-ae22994fc97f" />
+  <img width="90%" alt="회원가입 페이지" src="https://github.com/user-attachments/assets/a7f71607-c0d0-408a-84c6-0335b3695e00" />
+  <img width="90%" alt="오픈 채팅" src="https://github.com/user-attachments/assets/3fafe452-834f-476d-aebc-bf3fcb939022" />
 </div>
 
 ## 사용 기술
@@ -115,7 +115,7 @@
 ## 아키텍처
 
 <div align="center">
-  <img width="80%" alt="forklog architecture" src="https://github.com/user-attachments/assets/ab9f1f8f-7931-4a41-86e8-c4829e4212a8" />
+  <img width="90%" alt="forklog architecture" src="https://github.com/user-attachments/assets/ab9f1f8f-7931-4a41-86e8-c4829e4212a8" />
 </div>
 
 ## 프로젝트 정보
@@ -205,7 +205,7 @@
 - **ERD**    
 
 <div align="center">
-  <img width="80%" alt="ERD" src="https://github.com/user-attachments/assets/2fe358cc-0d44-4004-b059-0973dcc489cb" />
+  <img width="90%" alt="ERD" src="https://github.com/user-attachments/assets/2fe358cc-0d44-4004-b059-0973dcc489cb" />
 </div>
 
 - **메뉴 정의서**   
@@ -217,8 +217,8 @@
 - **화면 정의서**
 
 <div align="center">
-  <img width="80%" alt="화면정의서-6" src="https://github.com/user-attachments/assets/ddd7a869-8d6a-4764-b5a2-45f9597a29cd" />
-  <img width="80%" alt="화면정의서-9" src="https://github.com/user-attachments/assets/fdec4263-82ba-49a5-8fd4-c973f7dfb677" />
+  <img width="90%" alt="화면정의서-6" src="https://github.com/user-attachments/assets/ddd7a869-8d6a-4764-b5a2-45f9597a29cd" />
+  <img width="90%" alt="화면정의서-9" src="https://github.com/user-attachments/assets/fdec4263-82ba-49a5-8fd4-c973f7dfb677" />
 </div>
 
 전체 화면정의서는 [Github Wiki - 화면 정의서](https://github.com/JeroCaller/forklog-backend/wiki/%EA%B8%B0%ED%9A%8D%EC%84%9C#%ED%99%94%EB%A9%B4-%EC%A0%95%EC%9D%98%EC%84%9C)를 참고하시기 바랍니다.
@@ -228,20 +228,20 @@
 - **테스트 케이스**
 
 <div align="center">
-  <img width="80%" alt="테스트 케이스" src="https://github.com/user-attachments/assets/3b8b3a0c-6c68-4d6b-abcc-26326e6d9270" />
+  <img width="90%" alt="테스트 케이스" src="https://github.com/user-attachments/assets/3b8b3a0c-6c68-4d6b-abcc-26326e6d9270" />
 </div>
 
 - **화면 흐름도**
 
 <div align="center">
-  <img width="80%" alt="화면흐름도" src="https://github.com/user-attachments/assets/40b6cde8-9b0e-4355-9f7e-b49287681553" />
+  <img width="90%" alt="화면흐름도" src="https://github.com/user-attachments/assets/40b6cde8-9b0e-4355-9f7e-b49287681553" />
 </div>
 
 - **API 정의서**
 
 <div align="center">
-  <img width="80%" alt="api_정의서-1" src="https://github.com/user-attachments/assets/440936eb-f884-4707-b604-f08237a7cf31" />
-  <img width="80%" alt="api_정의서-2" src="https://github.com/user-attachments/assets/15a8b4a2-058a-40d2-908f-aa24ce1ff0a8" />
+  <img width="90%" alt="api-정의서-1" src="https://github.com/user-attachments/assets/440936eb-f884-4707-b604-f08237a7cf31" />
+  <img width="90%" alt="api-정의서-2" src="https://github.com/user-attachments/assets/15a8b4a2-058a-40d2-908f-aa24ce1ff0a8" />
 </div>
 
 모든 API 정의서는 다음의 링크로 연결되는 문서를 참고하시길 바랍니다 :arrow_forward: [Forklog - API 정의서 (Google Docs)](https://docs.google.com/document/d/1gr1LC7xXLm75eSTxfhw8NY3LrZwSxwv_UPKehpOGy2w/edit?usp=sharing)
