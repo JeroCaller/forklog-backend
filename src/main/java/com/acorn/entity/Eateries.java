@@ -24,6 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Eateries {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer no;
@@ -59,5 +60,4 @@ public class Eateries {
 	@ManyToOne
 	@JoinColumn(name = "category_no", nullable = false)
 	private Categories category;
-	
 }

@@ -12,10 +12,14 @@ import lombok.ToString;
 /**
  * 카카오 API - "키워드로 장소 검색하기" 응답 데이터의 "meta" 
  * 부분을 담당하는 DTO
- * 
- * 참고 자료)
- * https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-meta
- * 
+ *
+ * <p>
+ * 참고 자료) <br/>
+ * <a href="https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-meta">
+ *     https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-meta
+ * </a>
+ * </p>
+ *
  * @author JeroCaller (JJH)
  */
 @Getter
@@ -30,5 +34,4 @@ public class KeywordMetaDto {
 	
 	// 지금은 불필요한 정보라 생각되어 Map으로 처리함.
 	private Map<String, Object> sameName;
-	
 }

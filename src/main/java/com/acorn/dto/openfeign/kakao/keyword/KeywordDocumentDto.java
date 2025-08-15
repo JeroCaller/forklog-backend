@@ -10,10 +10,14 @@ import lombok.ToString;
 /**
  * 카카오 API - "키워드로 장소 검색하기" 응답 데이터의 "document" 
  * 부분을 담당하는 DTO
- * 
- * 참고 자료)
- * https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-document
- * 
+ *
+ * <p>
+ * 참고 자료) <br/>
+ * <a href="https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-document">
+ *   https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword-response-body-document
+ * </a>
+ * </p>
+ *
  * @author JeroCaller (JJH)
  */
 @Getter
@@ -34,5 +38,4 @@ public class KeywordDocumentDto {
 	private String y;
 	private String placeUrl;
 	private String distance;
-	
 }

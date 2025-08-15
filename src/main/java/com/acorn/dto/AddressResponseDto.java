@@ -7,9 +7,12 @@ import lombok.Data;
 /**
  * 경위도를 도로명주소로 변환하는 로직에 사용되는 DTO
  * Key : Value 값이 겹겹이 쌓여 있는 구조로 별도의 (내부) 클래스로 분해
+ *
+ * @author EaseHee
  */
 @Data
 public class AddressResponseDto {
+
 	private List<Document> documents;
 	
     @Data

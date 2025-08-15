@@ -13,7 +13,6 @@ public class AuthUtil {
 	 * @return
 	 */
 	public static String getRole(Authentication auth) {
-		
 		String result = null;
 		
 		// 한 명의 사용자가 둘 이상의 권한을 가질 순 없다고 가정.
@@ -24,5 +23,4 @@ public class AuthUtil {
 		
 		return result;
 	}
-	
 }

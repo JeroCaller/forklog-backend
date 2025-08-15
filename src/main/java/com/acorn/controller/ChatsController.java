@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
-import com.acorn.dto.ChatsRequestDto;
-import com.acorn.dto.ChatsResponseDto;
-import com.acorn.dto.MembersDto;
+import com.acorn.dto.chats.ChatsRequestDto;
+import com.acorn.dto.chats.ChatsResponseDto;
+import com.acorn.dto.members.MembersDto;
 import com.acorn.process.ChatsProcess;
 
 import lombok.RequiredArgsConstructor;
@@ -41,8 +41,8 @@ public class ChatsController {
      */
     @GetMapping("/chat/message")
     public ResponseEntity<Slice<ChatsResponseDto>> getMessages(
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "30") int size
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "30") int size
 	) {
 //    	log.info("========== page: {}, size : {} ==========", page, size);
         return ResponseEntity.ok().body(chatsProcess.getMessages(page, size));

@@ -8,15 +8,22 @@ import org.springframework.data.repository.query.Param;
 
 import com.acorn.entity.Comments;
 
+/**
+ *
+ * @author kai-jang99
+ */
 public interface CommentsRepository extends JpaRepository<Comments, Integer> {
 	// Page<Comments> findByEateryNoAndParentCommentIsNullOrderByCreatedAtDesc(int
 	// eateryNo, Pageable pageable);
 
-	@Query("SELECT c, COUNT(l) FROM Comments c " +
-		   "LEFT JOIN FETCH c.member " +
-		   "LEFT JOIN Likes l ON c.no = l.comment.no " +
-		   "WHERE c.eatery.no = :eateryNo " +
-		   "GROUP BY c.no " +
-		   "ORDER BY c.parentComment ASC, c.createdAt DESC")
+	@Query("""
+		SELECT c, COUNT(l)
+		FROM Comments c
+		LEFT JOIN FETCH c.member
+		LEFT JOIN Likes l ON c.no = l.comment.no
+		WHERE c.eatery.no = :eateryNo
+		GROUP BY c.no
+		ORDER BY c.parentComment ASC, c.createdAt DESC
+	""")
 	Page<Object[]> findByEatery(@Param("eateryNo") int eateryNo, Pageable pageable);
 }

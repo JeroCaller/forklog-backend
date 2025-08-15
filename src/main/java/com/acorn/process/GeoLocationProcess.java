@@ -26,7 +26,6 @@ public class GeoLocationProcess {
 	 * @return
 	 */
 	public LocationSplitDto getOneLocationFromCoordinate(String x, String y) {
-		
 		GeoLocationResponseDto responseDto = kakaoRestOpenFeign
 				.getAddressFromCoordinate(x, y);
 		

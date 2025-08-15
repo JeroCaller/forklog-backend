@@ -3,7 +3,7 @@ package com.acorn.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.acorn.dto.RegisterRequestDto;
+import com.acorn.dto.members.RegisterRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -79,27 +79,33 @@ public class Members {
 	
 	@Column(name = "nickname")
 	private String nickname;
-	
-	// 회원가입 시 클라이언트로부터 받아온 데이터를 엔티티에 저장하는 메소드
+
+	/**
+	 * 회원가입 시 클라이언트로부터 받아온 데이터를 엔티티에 저장하는 메소드
+	 *
+	 * @author YYUMMMMMMMM
+	 * @param dto
+	 * @return
+	 */
 	public static Members registerToEntity(RegisterRequestDto dto) {
 		return Members.builder()
-				.email(dto.getEmail())
-				.password(dto.getPassword())
-				.role(dto.getRole())
-				.snsConnected(dto.getSnsConnected())
-				.name(dto.getName())
-				.postcode(dto.getPostcode())
-				.roadAddress(dto.getRoadAddress())
-				.detailAddress(dto.getDetailAddress())
-				.createdAt(dto.getCreatedAt())
-				.updatedAt(dto.getUpdatedAt())
-				.birthDate(dto.getBirthDate())
-				.gender(dto.getGender())
-				.phone(dto.getPhone())
-				.emailVerified(dto.getEmailVerified())
-				.status(dto.getStatus())
-				.terms(dto.getTerms())
-				.nickname(dto.getNickname() != null ? dto.getNickname() : dto.getName())
-				.build();
+			.email(dto.getEmail())
+			.password(dto.getPassword())
+			.role(dto.getRole())
+			.snsConnected(dto.getSnsConnected())
+			.name(dto.getName())
+			.postcode(dto.getPostcode())
+			.roadAddress(dto.getRoadAddress())
+			.detailAddress(dto.getDetailAddress())
+			.createdAt(dto.getCreatedAt())
+			.updatedAt(dto.getUpdatedAt())
+			.birthDate(dto.getBirthDate())
+			.gender(dto.getGender())
+			.phone(dto.getPhone())
+			.emailVerified(dto.getEmailVerified())
+			.status(dto.getStatus())
+			.terms(dto.getTerms())
+			.nickname(dto.getNickname() != null ? dto.getNickname() : dto.getName())
+			.build();
 	}
 }
