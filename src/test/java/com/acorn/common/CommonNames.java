@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @Getter
 public enum CommonNames {
-    
+
     ROLE_USER("ROLE_USER"),
     STATUS_ACTIVE("Active"),
     ACCESS_TOKEN_NAME("accessToken"),

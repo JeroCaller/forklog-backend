@@ -1,5 +1,6 @@
 package com.acorn.process.auth;
 
+import com.acorn.common.Tokens;
 import com.acorn.dto.ResponseDto;
 import com.acorn.dto.auth.LoginRepsonseDto;
 import com.acorn.dto.auth.LoginRequestDto;
@@ -11,7 +12,7 @@ import com.acorn.jwt.JwtUtil;
 import com.acorn.process.CustomUserDetailService;
 import com.acorn.repository.MembersRepository;
 import com.acorn.repository.RefreshTokenRepository;
-import jakarta.servlet.http.Cookie;
+import com.acorn.utils.cookie.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
-// TODO - cookie 코드 중복 리팩토링
 /**
  *
- * @author YYUMMMMMMMM
+ * @author YYUMMMMMMMM, refactored by JeroCaller
  */
 @Service
 @RequiredArgsConstructor
@@ -49,6 +49,7 @@ public class AuthProcessImpl implements AuthProcess {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
+	private final CookieUtil cookieUtil;
 
 	/**
 	 * 회원가입
@@ -133,19 +134,8 @@ public class AuthProcessImpl implements AuthProcess {
 			saveRefreshToken(email, refreshToken);
 			// System.out.println("Saving refresh token for email: " + email);
 
-			Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge(3600);
-			response.addCookie(accessTokenCookie);
-
-			Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(604800);
-			response.addCookie(refreshTokenCookie);
+			cookieUtil.addTokenCookie(response, Tokens.ACCESS_TOKEN, accessToken);
+			cookieUtil.addTokenCookie(response, Tokens.REFRESH_TOKEN, refreshToken);
 
 			return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
 
@@ -170,21 +160,8 @@ public class AuthProcessImpl implements AuthProcess {
 	@Override
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 		try {
-			// 엑세스 토큰 쿠키 제거
-			Cookie accessTokenCookie = new Cookie("accessToken", null);
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false);
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge(0);
-			response.addCookie(accessTokenCookie);
-
-			// 엑세스 토큰 쿠키 제거
-			Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false);
-			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(0);
-			response.addCookie(refreshTokenCookie);
+			cookieUtil.deleteCookie(response, Tokens.ACCESS_TOKEN.getTokenName());
+			cookieUtil.deleteCookie(response, Tokens.REFRESH_TOKEN.getTokenName());
 
 			SecurityContextHolder.clearContext();
 

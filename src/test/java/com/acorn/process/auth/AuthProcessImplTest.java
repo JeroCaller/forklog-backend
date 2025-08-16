@@ -9,6 +9,8 @@ import com.acorn.jwt.JwtUtil;
 import com.acorn.process.CustomUserDetailService;
 import com.acorn.repository.MembersRepository;
 import com.acorn.repository.RefreshTokenRepository;
+import com.acorn.utils.cookie.CookieUtil;
+import com.acorn.utils.cookie.impl.DefaultCookieConfig;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +43,9 @@ import static org.assertj.core.api.Assertions.assertThat;
     AuthProcessImpl.class,
     JwtUtil.class,
     CustomUserDetailService.class,
-    BCryptPasswordEncoder.class
+    BCryptPasswordEncoder.class,
+    CookieUtil.class,
+    DefaultCookieConfig.class
 })
 @Slf4j
 // 테스트 편의성을 위해 jwt secret key를 기존 설정 파일로부터 가져온다.
@@ -60,6 +64,9 @@ class AuthProcessImplTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CookieUtil cookieUtil;
+
     @MockitoBean
     private MailProcess mailProcess;
 
@@ -71,26 +78,9 @@ class AuthProcessImplTest {
 
     private MockHttpServletResponse mockHttpServletResponse;
 
-    /*
-    private final String ROLE_USER = "ROLE_USER";
-    private final String STATUS_ACTIVE = "Active";
-    private final String ACCESS_TOKEN_NAME = "accessToken";
-    private final String REFRESH_TOKEN_NAME = "refreshToken";
-
-     */
-
     @BeforeEach
     void setUp() {
         mockHttpServletResponse = new MockHttpServletResponse();
-        customUserDetailService = new CustomUserDetailService(membersRepository);
-        authProcessImpl = new AuthProcessImpl(
-            jwtUtil,
-            membersRepository,
-            customUserDetailService,
-            refreshTokenRepository,
-            mailProcess,
-            passwordEncoder
-        );
     }
 
     @Test

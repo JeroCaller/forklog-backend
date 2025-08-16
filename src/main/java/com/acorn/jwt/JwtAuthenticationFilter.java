@@ -1,7 +1,13 @@
 package com.acorn.jwt;
 
-import java.io.IOException;
-
+import com.acorn.common.Tokens;
+import com.acorn.utils.cookie.CookieUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,12 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
 
 /**
  * <p>
@@ -35,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final UserDetailsService userDetailsService;
+	private final CookieUtil cookieUtil;
 
 	@Override
 	protected void doFilterInternal(
@@ -57,13 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						String newAccessToken = jwtUtil.createAccessToken(email);
 						//System.out.println("newAccessToken : " + newAccessToken);
 
-						Cookie newAccessTokenCookie = new Cookie("accessToken", newAccessToken);
-						newAccessTokenCookie.setHttpOnly(true);
-						newAccessTokenCookie.setSecure(false);
-						newAccessTokenCookie.setPath("/");
-						newAccessTokenCookie.setMaxAge(3600);
-
-						response.addCookie(newAccessTokenCookie);
+						cookieUtil.addTokenCookie(response, Tokens.ACCESS_TOKEN, newAccessToken);
 						response.setHeader("Authorization", "Bearer " + newAccessToken);
 
 						UserDetails userDetails = userDetailsService.loadUserByUsername(email);
