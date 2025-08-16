@@ -99,6 +99,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	/**
 	 * 엑세스 토큰을 추출
 	 *
+	 * TODO - parseAccessToken()과 parseRefreshToken() 로직이 겹치므로 리팩토링 필요.
+	 *
 	 * @param request
 	 * @return
 	 */
