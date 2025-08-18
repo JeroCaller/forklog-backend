@@ -9,29 +9,28 @@ import com.acorn.common.ResponseMessage;
 
 import lombok.Getter;
 
-// TODO - 클래스명 오타 수정.
 /**
- * LoginRepsonseDto : 로그인 과정에서 발생하는 다양한 응답을 관리하는 DTO
+ * LoginResponseDto : 로그인 과정에서 발생하는 다양한 응답을 관리하는 DTO
  *
  * @author YYUMMMMMMMM
  */
 @Getter
-public class LoginRepsonseDto extends ResponseDto {
+public class LoginResponseDto extends ResponseDto {
 
 	private String accessToken;
 	private String refreshToken;
 	private int accessExpirationTime;
 	private int refreshExpirationTime;
 
-	private LoginRepsonseDto(String accessToken, String refreshToken) {
+	private LoginResponseDto(String accessToken, String refreshToken) {
 		super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
 		this.accessToken = accessToken;
 		this.accessExpirationTime = 3600;
 		this.refreshExpirationTime = 604800;
 	}
 
-	public static ResponseEntity<LoginRepsonseDto> success(String accessToken, String refreshToken) {
-		LoginRepsonseDto result = new LoginRepsonseDto(accessToken, refreshToken);
+	public static ResponseEntity<LoginResponseDto> success(String accessToken, String refreshToken) {
+		LoginResponseDto result = new LoginResponseDto(accessToken, refreshToken);
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 

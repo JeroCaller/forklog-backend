@@ -1,7 +1,7 @@
 package com.acorn.process.auth;
 
 import com.acorn.common.CommonNames;
-import com.acorn.dto.auth.LoginRepsonseDto;
+import com.acorn.dto.auth.LoginResponseDto;
 import com.acorn.dto.auth.LoginRequestDto;
 import com.acorn.entity.Members;
 import com.acorn.entity.RefreshToken;
@@ -115,7 +115,7 @@ class AuthProcessImplTest {
         loginRequestDto.setEmail(memberOne.getEmail());
         loginRequestDto.setPassword(rawPassword);
 
-        ResponseEntity<LoginRepsonseDto> authResult = (ResponseEntity<LoginRepsonseDto>)
+        ResponseEntity<LoginResponseDto> authResult = (ResponseEntity<LoginResponseDto>)
             authProcessImpl.login(loginRequestDto, mockHttpServletResponse);
 
         assertThat(authResult.getStatusCode().value()).isEqualTo(HttpStatus.OK.value());
