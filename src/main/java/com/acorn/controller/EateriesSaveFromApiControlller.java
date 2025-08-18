@@ -37,18 +37,18 @@ public class EateriesSaveFromApiControlller {
 	 */
 	@GetMapping("/eateries")
 	public ResponseEntity<ResponseJson> saveEateriesFromApi(
-			@RequestParam("query") String query,
-			@RequestParam(name = "startPage", defaultValue = "1") int startPage,
-			@RequestParam(name = "dataNum", defaultValue = "45") int requestApiDataNum
+		@RequestParam("query") String query,
+		@RequestParam(name = "startPage", defaultValue = "1") int startPage,
+		@RequestParam(name = "dataNum", defaultValue = "45") int requestApiDataNum
 	) {
 		ResponseJson responseJson = null;
 		
 		// 예상치 못한 예외 원인 추적을 위해 예외 캐치 코드 작성함.
 		try {
 			responseJson = eateriesWithApiProcess.saveEateriesAll(
-					query, 
-					startPage, 
-					requestApiDataNum
+				query,
+				startPage,
+				requestApiDataNum
 			);
 		} catch (Exception e) {
 			log.error("예기치 못한 예외 발생");
@@ -57,13 +57,11 @@ public class EateriesSaveFromApiControlller {
 			e.printStackTrace();  // 자세한 예외 원인 파악용
 			
 			responseJson = ResponseJson.builder()
-					.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.message(e.getClass().getName() + " : " + e.getMessage())
-					.build();
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.message(e.getClass().getName() + " : " + e.getMessage())
+				.build();
 		}
 		
 		return responseJson.toResponseEntity();
-				
 	}
-	
 }

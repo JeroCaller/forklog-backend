@@ -24,18 +24,18 @@ public class BlogSearchProcess {
 	 */
 	public BlogDocumentsDto getOneBlog(String query) {
 		BlogRequestDto requestDto = BlogRequestDto.builder()
-				.query(query)
-				.build();
-		BlogResponseDto responseDto 
-			= kakaoRestOpenFeign.getEateryBlog(requestDto);
-		
+			.query(query)
+			.build();
+		BlogResponseDto responseDto = kakaoRestOpenFeign.getEateryBlog(requestDto);
 		BlogDocumentsDto result = null;
+
 		if (responseDto != null && 
 			responseDto.getDocuments() != null &&
 			responseDto.getDocuments().size() != 0
 		) {
 			result = responseDto.getDocuments().getFirst();
 		}
+
 		return result;
 	}
 }

@@ -9,7 +9,11 @@ import com.acorn.common.ResponseMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-// 응답 관리 DTO
+/**
+ * 응답 관리 DTO
+ *
+ * @author YYUMMMMMMMM
+ */
 @Getter
 @AllArgsConstructor
 public class ResponseDto {
@@ -18,7 +22,10 @@ public class ResponseDto {
 	private String message;
 
 	public static ResponseEntity<ResponseDto> databaseError() {
-		ResponseDto responseBody = new ResponseDto(ResponseCode.DATABASE_ERROR, ResponseMessage.DATABASE_ERROR);
+		ResponseDto responseBody = new ResponseDto(
+			ResponseCode.DATABASE_ERROR,
+			ResponseMessage.DATABASE_ERROR
+		);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
 	}
 }

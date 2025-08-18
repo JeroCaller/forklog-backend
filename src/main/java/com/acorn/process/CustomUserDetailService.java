@@ -16,6 +16,10 @@ import com.acorn.repository.MembersRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ *
+ * @author YYUMMMMMMMM
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
@@ -24,7 +28,6 @@ public class CustomUserDetailService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-			
 		Members members = membersRepository.findByEmail(email);
 		
 		if (members == null) {
@@ -32,9 +35,7 @@ public class CustomUserDetailService implements UserDetailsService {
         }
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		authorities.add(new SimpleGrantedAuthority(members.getRole()));
-		
-		UserDetails userDetails = new User(members.getEmail(), members.getPassword(), authorities);
-		
-		return userDetails;
+
+        return new User(members.getEmail(), members.getPassword(), authorities);
 	}
 }

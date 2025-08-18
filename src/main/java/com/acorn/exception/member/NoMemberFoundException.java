@@ -10,5 +10,4 @@ public class NoMemberFoundException extends Exception {
 	public NoMemberFoundException(String inputInfo) {
  		super("사용자 정보를 찾지 못했습니다. 입력한 사용자 정보: " + inputInfo);
 	}
-	
 }

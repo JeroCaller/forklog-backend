@@ -13,5 +13,4 @@ public class NoCategoryFoundException extends Exception {
 	public NoCategoryFoundException(String input) {
 		super("해당 카테고리 조회 결과가 없습니다. 입력한 카테고리 관련 정보: " + input);
 	}
-	
 }

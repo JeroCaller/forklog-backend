@@ -32,8 +32,7 @@ public class ResponseJson {
 	 */
 	public ResponseEntity<ResponseJson> toResponseEntity() {
 		return ResponseEntity
-				.status(this.status)
-				.body(this);
+			.status(this.status)
+			.body(this);
 	}
-	
 }

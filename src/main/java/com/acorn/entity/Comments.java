@@ -25,8 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Builder(toBuilder = true) @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comments {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
@@ -74,9 +78,8 @@ public class Comments {
             return this.toBuilder()
                 .childComments(updatedChildComments) // 새로운 자식 댓글 리스트로 업데이트
                 .build(); // 새로운 Comment 객체 반환
-        } else {
-            throw new IllegalStateException("대댓글에는 다시 대댓글을 작성할 수 없습니다.");
         }
+        throw new IllegalStateException("대댓글에는 다시 대댓글을 작성할 수 없습니다.");
     }
     
     public boolean hasChildComments() {

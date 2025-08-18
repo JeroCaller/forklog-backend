@@ -14,8 +14,28 @@ import com.acorn.entity.Categories;
 import com.acorn.entity.Eateries;
 
 public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
-	
-	boolean existsByNameAndLongitudeAndLatitude(String name, BigDecimal longitude, BigDecimal latitude);	
+
+	/**
+	 *
+	 * @author EaseHee
+	 * @param name
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 */
+	boolean existsByNameAndLongitudeAndLatitude(
+		String name,
+		BigDecimal longitude,
+		BigDecimal latitude
+	);
+
+	/**
+	 *
+	 * @author JeroCaller
+	 * @param address
+	 * @param pageRequest
+	 * @return
+	 */
 	Page<Eateries> findByAddressContaining(String address, Pageable pageRequest);
 	
 	/**
@@ -29,9 +49,9 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 * @return
 	 */
 	Page<Eateries> findByAddressContainsAndCategory(
-			String address, 
-			Categories categories,
-			Pageable pageRequest
+		String address,
+		Categories categories,
+		Pageable pageRequest
 	);
 	
 	/**
@@ -40,7 +60,7 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 * @author JeroCaller (JJH)
 	 * @param address
 	 * @param categoryGroupNo
-	 * @param pageRequset
+	 * @param pageRequest
 	 * @return
 	 */
 	@Query(value = """
@@ -52,11 +72,18 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 		cg.no = :paramNo
 	""")
 	Page<Eateries> findByCategoryGroup(
-			@Param("address") String address, 
-			@Param("paramNo") int categoryGroupNo, 
-			Pageable pageRequset
+		@Param("address") String address,
+		@Param("paramNo") int categoryGroupNo,
+		Pageable pageRequest
 	);
-	
+
+	/**
+	 *
+	 * @author JeroCaller
+	 * @param name
+	 * @param address
+	 * @return
+	 */
 	Optional<Eateries> findByNameAndAddress(String name, String address);
 	
 	/**
@@ -77,10 +104,15 @@ public interface EateriesRepository extends JpaRepository<Eateries, Integer> {
 	 * @return
 	 */
 	Page<Eateries> findByCategoryIn(List<Categories> categories, Pageable pageRequest);
-	
-	// 리뷰가 crud 될때마다 rating 업데이트
+
+	/**
+	 * 리뷰가 crud 될때마다 rating 업데이트
+	 *
+	 * @author jaeuk-choi
+	 * @param eateryNo
+	 * @param rating
+	 */
 	@Modifying
     @Query("UPDATE Eateries e SET e.rating = :rating WHERE e.no = :eateryNo")
     void updateRating(@Param("eateryNo") int eateryNo, @Param("rating") BigDecimal rating);
-
 }

@@ -15,9 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.acorn.dto.ChatsRequestDto;
-import com.acorn.dto.ChatsResponseDto;
-import com.acorn.dto.MembersDto;
+import com.acorn.dto.chats.ChatsRequestDto;
+import com.acorn.dto.chats.ChatsResponseDto;
+import com.acorn.dto.members.MembersDto;
 import com.acorn.entity.Chats;
 import com.acorn.exception.NotFoundException;
 import com.acorn.repository.ChatsRepository;
@@ -36,11 +36,14 @@ import lombok.RequiredArgsConstructor;
 public class ChatsProcess {
 
 	private final SimpMessagingTemplate messagingTemplate;
-
 	private final ChatsRepository chatsRepository;
 	private final MembersRepository membersRepository;
 
-	// 채팅방 사용 시 현재 로그인한 회원 정보 반환
+	/**
+	 * 채팅방 사용 시 현재 로그인한 회원 정보 반환
+	 *
+	 * @return
+	 */
 	public MembersDto getMember() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String email = authentication.getName();
@@ -61,12 +64,10 @@ public class ChatsProcess {
 		Slice<Chats> chats = chatsRepository.findAllByOrderByNoDesc(pageRequest);
 		
 		// 역순으로 재정렬
-		List<ChatsResponseDto> reversedChats = 
-				chats.getContent()
-					 .stream()
-					 .map( ChatsResponseDto :: fromEntity )
-					 .collect(Collectors.toList());
-		
+		List<ChatsResponseDto> reversedChats = chats.getContent()
+			.stream()
+			.map( ChatsResponseDto :: fromEntity )
+			.collect(Collectors.toList());
 		Collections.reverse(reversedChats);
 
 		return new SliceImpl<ChatsResponseDto>(reversedChats, pageRequest, chats.hasNext());
@@ -80,16 +81,18 @@ public class ChatsProcess {
 	@Transactional
 	public void saveAndBroadcastMessage(ChatsRequestDto request) {
 		// 메시지 엔티티 생성 후 저장
-		Chats chats = 
-			Chats.builder()
-			 	 .content(request.getContent())
-				 .member(membersRepository
-			 				.findById(request.getMemberNo())
-			 				.orElseThrow(() -> new NotFoundException("회원 정보 조회 실패")))
-				 .build();
+		Chats chats = Chats.builder()
+			.content(request.getContent())
+			.member(membersRepository
+				.findById(request.getMemberNo())
+				.orElseThrow(() -> new NotFoundException("회원 정보 조회 실패")))
+			.build();
 
 		// 저장된 메시지를 모든 사용자에게 브로드캐스트
 		Chats savedChat = chatsRepository.save(chats);
-		messagingTemplate.convertAndSend("/sub/chat/message", ChatsResponseDto.fromEntity(savedChat));
+		messagingTemplate.convertAndSend(
+			"/sub/chat/message",
+			ChatsResponseDto.fromEntity(savedChat)
+		);
 	}
 }

@@ -10,5 +10,4 @@ public class NoEateriesFoundException extends Exception {
 	public NoEateriesFoundException() {
 		super("조회된 음식점 정보가 없습니다.");
 	}
-	
 }

@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
  * 이미지 프록시를 제공하는 REST 컨트롤러 클래스.
  * 외부 URL로부터 이미지를 요청하고, 해당 이미지를 클라이언트에게 반환합니다.
  * 주로 CORS 문제 해결과 외부 이미지 접근 제한을 우회하기 위해 사용됩니다.
+ *
+ * @author jaeuk-choi
  */
 @RestController
 public class ImageProxyController {
@@ -45,9 +47,12 @@ public class ImageProxyController {
 
             // 요청 헤더 설정 - 실제 브라우저에서 보내는 것처럼 헤더를 구성
             HttpHeaders requestHeaders = new HttpHeaders();
+
             // User-Agent 설정 - 크롬 브라우저로 위장
             requestHeaders.set("User-Agent", 
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+            );
+
             // Referer 설정 - 이미지 제공 사이트의 도메인을 referer로 사용
             requestHeaders.set("Referer", urlObj.getProtocol() + "://" + urlObj.getHost());
             

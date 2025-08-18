@@ -26,18 +26,19 @@ public class ImageSearchProcess {
 	 */
 	public ImageDocumentDto getOneImage(String query) {
 		ImageRequestDto requestDto = ImageRequestDto.builder()
-				.query(query)
-				.build();
+			.query(query)
+			.build();
 		ImageResponseDto responseDto = kakaoRestOpenFeign
-				.getEateryImage(requestDto);
-
+			.getEateryImage(requestDto);
 		ImageDocumentDto result = null;
+
 		if (responseDto != null && 
 			responseDto.getDocuments() != null &&
 			responseDto.getDocuments().size() != 0
 		) {
 			result = responseDto.getDocuments().getFirst();
 		}
+
 		return result;
 	}
 }

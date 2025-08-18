@@ -29,6 +29,7 @@ public class KakaoOpenFeignConfig {
      * feign.logger.level 환경 변수 값을 이용함.
      * 
      * REST API 키가 이클립스 콘솔창에 노출되니 정말 필요할 때만 사용!
+     *
      * @author JeroCaller (JJH)
      */
     @Bean

@@ -10,11 +10,29 @@ import com.acorn.entity.Categories;
 import com.acorn.entity.Members;
 
 public interface CategoriesRepository extends JpaRepository<Categories, Integer> {
-	
+
+	/**
+	 *
+	 * @author EaseHee
+	 * @param name
+	 * @return
+	 */
 	Integer findIdByName(String name);
-	
+
+	/**
+	 *
+	 * @author EaseHee
+	 * @param name
+	 * @return
+	 */
 	Categories findByName(String name);
-	
+
+	/**
+	 *
+	 * @author EaseHee
+	 * @param name
+	 * @return
+	 */
 	boolean existsByName(String name);
 	
 	/**
@@ -26,15 +44,15 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 	 * @return
 	 */
 	@Query(value = """
-			SELECT c 
-			FROM Categories c
-			JOIN c.group cg
-			WHERE c.name = :smallCate AND
-			cg.name = :largeCate
+		SELECT c
+		FROM Categories c
+		JOIN c.group cg
+		WHERE c.name = :smallCate AND
+		cg.name = :largeCate
 	""")
 	Categories findByNames(
-			@Param("largeCate") String largeCate,
-			@Param("smallCate") String smallCate
+		@Param("largeCate") String largeCate,
+		@Param("smallCate") String smallCate
 	);
 	
 	/**
@@ -51,5 +69,4 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 		WHERE f.status = 1
 	""")
 	List<Categories> findByMemberFavorite(@Param("member") Members member);
-	
 }

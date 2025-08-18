@@ -8,9 +8,13 @@ import lombok.Setter;
 
 /**
  * 카카오 API - "블로그 검색하기"에서 블로그 정보 요청을 위한 DTO 클래스.
- * 
- * 참고 사이트
- * https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-blog
+ *
+ * <p>
+ * 참고 사이트 <br/>
+ * <a href="https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-blog">
+ *     https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-blog
+ * </a>
+ * </p>
  * 
  * @author JeroCaller (JJH)
  */

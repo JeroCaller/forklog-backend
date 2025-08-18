@@ -25,6 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Favorites {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;

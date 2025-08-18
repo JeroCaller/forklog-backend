@@ -32,5 +32,4 @@ public class ListUtil {
 	public static <E> boolean isEmpty(List<E> list) {
 		return (list == null || list.size() == 0);
 	}
-	
 }
