@@ -47,9 +47,8 @@ public class MembersEateriesController {
 		return getMemberInfo().toResponseEntity();
 	}
 
-	// TODO - javadoc 문단 구분 (p 태그로)
 	/**
-	 * 사용자 맞춤 추천 음식점 정보 반환
+	 * <p>사용자 맞춤 추천 음식점 정보 반환</p>
 	 * 
 	 * 추천 알고리즘
 	 * - 사용자 (로그인한 상황 가정) 즐겨찾기한 음식점 목록 추린 후, 
@@ -63,7 +62,6 @@ public class MembersEateriesController {
 		@RequestParam(name = "page", defaultValue = "1") int page,
 		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
-		
 		ResponseJson responseJson = null;
 		ResponseJson memberJson = getMemberInfo();
 			
