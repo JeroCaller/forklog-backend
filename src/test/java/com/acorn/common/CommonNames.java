@@ -12,7 +12,9 @@ public enum CommonNames {
     ROLE_USER("ROLE_USER"),
     STATUS_ACTIVE("Active"),
     ACCESS_TOKEN_NAME("accessToken"),
-    REFRESH_TOKEN_NAME("refreshToken")
+    REFRESH_TOKEN_NAME("refreshToken"),
+    HEADER_AUTH("Authorization"),
+    HEADER_BEARER("Bearer "),
     ;
 
     private String name;

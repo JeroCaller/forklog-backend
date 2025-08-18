@@ -46,7 +46,8 @@ public class MembersEateriesController {
 	public ResponseEntity<ResponseJson> getUserInfo() {
 		return getMemberInfo().toResponseEntity();
 	}
-	
+
+	// TODO - javadoc 문단 구분 (p 태그로)
 	/**
 	 * 사용자 맞춤 추천 음식점 정보 반환
 	 * 
@@ -97,6 +98,8 @@ public class MembersEateriesController {
 				.status(HttpStatus.NOT_FOUND)
 				.message(e.getMessage())
 				.build();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 			
 		if (!isException) {
@@ -146,6 +149,8 @@ public class MembersEateriesController {
 				.message(e.getMessage())
 				.data(memberDto)
 				.build();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		if (!isException) {

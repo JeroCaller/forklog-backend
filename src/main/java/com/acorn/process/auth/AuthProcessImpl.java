@@ -146,6 +146,7 @@ public class AuthProcessImpl implements AuthProcess {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body("가입된 계정이 없습니다.");
 		} catch (Exception e) {
+			e.printStackTrace(); // for test
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body("로그인 중 오류가 발생했습니다.");
 		}
