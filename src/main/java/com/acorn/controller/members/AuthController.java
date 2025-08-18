@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.acorn.dto.auth.LoginRepsonseDto;
+import com.acorn.dto.auth.LoginResponseDto;
 import com.acorn.dto.auth.LoginRequestDto;
 import com.acorn.dto.members.RegisterRequestDto;
 import com.acorn.dto.members.RegisterResponseDto;
@@ -63,12 +63,12 @@ public class AuthController {
 	 * @return
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<? super LoginRepsonseDto> login(
+	public ResponseEntity<? super LoginResponseDto> login(
 		@RequestBody @Valid LoginRequestDto dto,
 		HttpServletResponse response
 	) {
 		// 로그인 처리 및 응답 반환
-		ResponseEntity<? super LoginRepsonseDto> loginResponse = authProcess.login(dto, response);
+		ResponseEntity<? super LoginResponseDto> loginResponse = authProcess.login(dto, response);
 		return loginResponse;
 	}
 

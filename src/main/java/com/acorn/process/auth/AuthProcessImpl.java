@@ -2,7 +2,7 @@ package com.acorn.process.auth;
 
 import com.acorn.common.Tokens;
 import com.acorn.dto.ResponseDto;
-import com.acorn.dto.auth.LoginRepsonseDto;
+import com.acorn.dto.auth.LoginResponseDto;
 import com.acorn.dto.auth.LoginRequestDto;
 import com.acorn.dto.members.RegisterRequestDto;
 import com.acorn.dto.members.RegisterResponseDto;
@@ -98,7 +98,7 @@ public class AuthProcessImpl implements AuthProcess {
 	 * @return
 	 */
 	@Override
-	public ResponseEntity<? super LoginRepsonseDto> login(
+	public ResponseEntity<? super LoginResponseDto> login(
 		@RequestBody LoginRequestDto dto,
 		HttpServletResponse response
 	) {
@@ -137,7 +137,7 @@ public class AuthProcessImpl implements AuthProcess {
 			cookieUtil.addTokenCookie(response, Tokens.ACCESS_TOKEN, accessToken);
 			cookieUtil.addTokenCookie(response, Tokens.REFRESH_TOKEN, refreshToken);
 
-			return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
+			return ResponseEntity.ok(LoginResponseDto.success(accessToken, refreshToken));
 
 		} catch (BadCredentialsException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
