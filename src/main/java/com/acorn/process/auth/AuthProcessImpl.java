@@ -1,13 +1,22 @@
 package com.acorn.process.auth;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
-
+import com.acorn.common.Tokens;
+import com.acorn.dto.ResponseDto;
+import com.acorn.dto.auth.LoginRepsonseDto;
+import com.acorn.dto.auth.LoginRequestDto;
+import com.acorn.dto.members.RegisterRequestDto;
+import com.acorn.dto.members.RegisterResponseDto;
+import com.acorn.entity.Members;
+import com.acorn.entity.RefreshToken;
+import com.acorn.jwt.JwtUtil;
 import com.acorn.process.CustomUserDetailService;
+import com.acorn.repository.MembersRepository;
+import com.acorn.repository.RefreshTokenRepository;
+import com.acorn.utils.cookie.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,28 +27,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.acorn.dto.auth.LoginRequestDto;
-import com.acorn.dto.auth.LoginRepsonseDto;
-import com.acorn.dto.members.RegisterRequestDto;
-import com.acorn.dto.members.RegisterResponseDto;
-import com.acorn.dto.ResponseDto;
-import com.acorn.entity.Members;
-import com.acorn.entity.RefreshToken;
-import com.acorn.jwt.JwtUtil;
-import com.acorn.repository.MembersRepository;
-import com.acorn.repository.RefreshTokenRepository;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 /**
  *
- * @author YYUMMMMMMMM
+ * @author YYUMMMMMMMM, refactored by JeroCaller
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthProcessImpl implements AuthProcess {
 
 	private final JwtUtil jwtUtil;
@@ -48,6 +49,7 @@ public class AuthProcessImpl implements AuthProcess {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MailProcess mailProcess;
 	private final PasswordEncoder passwordEncoder;
+	private final CookieUtil cookieUtil;
 
 	/**
 	 * 회원가입
@@ -110,6 +112,8 @@ public class AuthProcessImpl implements AuthProcess {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입된 계정이 없습니다.");
 			}
 
+			//log.info("userDetails: {}", userDetails);
+
 			// 회원 상태 확인 (Inactive 상태 확인)
 			Members member = membersRepository.findByEmail(email);
 			if (member == null || "Inactive".equalsIgnoreCase(member.getStatus())) {
@@ -130,19 +134,8 @@ public class AuthProcessImpl implements AuthProcess {
 			saveRefreshToken(email, refreshToken);
 			// System.out.println("Saving refresh token for email: " + email);
 
-			Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge(3600);
-			response.addCookie(accessTokenCookie);
-
-			Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false); // HTTPS 사용하는 경우 true로 변경
-			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(604800);
-			response.addCookie(refreshTokenCookie);
+			cookieUtil.addTokenCookie(response, Tokens.ACCESS_TOKEN, accessToken);
+			cookieUtil.addTokenCookie(response, Tokens.REFRESH_TOKEN, refreshToken);
 
 			return ResponseEntity.ok(LoginRepsonseDto.success(accessToken, refreshToken));
 
@@ -153,6 +146,7 @@ public class AuthProcessImpl implements AuthProcess {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body("가입된 계정이 없습니다.");
 		} catch (Exception e) {
+			e.printStackTrace(); // for test
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body("로그인 중 오류가 발생했습니다.");
 		}
@@ -167,21 +161,8 @@ public class AuthProcessImpl implements AuthProcess {
 	@Override
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 		try {
-			// 엑세스 토큰 쿠키 제거
-			Cookie accessTokenCookie = new Cookie("accessToken", null);
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false);
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge(0);
-			response.addCookie(accessTokenCookie);
-
-			// 엑세스 토큰 쿠키 제거
-			Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false);
-			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(0);
-			response.addCookie(refreshTokenCookie);
+			cookieUtil.deleteCookie(response, Tokens.ACCESS_TOKEN.getTokenName());
+			cookieUtil.deleteCookie(response, Tokens.REFRESH_TOKEN.getTokenName());
 
 			SecurityContextHolder.clearContext();
 
