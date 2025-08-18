@@ -186,17 +186,19 @@
     - 회의록 작성.
     - 화면 설계서 및 API 정의서 작성.
   - [BE]
-    - Open API로부터 음식점 데이터 수집 및 DB 저장 파이프라인 구축. [[Source code 1]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/api/openfeign/KakaoRestOpenFeign.java) [[Source code 2]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/process/EateriesWithApiProcess.java)
+    - Open API로부터 음식점 데이터 수집 및 DB 저장 파이프라인 구축. [[Source code 1]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/api/openfeign/KakaoOpenFeignConfig.java) [[Source code 2]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/process/EateriesWithApiProcess.java)
     - 전국 주소 데이터를 시도군 및 도로명 별로 수집하여 지역별 음식점 정보 제공에 활용.
-    - 음식점 페이지 조회수 증가 기능 구현. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/process/EateriesProcess.java#L52)
+    - 음식점 페이지 조회수 증가 기능 구현. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/process/eateries/EateriesProcess.java#L58)
     - REST API 구현.
-      - 음식점 카테고리 대소분류 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/controller/CategoryController.java)
-      - 지역 필터 UI를 통해 지역 주소 입력 시 주변 음식점 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/controller/EateriesMainController.java)
-      - 지역 대소분류 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/controller/LocationController.java)
-      - 사용자 현재 위치 좌표 정보를 토대로 근처 음식점 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/controller/EateriesMainController.java#L208)
-      - 음식점 추천 알고리즘 구상 및 구현. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/controller/MembersEateriesController.java#L61)
-        - 사용자가 즐겨찾기한 음식점의 카테고리와 일치하는 음식점들을 추천하는 방식. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/process/MembersEateriesProcess.java#L98)
-      - REST API JSON 응답 구조 정형화. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/main/src/main/java/com/acorn/response/ResponseJson.java#L21)
+      - 음식점 카테고리 대소분류 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/controller/filters/CategoryController.java)
+      - 지역 필터 UI를 통해 지역 주소 입력 시 주변 음식점 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/controller/eateries/EateriesMainController.java)
+      - 지역 대소분류 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/controller/filters/LocationController.java)
+      - 사용자 현재 위치 좌표 정보를 토대로 근처 음식점 정보 제공. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/controller/eateries/EateriesMainController.java#L207)
+      - 음식점 추천 알고리즘 구상 및 구현. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/controller/members/MembersEateriesController.java#L61)
+        - 사용자가 즐겨찾기한 음식점의 카테고리와 일치하는 음식점들을 추천하는 방식. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/process/members/MembersEateriesProcess.java#L100)
+      - REST API JSON 응답 구조 정형화. [[Source code]](https://github.com/JeroCaller/forklog-backend/blob/develop/src/main/java/com/acorn/response/ResponseJson.java)
+    - 코드 리팩토링
+      - 안전한 리팩토링을 위한 테스트 코드 작성. [[Source code]](https://github.com/JeroCaller/forklog-backend/tree/develop/src/test/java/com/acorn)
 
 ## 문서
 
