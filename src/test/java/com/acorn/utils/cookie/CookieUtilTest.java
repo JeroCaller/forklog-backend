@@ -1,7 +1,7 @@
 package com.acorn.utils.cookie;
 
 import com.acorn.common.Tokens;
-import com.acorn.jwt.JwtUtil;
+import com.acorn.jwt.JwtAuthenticationProvider;
 import com.acorn.utils.cookie.impl.DefaultCookieConfig;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 안전한 리팩토링을 위한 테스트.
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     CookieUtil.class,
     DefaultCookieConfig.class,
-    JwtUtil.class
+    JwtAuthenticationProvider.class
 })
 @Slf4j
 @TestPropertySource(locations = "classpath:application-secret.yml")
@@ -40,7 +39,7 @@ class CookieUtilTest {
     private CookieConfigurer cookieConfigurer;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtAuthenticationProvider jwtAuthenticationProvider;
 
     private MockHttpServletResponse mockHttpServletResponse;
     private Cookie comparasionCookie;  // 비교를 위한 쿠키
@@ -74,10 +73,10 @@ class CookieUtilTest {
 
         switch (whatToken) {
             case ACCESS_TOKEN:
-                token = jwtUtil.createAccessToken(testEmail);
+                token = jwtAuthenticationProvider.createAccessToken(testEmail);
                 break;
             case REFRESH_TOKEN:
-                token = jwtUtil.createRefreshToken(testEmail);
+                token = jwtAuthenticationProvider.createRefreshToken(testEmail);
                 break;
         }
 
@@ -92,8 +91,8 @@ class CookieUtilTest {
         String resultToken = tokenCookie.getValue();
         assertThat(tokenCookie).isNotNull();
         assertThat(resultToken).isNotNull();
-        assertThat(jwtUtil.validate(resultToken)).isTrue();
-        assertThat(jwtUtil.extractUseremail(resultToken)).isEqualTo(testEmail);
+        assertThat(jwtAuthenticationProvider.validate(resultToken)).isTrue();
+        assertThat(jwtAuthenticationProvider.extractUseremail(resultToken)).isEqualTo(testEmail);
         assertThat(tokenCookie.getMaxAge())
             .isEqualTo(whatToken.getMaxAgeInSeconds());
         assertThat(tokenCookie.isHttpOnly()).isEqualTo(comparasionCookie.isHttpOnly());
@@ -108,12 +107,12 @@ class CookieUtilTest {
         cookieUtil.addTokenCookie(
             mockHttpServletResponse,
             Tokens.ACCESS_TOKEN,
-            jwtUtil.createAccessToken(testEmail)
+            jwtAuthenticationProvider.createAccessToken(testEmail)
         );
         cookieUtil.addTokenCookie(
             mockHttpServletResponse,
             Tokens.REFRESH_TOKEN,
-            jwtUtil.createRefreshToken(testEmail)
+            jwtAuthenticationProvider.createRefreshToken(testEmail)
         );
 
         assertThat(mockHttpServletResponse.getCookie(Tokens.ACCESS_TOKEN.getTokenName()))

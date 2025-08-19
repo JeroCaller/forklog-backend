@@ -5,7 +5,7 @@ import com.acorn.dto.auth.LoginResponseDto;
 import com.acorn.dto.auth.LoginRequestDto;
 import com.acorn.entity.Members;
 import com.acorn.entity.RefreshToken;
-import com.acorn.jwt.JwtUtil;
+import com.acorn.jwt.JwtAuthenticationProvider;
 import com.acorn.process.CustomUserDetailService;
 import com.acorn.repository.MembersRepository;
 import com.acorn.repository.RefreshTokenRepository;
@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @Import({
     AuthProcessImpl.class,
-    JwtUtil.class,
+    JwtAuthenticationProvider.class,
     CustomUserDetailService.class,
     BCryptPasswordEncoder.class,
     CookieUtil.class,
@@ -56,7 +56,7 @@ class AuthProcessImplTest {
     private AuthProcessImpl authProcessImpl;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Autowired
     private CustomUserDetailService customUserDetailService;
@@ -107,7 +107,7 @@ class AuthProcessImplTest {
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setNo(1);
         refreshTokenEntity.setEmail(memberOne.getEmail());
-        refreshTokenEntity.setRefreshToken(jwtUtil.createRefreshToken(memberOne.getEmail()));
+        refreshTokenEntity.setRefreshToken(jwtAuthenticationProvider.createRefreshToken(memberOne.getEmail()));
         Mockito.when(refreshTokenRepository.findByEmail(memberOne.getEmail()))
             .thenReturn(Optional.of(refreshTokenEntity));
 
@@ -126,13 +126,13 @@ class AuthProcessImplTest {
             .getCookie(CommonNames.REFRESH_TOKEN_NAME.getName());
 
         assertThat(accessTokenCookie).isNotNull();
-        assertThat(jwtUtil.validate(accessTokenCookie.getValue())).isTrue();
-        assertThat(jwtUtil.extractUseremail(accessTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.validate(accessTokenCookie.getValue())).isTrue();
+        assertThat(jwtAuthenticationProvider.extractUseremail(accessTokenCookie.getValue()))
             .isEqualTo(memberOne.getEmail());
 
         assertThat(refreshTokenCookie).isNotNull();
-        assertThat(jwtUtil.validate(refreshTokenCookie.getValue())).isTrue();
-        assertThat(jwtUtil.extractUseremail(refreshTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.validate(refreshTokenCookie.getValue())).isTrue();
+        assertThat(jwtAuthenticationProvider.extractUseremail(refreshTokenCookie.getValue()))
             .isEqualTo(memberOne.getEmail());
     }
 
@@ -150,11 +150,11 @@ class AuthProcessImplTest {
         assertThat(accessTokenCookie).isNotNull();
         assertThat(accessTokenCookie.getValue()).isNull();
         assertThat(accessTokenCookie.getMaxAge()).isZero();
-        assertThat(jwtUtil.validate(accessTokenCookie.getValue())).isFalse();
+        assertThat(jwtAuthenticationProvider.validate(accessTokenCookie.getValue())).isFalse();
 
         assertThat(refreshTokenCookie).isNotNull();
         assertThat(refreshTokenCookie.getValue()).isNull();
         assertThat(refreshTokenCookie.getMaxAge()).isZero();
-        assertThat(jwtUtil.validate(refreshTokenCookie.getValue())).isFalse();
+        assertThat(jwtAuthenticationProvider.validate(refreshTokenCookie.getValue())).isFalse();
     }
 }

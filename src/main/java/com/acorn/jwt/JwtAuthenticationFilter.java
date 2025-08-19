@@ -36,7 +36,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtUtil jwtUtil;
+	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final UserDetailsService userDetailsService;
 	private final CookieUtil cookieUtil;
 
@@ -54,11 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				String refreshToken = parseJwtToken(request, Tokens.REFRESH_TOKEN);
 				//System.out.println("request refreshToken : " + refreshToken);
 
-				if (refreshToken != null && jwtUtil.validate(refreshToken)) {
-					String email = jwtUtil.extractUseremail(refreshToken);
+				if (refreshToken != null && jwtAuthenticationProvider.validate(refreshToken)) {
+					String email = jwtAuthenticationProvider.extractUseremail(refreshToken);
 
 					if (email != null) {
-						String newAccessToken = jwtUtil.createAccessToken(email);
+						String newAccessToken = jwtAuthenticationProvider.createAccessToken(email);
 						//System.out.println("newAccessToken : " + newAccessToken);
 
 						cookieUtil.addTokenCookie(response, Tokens.ACCESS_TOKEN, newAccessToken);
@@ -75,8 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}
 				}
-			} else if (jwtUtil.validate(accessToken)) {
-				String email = jwtUtil.extractUseremail(accessToken);
+			} else if (jwtAuthenticationProvider.validate(accessToken)) {
+				String email = jwtAuthenticationProvider.extractUseremail(accessToken);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
 					userDetails,

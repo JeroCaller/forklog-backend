@@ -1,12 +1,5 @@
 package com.acorn.jwt;
 
-import java.util.Date;
-
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,14 +8,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 /**
- * JwtUtil : JWT 처리에 필요한 로직을 제공하는 클래스, 토큰의 생성과 유효성을 검증한다.
+ * JWT 처리에 필요한 로직을 제공하는 클래스, 토큰의 생성과 유효성을 검증한다.
  *
  * @author YYUMMMMMMMM
  */
 @Component
-public class JwtUtil {
+public class JwtAuthenticationProvider {
 
 	@Value("${secret-key}") // @Value : application.properties에 등록한 secretKey를 가져온다.
 	private String secretKey;

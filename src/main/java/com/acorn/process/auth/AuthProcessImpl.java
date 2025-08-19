@@ -8,7 +8,7 @@ import com.acorn.dto.members.RegisterRequestDto;
 import com.acorn.dto.members.RegisterResponseDto;
 import com.acorn.entity.Members;
 import com.acorn.entity.RefreshToken;
-import com.acorn.jwt.JwtUtil;
+import com.acorn.jwt.JwtAuthenticationProvider;
 import com.acorn.process.CustomUserDetailService;
 import com.acorn.repository.MembersRepository;
 import com.acorn.repository.RefreshTokenRepository;
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class AuthProcessImpl implements AuthProcess {
 
-	private final JwtUtil jwtUtil;
+	private final JwtAuthenticationProvider jwtAuthenticationProvider;
 	private final MembersRepository membersRepository;
 	private final CustomUserDetailService customUserDetailService;
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -128,8 +128,8 @@ public class AuthProcessImpl implements AuthProcess {
 			}
 
 			// JWT 토큰 생성
-			String accessToken = jwtUtil.createAccessToken(email);
-			String refreshToken = jwtUtil.createRefreshToken(email);
+			String accessToken = jwtAuthenticationProvider.createAccessToken(email);
+			String refreshToken = jwtAuthenticationProvider.createRefreshToken(email);
 
 			saveRefreshToken(email, refreshToken);
 			// System.out.println("Saving refresh token for email: " + email);
