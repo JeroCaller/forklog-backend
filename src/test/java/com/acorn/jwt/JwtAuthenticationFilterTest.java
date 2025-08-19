@@ -95,7 +95,7 @@ class JwtAuthenticationFilterTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Autowired
     private CookieConfigurer cookieConfigurer;
@@ -346,8 +346,8 @@ class JwtAuthenticationFilterTest {
             .getCookie(Tokens.ACCESS_TOKEN.getTokenName());
         assertThat(accessTokenCookie).isNotNull();
         assertThat(accessTokenCookie.getValue()).isNotEmpty();
-        assertThat(jwtUtil.validate(accessTokenCookie.getValue())).isTrue();
-        assertThat(jwtUtil.extractUseremail(accessTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.validate(accessTokenCookie.getValue())).isTrue();
+        assertThat(jwtAuthenticationProvider.extractUseremail(accessTokenCookie.getValue()))
             .isEqualTo(MOCK_USER_EMAIL);
     }
 
@@ -356,8 +356,8 @@ class JwtAuthenticationFilterTest {
     void shouldNotBeAbleToAccessToProtectedResourcesWithoutAccessTokenAndWithInvalidRefreshToken()
         throws Exception
     {
-        String invalidRefreshToken = jwtUtil.create(MOCK_USER_EMAIL, 0);
-        assertThat(jwtUtil.validate(invalidRefreshToken)).isFalse();
+        String invalidRefreshToken = jwtAuthenticationProvider.create(MOCK_USER_EMAIL, 0);
+        assertThat(jwtAuthenticationProvider.validate(invalidRefreshToken)).isFalse();
 
         // 유효한 쿠키에 만료된 리프레시 토큰 삽입.
         Cookie refreshTokenCookieForRequest = new Cookie(
@@ -386,10 +386,10 @@ class JwtAuthenticationFilterTest {
     @Test
     @DisplayName("모두 유효하지 않은 JWT 토큰들로 보호된 자원 요청 시 해당 자원을 응답받을 수 없어야 한다.")
     void shouldNotBeAbleToAccessToProtectedResourcesWithInvalidTokens() throws Exception {
-        String invalidAccessToken = jwtUtil.create(MOCK_USER_EMAIL, 0);
-        String invalidRefreshToken = jwtUtil.create(MOCK_USER_EMAIL, 0);
-        assertThat(jwtUtil.validate(invalidAccessToken)).isFalse();
-        assertThat(jwtUtil.validate(invalidRefreshToken)).isFalse();
+        String invalidAccessToken = jwtAuthenticationProvider.create(MOCK_USER_EMAIL, 0);
+        String invalidRefreshToken = jwtAuthenticationProvider.create(MOCK_USER_EMAIL, 0);
+        assertThat(jwtAuthenticationProvider.validate(invalidAccessToken)).isFalse();
+        assertThat(jwtAuthenticationProvider.validate(invalidRefreshToken)).isFalse();
 
         // 유효한 쿠키에 만료된 리프레시 토큰 삽입.
         Cookie refreshTokenCookieForRequest = new Cookie(
@@ -447,16 +447,16 @@ class JwtAuthenticationFilterTest {
 
         assertThat(accessTokenCookie).isNotNull();
         assertThat(accessTokenCookie.getValue()).isNotEmpty();
-        assertThat(jwtUtil.extractUseremail(accessTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.extractUseremail(accessTokenCookie.getValue()))
             .isEqualTo(loginRequestDto.getEmail());
-        assertThat(jwtUtil.validate(accessTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.validate(accessTokenCookie.getValue()))
             .isTrue();
 
         assertThat(refreshTokenCookie).isNotNull();
         assertThat(refreshTokenCookie.getValue()).isNotEmpty();
-        assertThat(jwtUtil.extractUseremail(refreshTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.extractUseremail(refreshTokenCookie.getValue()))
             .isEqualTo(loginRequestDto.getEmail());
-        assertThat(jwtUtil.validate(refreshTokenCookie.getValue()))
+        assertThat(jwtAuthenticationProvider.validate(refreshTokenCookie.getValue()))
             .isTrue();
 
         return authRequestResult;
